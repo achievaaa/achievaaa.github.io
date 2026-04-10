@@ -1,12 +1,996 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Achievaaa</title>
-    <link rel="icon" href="icon.png">
-</head>
-<body>
-    <h1>Hai Dunia</h1>
-    <p>Selamat Datang ke Achievaaa!</p>
-</body>
-</html>
+import { useState, useEffect } from "react";
+
+const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=Space+Mono:wght@400;700&display=swap');`;
+
+const styles = `
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Sora', sans-serif; background: #0e1a14; }
+
+  .app {
+    min-height: 100vh;
+    background: #0e1a14;
+    color: #f0ebe1;
+    font-family: 'Sora', sans-serif;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  .bg-orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.18;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .orb1 { width: 500px; height: 500px; background: #3ecf6e; top: -100px; right: -100px; }
+  .orb2 { width: 400px; height: 400px; background: #f5b731; bottom: -50px; left: -100px; }
+  .orb3 { width: 300px; height: 300px; background: #3ecf6e; top: 50%; left: 40%; }
+
+  .container {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .logo-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(62,207,110,0.12);
+    border: 1px solid rgba(62,207,110,0.3);
+    border-radius: 100px;
+    padding: 6px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #3ecf6e;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  h1 {
+    font-size: clamp(28px, 5vw, 42px);
+    font-weight: 800;
+    line-height: 1.1;
+    color: #f0ebe1;
+  }
+  h1 span { color: #3ecf6e; }
+
+  .subtitle {
+    margin-top: 12px;
+    color: #8a9e90;
+    font-size: 15px;
+    font-weight: 300;
+  }
+
+  /* Steps indicator */
+  .steps-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    margin-bottom: 40px;
+  }
+  .step-dot {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: 'Space Mono', monospace;
+    transition: all 0.3s;
+    border: 2px solid #2a3d2e;
+    background: #1a2e1e;
+    color: #4a6650;
+    flex-shrink: 0;
+  }
+  .step-dot.active {
+    background: #3ecf6e;
+    border-color: #3ecf6e;
+    color: #0e1a14;
+    box-shadow: 0 0 16px rgba(62,207,110,0.4);
+  }
+  .step-dot.done {
+    background: #1e3a22;
+    border-color: #3ecf6e;
+    color: #3ecf6e;
+  }
+  .step-line {
+    width: 40px;
+    height: 2px;
+    background: #2a3d2e;
+    transition: background 0.3s;
+  }
+  .step-line.done { background: #3ecf6e; }
+
+  /* Card */
+  .card {
+    background: rgba(20, 35, 22, 0.85);
+    border: 1px solid rgba(62,207,110,0.15);
+    border-radius: 20px;
+    padding: 32px;
+    backdrop-filter: blur(12px);
+    animation: fadeUp 0.4s ease;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: #f0ebe1;
+  }
+  .card-subtitle {
+    font-size: 13px;
+    color: #5a7a60;
+    margin-bottom: 28px;
+  }
+
+  /* Input */
+  .input-group { margin-bottom: 20px; }
+  .input-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #5a7a60;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .input-wrap {
+    display: flex;
+    align-items: center;
+    background: #0e1a14;
+    border: 1.5px solid #2a3d2e;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .input-wrap:focus-within { border-color: #3ecf6e; }
+  .input-prefix {
+    padding: 0 14px;
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: #3ecf6e;
+    font-weight: 700;
+    background: rgba(62,207,110,0.08);
+    height: 48px;
+    display: flex;
+    align-items: center;
+    border-right: 1.5px solid #2a3d2e;
+  }
+  input[type="number"], input[type="text"] {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 0 16px;
+    height: 48px;
+    font-family: 'Space Mono', monospace;
+    font-size: 15px;
+    color: #f0ebe1;
+    width: 100%;
+  }
+  input::placeholder { color: #2e4a34; }
+
+  /* Formula selector */
+  .formula-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  @media (max-width: 500px) { .formula-grid { grid-template-columns: 1fr; } }
+
+  .formula-card {
+    border: 1.5px solid #2a3d2e;
+    border-radius: 14px;
+    padding: 16px 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+    background: #0e1a14;
+  }
+  .formula-card:hover { border-color: rgba(62,207,110,0.4); }
+  .formula-card.selected {
+    border-color: #3ecf6e;
+    background: rgba(62,207,110,0.08);
+    box-shadow: 0 0 20px rgba(62,207,110,0.12);
+  }
+  .formula-name {
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    color: #3ecf6e;
+    margin-bottom: 6px;
+  }
+  .formula-desc {
+    font-size: 10px;
+    color: #5a7a60;
+    line-height: 1.5;
+  }
+
+  .formula-breakdown {
+    background: #0a1410;
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 16px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    text-align: center;
+  }
+  .breakdown-item label { font-size: 10px; color: #5a7a60; display: block; margin-bottom: 4px; }
+  .breakdown-item span {
+    font-family: 'Space Mono', monospace;
+    font-size: 16px;
+    font-weight: 700;
+  }
+  .breakdown-item.needs span { color: #60a8ff; }
+  .breakdown-item.wants span { color: #f5b731; }
+  .breakdown-item.savings span { color: #3ecf6e; }
+
+  .free-mode-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+  }
+
+  /* Commitments list */
+  .commitment-list { margin-bottom: 16px; }
+  .commitment-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #0a1410;
+    border: 1px solid #1e3322;
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+  }
+  .commitment-name { flex: 1; font-size: 13px; color: #c5d9c8; }
+  .commitment-amount {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: #f5b731;
+    font-weight: 700;
+  }
+  .btn-remove {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #3a5040;
+    font-size: 16px;
+    transition: color 0.2s;
+    padding: 2px;
+  }
+  .btn-remove:hover { color: #e05555; }
+
+  .add-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 8px;
+    align-items: center;
+  }
+  .add-row input[type="text"], .add-row input[type="number"] {
+    height: 42px;
+    background: #0e1a14;
+    border: 1.5px solid #2a3d2e;
+    border-radius: 10px;
+    padding: 0 12px;
+    font-size: 13px;
+  }
+
+  /* Goals */
+  .goal-item {
+    background: #0a1410;
+    border: 1px solid #1e3322;
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 10px;
+    position: relative;
+  }
+  .goal-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .goal-name-display {
+    font-size: 14px;
+    font-weight: 600;
+    color: #f0ebe1;
+    flex: 1;
+  }
+  .priority-badge {
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .priority-high { background: rgba(255,80,80,0.15); color: #ff6060; border: 1px solid rgba(255,80,80,0.3); }
+  .priority-medium { background: rgba(245,183,49,0.15); color: #f5b731; border: 1px solid rgba(245,183,49,0.3); }
+  .priority-low { background: rgba(100,150,200,0.15); color: #82b4e8; border: 1px solid rgba(100,150,200,0.3); }
+
+  .goal-meta {
+    display: flex;
+    gap: 12px;
+    font-size: 12px;
+    color: #4a6650;
+  }
+  .goal-meta span { display: flex; align-items: center; gap: 4px; }
+  .goal-meta b { color: #c5d9c8; font-family: 'Space Mono', monospace; }
+
+  .priority-select {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+  }
+  .p-btn {
+    flex: 1;
+    padding: 5px 0;
+    border-radius: 8px;
+    border: 1.5px solid transparent;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: 'Sora', sans-serif;
+    background: #0e1a14;
+    color: #4a6650;
+    border-color: #2a3d2e;
+  }
+  .p-btn.high.sel { background: rgba(255,80,80,0.15); color: #ff6060; border-color: #ff6060; }
+  .p-btn.medium.sel { background: rgba(245,183,49,0.15); color: #f5b731; border-color: #f5b731; }
+  .p-btn.low.sel { background: rgba(100,150,200,0.15); color: #82b4e8; border-color: #82b4e8; }
+
+  .timeline-toggle {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .t-btn {
+    flex: 1;
+    padding: 6px;
+    border-radius: 8px;
+    border: 1.5px solid #2a3d2e;
+    background: #0e1a14;
+    color: #4a6650;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Sora', sans-serif;
+    transition: all 0.15s;
+  }
+  .t-btn.sel { background: rgba(62,207,110,0.1); color: #3ecf6e; border-color: #3ecf6e; }
+
+  /* Buttons */
+  .btn-primary {
+    width: 100%;
+    padding: 14px;
+    background: #3ecf6e;
+    color: #0a1410;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Sora', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 24px;
+  }
+  .btn-primary:hover { background: #52e07e; box-shadow: 0 0 24px rgba(62,207,110,0.3); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .btn-secondary {
+    background: none;
+    border: 1.5px solid #2a3d2e;
+    color: #5a7a60;
+    border-radius: 12px;
+    padding: 10px 20px;
+    font-family: 'Sora', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 12px;
+  }
+  .btn-secondary:hover { border-color: #3ecf6e; color: #3ecf6e; }
+
+  .btn-add {
+    background: rgba(62,207,110,0.1);
+    border: 1.5px solid rgba(62,207,110,0.3);
+    color: #3ecf6e;
+    border-radius: 10px;
+    padding: 0 16px;
+    height: 42px;
+    font-family: 'Sora', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .btn-add:hover { background: rgba(62,207,110,0.2); }
+
+  /* Results */
+  .results-summary {
+    background: linear-gradient(135deg, rgba(62,207,110,0.15), rgba(62,207,110,0.05));
+    border: 1px solid rgba(62,207,110,0.3);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+  .results-label { font-size: 12px; color: #5a7a60; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+  .results-amount {
+    font-family: 'Space Mono', monospace;
+    font-size: 36px;
+    font-weight: 700;
+    color: #3ecf6e;
+  }
+  .results-sub { font-size: 12px; color: #5a7a60; margin-top: 4px; }
+
+  .budget-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #1a2e1e;
+  }
+  .budget-row:last-child { border-bottom: none; }
+  .budget-row-label { font-size: 13px; color: #8a9e90; }
+  .budget-row-amount {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .goal-result-card {
+    background: #0a1410;
+    border: 1px solid #1e3322;
+    border-radius: 14px;
+    padding: 18px;
+    margin-bottom: 10px;
+    position: relative;
+    overflow: hidden;
+  }
+  .goal-result-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+  }
+  .goal-result-card.high::before { background: #ff6060; }
+  .goal-result-card.medium::before { background: #f5b731; }
+  .goal-result-card.low::before { background: #82b4e8; }
+
+  .goal-result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+  }
+  .goal-result-name { font-size: 14px; font-weight: 700; color: #f0ebe1; }
+  .goal-result-target {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: #5a7a60;
+    margin-top: 2px;
+  }
+
+  .progress-bar {
+    height: 6px;
+    background: #1a2e1e;
+    border-radius: 100px;
+    margin: 10px 0;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 100px;
+    transition: width 1s ease;
+  }
+  .high .progress-fill { background: linear-gradient(90deg, #ff6060, #ff9090); }
+  .medium .progress-fill { background: linear-gradient(90deg, #f5b731, #ffd87a); }
+  .low .progress-fill { background: linear-gradient(90deg, #60a8ff, #82b4e8); }
+
+  .goal-result-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .stat-box {
+    background: #0e1a14;
+    border-radius: 8px;
+    padding: 8px 10px;
+    text-align: center;
+  }
+  .stat-label { font-size: 9px; color: #3a5040; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 3px; }
+  .stat-value { font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; color: #c5d9c8; }
+
+  .warning-box {
+    background: rgba(255,160,50,0.08);
+    border: 1px solid rgba(255,160,50,0.25);
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 12px;
+    color: #f5b731;
+    margin-bottom: 16px;
+  }
+
+  .nav-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 24px;
+  }
+  .nav-row .btn-secondary { flex: 1; margin-top: 0; }
+  .nav-row .btn-primary { flex: 2; margin-top: 0; }
+
+  select {
+    background: #0e1a14;
+    border: 1.5px solid #2a3d2e;
+    color: #f0ebe1;
+    border-radius: 10px;
+    padding: 0 12px;
+    height: 42px;
+    font-family: 'Sora', sans-serif;
+    font-size: 13px;
+    width: 100%;
+    outline: none;
+  }
+
+  .month-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .month-input-wrap input { flex: 1; height: 40px; }
+  .month-suffix { font-size: 12px; color: #5a7a60; }
+`;
+
+const round = (n) => Math.round(n);
+
+const FORMULAS = {
+  "70/20/10": { needs: 70, wants: 20, savings: 10, label: "Ketat & Selamat" },
+  "50/30/20": { needs: 50, wants: 30, savings: 20, label: "Balanced Life" },
+  free: { needs: null, wants: null, savings: null, label: "Ikut Suka" },
+};
+
+export default function App() {
+  const [step, setStep] = useState(1);
+  const [income, setIncome] = useState("");
+  const [formula, setFormula] = useState("50/30/20");
+  const [freePct, setFreePct] = useState({ needs: 50, wants: 30, savings: 20 });
+  const [commitments, setCommitments] = useState([]);
+  const [newCommit, setNewCommit] = useState({ name: "", amount: "" });
+  const [goals, setGoals] = useState([]);
+  const [newGoal, setNewGoal] = useState({ name: "", target: "", priority: "medium", mode: "auto", months: "" });
+  const [results, setResults] = useState(null);
+
+  const inc = parseFloat(income) || 0;
+
+  const getPct = () => {
+    if (formula === "free") return freePct;
+    return FORMULAS[formula];
+  };
+
+  const savingsPct = getPct().savings || 0;
+  const savingsAmt = round(inc * savingsPct / 100);
+  const totalCommit = commitments.reduce((s, c) => s + c.amount, 0);
+
+  const addCommitment = () => {
+    if (!newCommit.name || !newCommit.amount) return;
+    setCommitments([...commitments, { id: Date.now(), name: newCommit.name, amount: round(parseFloat(newCommit.amount)) }]);
+    setNewCommit({ name: "", amount: "" });
+  };
+
+  const addGoal = () => {
+    if (!newGoal.name || !newGoal.target) return;
+    setGoals([...goals, { ...newGoal, id: Date.now(), target: round(parseFloat(newGoal.target)), months: newGoal.months ? parseInt(newGoal.months) : null }]);
+    setNewGoal({ name: "", target: "", priority: "medium", mode: "auto", months: "" });
+  };
+
+  const calcResults = () => {
+    const availForGoals = savingsAmt; // savings allocation
+    const priorityWeight = { high: 3, medium: 2, low: 1 };
+    const totalWeight = goals.reduce((s, g) => s + priorityWeight[g.priority], 0);
+
+    const goalResults = goals.map(g => {
+      let monthlyAlloc, months;
+      if (g.mode === "manual" && g.months) {
+        months = g.months;
+        monthlyAlloc = round(g.target / months);
+      } else {
+        // auto: allocate proportionally by priority
+        const share = totalWeight > 0 ? (priorityWeight[g.priority] / totalWeight) : (1 / goals.length);
+        monthlyAlloc = round(availForGoals * share);
+        months = monthlyAlloc > 0 ? Math.ceil(g.target / monthlyAlloc) : 999;
+      }
+      return { ...g, monthlyAlloc, months, progress: 0 };
+    });
+
+    // sort by priority
+    const sortOrder = { high: 0, medium: 1, low: 2 };
+    goalResults.sort((a, b) => sortOrder[a.priority] - sortOrder[b.priority]);
+
+    setResults({
+      income: inc,
+      formula,
+      pct: getPct(),
+      needsAmt: round(inc * (getPct().needs || 0) / 100),
+      wantsAmt: round(inc * (getPct().wants || 0) / 100),
+      savingsAmt,
+      totalCommit,
+      availForGoals,
+      goals: goalResults,
+    });
+    setStep(5);
+  };
+
+  const stepLabels = ["Income", "Formula", "Komitmen", "Goals", "Hasil"];
+
+  return (
+    <>
+      <style>{FONTS + styles}</style>
+      <div className="app">
+        <div className="bg-orb orb1" />
+        <div className="bg-orb orb2" />
+        <div className="bg-orb orb3" />
+        <div className="container">
+
+          <div className="header">
+            <div className="logo-badge">💰 TabungKu</div>
+            <h1>Plan Smart,<br /><span>Simpan Lebih.</span></h1>
+            <p className="subtitle">Kira savings kau, set goals, capai impian — step by step.</p>
+          </div>
+
+          {/* Steps */}
+          <div className="steps-bar">
+            {[1,2,3,4,5].map((s, i) => (
+              <>
+                <div key={`dot-${s}`} className={`step-dot ${step === s ? "active" : step > s ? "done" : ""}`}>
+                  {step > s ? "✓" : s}
+                </div>
+                {i < 4 && <div key={`line-${s}`} className={`step-line ${step > s ? "done" : ""}`} />}
+              </>
+            ))}
+          </div>
+
+          {/* STEP 1: Income */}
+          {step === 1 && (
+            <div className="card">
+              <div className="card-title">Berapa income bulanan kau? 💸</div>
+              <div className="card-subtitle">Gaji bersih (after EPF/tax) ya, bukan gross.</div>
+              <div className="input-group">
+                <label className="input-label">Monthly Take-Home Pay</label>
+                <div className="input-wrap">
+                  <div className="input-prefix">RM</div>
+                  <input type="number" placeholder="3000" value={income} onChange={e => setIncome(e.target.value)} min="0" />
+                </div>
+              </div>
+              {inc > 0 && (
+                <div style={{ textAlign: "center", padding: "16px", background: "#0a1410", borderRadius: "12px", marginTop: "8px" }}>
+                  <span style={{ fontFamily: "'Space Mono', monospace", fontSize: "28px", fontWeight: 700, color: "#3ecf6e" }}>
+                    RM {inc.toLocaleString()}
+                  </span>
+                  <div style={{ fontSize: "11px", color: "#5a7a60", marginTop: "4px" }}>sebulan</div>
+                </div>
+              )}
+              <button className="btn-primary" disabled={!inc || inc <= 0} onClick={() => setStep(2)}>
+                Seterusnya →
+              </button>
+            </div>
+          )}
+
+          {/* STEP 2: Formula */}
+          {step === 2 && (
+            <div className="card">
+              <div className="card-title">Pilih formula simpanan kau 📊</div>
+              <div className="card-subtitle">Pilih yang paling sesuai dengan lifestyle kau.</div>
+              <div className="formula-grid">
+                {Object.entries(FORMULAS).map(([key, val]) => (
+                  <div key={key} className={`formula-card ${formula === key ? "selected" : ""}`} onClick={() => setFormula(key)}>
+                    <div className="formula-name">{key === "free" ? "FREE" : key}</div>
+                    <div className="formula-desc">
+                      {key === "free" ? "Tentukan % sendiri" : `${val.needs}% Keperluan\n${val.wants}% Kehendak\n${val.savings}% Simpanan`}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {formula !== "free" ? (
+                <div className="formula-breakdown">
+                  <div className="breakdown-item needs">
+                    <label>Keperluan</label>
+                    <span>RM {round(inc * FORMULAS[formula].needs / 100).toLocaleString()}</span>
+                  </div>
+                  <div className="breakdown-item wants">
+                    <label>Kehendak</label>
+                    <span>RM {round(inc * FORMULAS[formula].wants / 100).toLocaleString()}</span>
+                  </div>
+                  <div className="breakdown-item savings">
+                    <label>Simpanan</label>
+                    <span>RM {round(inc * FORMULAS[formula].savings / 100).toLocaleString()}</span>
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <div className="formula-breakdown free-mode-grid">
+                    {["needs","wants","savings"].map(k => (
+                      <div key={k} className={`breakdown-item ${k}`}>
+                        <label>{k === "needs" ? "Keperluan %" : k === "wants" ? "Kehendak %" : "Simpanan %"}</label>
+                        <input
+                          type="number" min="0" max="100"
+                          value={freePct[k]}
+                          onChange={e => {
+                            const v = parseInt(e.target.value) || 0;
+                            setFreePct(p => ({ ...p, [k]: v }));
+                          }}
+                          style={{ fontFamily: "'Space Mono',monospace", fontSize: 16, color: k==="needs"?"#60a8ff":k==="wants"?"#f5b731":"#3ecf6e", background:"transparent", border:"none", outline:"none", width:"60px", textAlign:"center" }}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                  {freePct.needs + freePct.wants + freePct.savings !== 100 && (
+                    <div className="warning-box" style={{ marginTop: 12 }}>
+                      ⚠️ Total kena 100%. Sekarang: {freePct.needs + freePct.wants + freePct.savings}%
+                    </div>
+                  )}
+                </div>
+              )}
+
+              <div className="nav-row">
+                <button className="btn-secondary" onClick={() => setStep(1)}>← Balik</button>
+                <button className="btn-primary"
+                  disabled={formula === "free" && freePct.needs + freePct.wants + freePct.savings !== 100}
+                  onClick={() => setStep(3)}>
+                  Seterusnya →
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 3: Commitments */}
+          {step === 3 && (
+            <div className="card">
+              <div className="card-title">Komitmen bulanan kau 📋</div>
+              <div className="card-subtitle">Sewa, ansuran kereta, loan, subscription — masukkan semua. Boleh skip kalau takde.</div>
+
+              <div className="commitment-list">
+                {commitments.map(c => (
+                  <div key={c.id} className="commitment-item">
+                    <span className="commitment-name">{c.name}</span>
+                    <span className="commitment-amount">RM {c.amount.toLocaleString()}</span>
+                    <button className="btn-remove" onClick={() => setCommitments(commitments.filter(x => x.id !== c.id))}>✕</button>
+                  </div>
+                ))}
+              </div>
+
+              <div className="add-row">
+                <input type="text" placeholder="Nama komitmen" value={newCommit.name} onChange={e => setNewCommit(p => ({ ...p, name: e.target.value }))} onKeyDown={e => e.key === "Enter" && addCommitment()} />
+                <div style={{ display:"flex", alignItems:"center", background:"#0e1a14", border:"1.5px solid #2a3d2e", borderRadius:10, overflow:"hidden" }}>
+                  <span style={{ padding:"0 8px", fontFamily:"'Space Mono',monospace", fontSize:11, color:"#3ecf6e", fontWeight:700 }}>RM</span>
+                  <input type="number" placeholder="500" value={newCommit.amount} onChange={e => setNewCommit(p => ({ ...p, amount: e.target.value }))} style={{ width:80 }} onKeyDown={e => e.key === "Enter" && addCommitment()} />
+                </div>
+                <button className="btn-add" onClick={addCommitment}>+ Add</button>
+              </div>
+
+              {commitments.length > 0 && (
+                <div style={{ marginTop: 16, padding:"12px 16px", background:"#0a1410", borderRadius:10, display:"flex", justifyContent:"space-between" }}>
+                  <span style={{ fontSize:12, color:"#5a7a60" }}>Total komitmen</span>
+                  <span style={{ fontFamily:"'Space Mono',monospace", fontSize:14, fontWeight:700, color:"#f5b731" }}>RM {totalCommit.toLocaleString()}</span>
+                </div>
+              )}
+
+              {totalCommit > savingsAmt && savingsAmt > 0 && (
+                <div className="warning-box" style={{ marginTop: 12 }}>
+                  ⚠️ Komitmen (RM {totalCommit}) melebihi savings allocation (RM {savingsAmt}). Consider adjust formula atau reduce komitmen.
+                </div>
+              )}
+
+              <div className="nav-row">
+                <button className="btn-secondary" onClick={() => setStep(2)}>← Balik</button>
+                <button className="btn-primary" onClick={() => setStep(4)}>Seterusnya →</button>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 4: Goals */}
+          {step === 4 && (
+            <div className="card">
+              <div className="card-title">Impian kau apa? 🎯</div>
+              <div className="card-subtitle">Masukkan goals kau — rumah, kereta, travel, emergency fund, apa je.</div>
+
+              <div className="commitment-list">
+                {goals.map((g, i) => (
+                  <div key={g.id} className="goal-item">
+                    <div className="goal-header">
+                      <span className="goal-name-display">{g.name}</span>
+                      <span className={`priority-badge priority-${g.priority}`}>{g.priority}</span>
+                      <button className="btn-remove" onClick={() => setGoals(goals.filter(x => x.id !== g.id))}>✕</button>
+                    </div>
+                    <div className="goal-meta">
+                      <span>🎯 Target: <b>RM {g.target.toLocaleString()}</b></span>
+                      <span>⏱ {g.mode === "manual" && g.months ? `${g.months} bulan` : "Auto"}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Add goal form */}
+              <div style={{ background:"#0a1410", border:"1px dashed #2a3d2e", borderRadius:14, padding:16 }}>
+                <div style={{ fontSize:12, color:"#3ecf6e", fontWeight:700, marginBottom:12, letterSpacing:"0.05em" }}>+ TAMBAH GOAL</div>
+
+                <div className="input-group" style={{ marginBottom:10 }}>
+                  <div className="input-wrap">
+                    <input type="text" placeholder="Nama goal (e.g. Emergency Fund)" value={newGoal.name} onChange={e => setNewGoal(p => ({ ...p, name: e.target.value }))} />
+                  </div>
+                </div>
+
+                <div className="input-group" style={{ marginBottom:10 }}>
+                  <div className="input-wrap">
+                    <div className="input-prefix">RM</div>
+                    <input type="number" placeholder="Target amount" value={newGoal.target} onChange={e => setNewGoal(p => ({ ...p, target: e.target.value }))} />
+                  </div>
+                </div>
+
+                <div style={{ fontSize:11, color:"#5a7a60", marginBottom:6, fontWeight:600, letterSpacing:"0.06em", textTransform:"uppercase" }}>Priority</div>
+                <div className="priority-select" style={{ marginBottom:12 }}>
+                  {["high","medium","low"].map(p => (
+                    <button key={p} className={`p-btn ${p} ${newGoal.priority===p?"sel":""}`} onClick={() => setNewGoal(g => ({ ...g, priority: p }))}>
+                      {p === "high" ? "🔴 High" : p === "medium" ? "🟡 Medium" : "🔵 Low"}
+                    </button>
+                  ))}
+                </div>
+
+                <div style={{ fontSize:11, color:"#5a7a60", marginBottom:6, fontWeight:600, letterSpacing:"0.06em", textTransform:"uppercase" }}>Timeline</div>
+                <div className="timeline-toggle" style={{ marginBottom: newGoal.mode==="manual"?10:0 }}>
+                  <button className={`t-btn ${newGoal.mode==="auto"?"sel":""}`} onClick={() => setNewGoal(g => ({ ...g, mode:"auto" }))}>🤖 Auto-kira</button>
+                  <button className={`t-btn ${newGoal.mode==="manual"?"sel":""}`} onClick={() => setNewGoal(g => ({ ...g, mode:"manual" }))}>📅 Saya tetapkan</button>
+                </div>
+
+                {newGoal.mode === "manual" && (
+                  <div className="month-input-wrap">
+                    <input type="number" placeholder="12" min="1" value={newGoal.months} onChange={e => setNewGoal(g => ({ ...g, months: e.target.value }))} style={{ background:"#0e1a14", border:"1.5px solid #2a3d2e", borderRadius:10, padding:"0 12px", color:"#f0ebe1", fontFamily:"'Space Mono',monospace", fontSize:14 }} />
+                    <span className="month-suffix">bulan untuk capai</span>
+                  </div>
+                )}
+
+                <button className="btn-add" style={{ width:"100%", marginTop:12, height:42 }} onClick={addGoal} disabled={!newGoal.name || !newGoal.target}>
+                  Tambah Goal
+                </button>
+              </div>
+
+              <div className="nav-row">
+                <button className="btn-secondary" onClick={() => setStep(3)}>← Balik</button>
+                <button className="btn-primary" disabled={goals.length === 0} onClick={calcResults}>
+                  Kira Sekarang ✨
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 5: Results */}
+          {step === 5 && results && (
+            <div className="card">
+              <div className="card-title">Breakdown Savings Kau 🏆</div>
+              <div className="card-subtitle">Semua dah dikira & dah rounded — no sen drama.</div>
+
+              <div className="results-summary">
+                <div className="results-label">Monthly Savings Available</div>
+                <div className="results-amount">RM {results.savingsAmt.toLocaleString()}</div>
+                <div className="results-sub">{results.pct.savings}% daripada RM {results.income.toLocaleString()} income kau</div>
+              </div>
+
+              {/* Budget breakdown */}
+              <div style={{ background:"#0a1410", borderRadius:12, padding:"4px 16px", marginBottom:20 }}>
+                <div className="budget-row">
+                  <span className="budget-row-label">💼 Income</span>
+                  <span className="budget-row-amount" style={{ color:"#f0ebe1" }}>RM {results.income.toLocaleString()}</span>
+                </div>
+                {results.formula !== "free" ? (
+                  <>
+                    <div className="budget-row">
+                      <span className="budget-row-label">🏠 Keperluan ({results.pct.needs}%)</span>
+                      <span className="budget-row-amount" style={{ color:"#60a8ff" }}>RM {results.needsAmt.toLocaleString()}</span>
+                    </div>
+                    <div className="budget-row">
+                      <span className="budget-row-label">🎮 Kehendak ({results.pct.wants}%)</span>
+                      <span className="budget-row-amount" style={{ color:"#f5b731" }}>RM {results.wantsAmt.toLocaleString()}</span>
+                    </div>
+                  </>
+                ) : null}
+                <div className="budget-row">
+                  <span className="budget-row-label">💰 Simpanan ({results.pct.savings}%)</span>
+                  <span className="budget-row-amount" style={{ color:"#3ecf6e" }}>RM {results.savingsAmt.toLocaleString()}</span>
+                </div>
+                {results.totalCommit > 0 && (
+                  <div className="budget-row">
+                    <span className="budget-row-label">📋 Total Komitmen</span>
+                    <span className="budget-row-amount" style={{ color:"#f5b731" }}>RM {results.totalCommit.toLocaleString()}</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Goals */}
+              <div style={{ marginBottom:16, fontSize:13, fontWeight:700, color:"#5a7a60", letterSpacing:"0.06em", textTransform:"uppercase" }}>
+                Goals Breakdown
+              </div>
+
+              {results.goals.map((g, i) => {
+                const yrs = Math.floor(g.months / 12);
+                const mths = g.months % 12;
+                const timeStr = yrs > 0 ? `${yrs} thn ${mths > 0 ? mths+" bln" : ""}` : `${g.months} bulan`;
+                const pctOfSavings = results.savingsAmt > 0 ? Math.round((g.monthlyAlloc / results.savingsAmt) * 100) : 0;
+
+                return (
+                  <div key={g.id} className={`goal-result-card ${g.priority}`}>
+                    <div className="goal-result-header">
+                      <div>
+                        <div className="goal-result-name">{g.name}</div>
+                        <div className="goal-result-target">Target: RM {g.target.toLocaleString()}</div>
+                      </div>
+                      <span className={`priority-badge priority-${g.priority}`}>{g.priority}</span>
+                    </div>
+                    <div className="progress-bar">
+                      <div className="progress-fill" style={{ width: `${Math.min(pctOfSavings, 100)}%` }} />
+                    </div>
+                    <div className="goal-result-stats">
+                      <div className="stat-box">
+                        <div className="stat-label">Simpan/Bulan</div>
+                        <div className="stat-value">RM {g.monthlyAlloc.toLocaleString()}</div>
+                      </div>
+                      <div className="stat-box">
+                        <div className="stat-label">Tempoh</div>
+                        <div className="stat-value">{timeStr}</div>
+                      </div>
+                      <div className="stat-box">
+                        <div className="stat-label">% Savings</div>
+                        <div className="stat-value">{pctOfSavings}%</div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+
+              {results.totalCommit > 0 && (
+                <div style={{ background:"#0a1410", borderRadius:10, padding:"12px 16px", marginTop:8, fontSize:12, color:"#8a9e90" }}>
+                  💡 Komitmen bulanan RM {results.totalCommit.toLocaleString()} telah dikira sebagai sebahagian daripada perbelanjaan keperluan kau.
+                </div>
+              )}
+
+              <div style={{ display:"flex", gap:10, marginTop:24 }}>
+                <button className="btn-secondary" style={{ margin:0, flex:1 }} onClick={() => { setStep(1); setGoals([]); setCommitments([]); setIncome(""); setResults(null); }}>
+                  🔄 Restart
+                </button>
+                <button className="btn-secondary" style={{ margin:0, flex:1 }} onClick={() => setStep(4)}>
+                  ✏️ Edit Goals
+                </button>
+              </div>
+            </div>
+          )}
+
+        </div>
+      </div>
+    </>
+  );
+}
