@@ -1,996 +1,665 @@
-import { useState, useEffect } from "react";
-
-const FONTS = `@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=Space+Mono:wght@400;700&display=swap');`;
-
-const styles = `
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>TabungKu — Plan Smart, Simpan Lebih</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: 'Sora', sans-serif; background: #0e1a14; }
+  body { font-family: 'Sora', sans-serif; background: #0e1a14; color: #f0ebe1; min-height: 100vh; }
 
-  .app {
-    min-height: 100vh;
-    background: #0e1a14;
-    color: #f0ebe1;
-    font-family: 'Sora', sans-serif;
-    position: relative;
-    overflow-x: hidden;
-  }
-
-  .bg-orb {
-    position: fixed;
-    border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.18;
-    pointer-events: none;
-    z-index: 0;
-  }
+  .bg-orb { position: fixed; border-radius: 50%; filter: blur(80px); opacity: 0.18; pointer-events: none; z-index: 0; }
   .orb1 { width: 500px; height: 500px; background: #3ecf6e; top: -100px; right: -100px; }
   .orb2 { width: 400px; height: 400px; background: #f5b731; bottom: -50px; left: -100px; }
   .orb3 { width: 300px; height: 300px; background: #3ecf6e; top: 50%; left: 40%; }
 
-  .container {
-    max-width: 680px;
-    margin: 0 auto;
-    padding: 40px 20px 80px;
-    position: relative;
-    z-index: 1;
-  }
+  .container { max-width: 680px; margin: 0 auto; padding: 40px 20px 80px; position: relative; z-index: 1; }
 
-  .header {
-    text-align: center;
-    margin-bottom: 48px;
-  }
-
+  .header { text-align: center; margin-bottom: 48px; }
   .logo-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(62,207,110,0.12);
-    border: 1px solid rgba(62,207,110,0.3);
-    border-radius: 100px;
-    padding: 6px 16px;
-    font-size: 12px;
-    font-weight: 600;
-    color: #3ecf6e;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-bottom: 20px;
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(62,207,110,0.12); border: 1px solid rgba(62,207,110,0.3);
+    border-radius: 100px; padding: 6px 16px; font-size: 12px; font-weight: 600;
+    color: #3ecf6e; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 20px;
   }
-
-  h1 {
-    font-size: clamp(28px, 5vw, 42px);
-    font-weight: 800;
-    line-height: 1.1;
-    color: #f0ebe1;
-  }
+  h1 { font-size: clamp(28px, 5vw, 42px); font-weight: 800; line-height: 1.1; color: #f0ebe1; }
   h1 span { color: #3ecf6e; }
+  .subtitle { margin-top: 12px; color: #8a9e90; font-size: 15px; font-weight: 300; }
 
-  .subtitle {
-    margin-top: 12px;
-    color: #8a9e90;
-    font-size: 15px;
-    font-weight: 300;
-  }
-
-  /* Steps indicator */
-  .steps-bar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0;
-    margin-bottom: 40px;
-  }
+  /* Steps */
+  .steps-bar { display: flex; align-items: center; justify-content: center; gap: 0; margin-bottom: 40px; }
   .step-dot {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    font-weight: 700;
-    font-family: 'Space Mono', monospace;
-    transition: all 0.3s;
-    border: 2px solid #2a3d2e;
-    background: #1a2e1e;
-    color: #4a6650;
-    flex-shrink: 0;
+    width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center;
+    justify-content: center; font-size: 12px; font-weight: 700; font-family: 'Space Mono', monospace;
+    transition: all 0.3s; border: 2px solid #2a3d2e; background: #1a2e1e; color: #4a6650; flex-shrink: 0;
   }
-  .step-dot.active {
-    background: #3ecf6e;
-    border-color: #3ecf6e;
-    color: #0e1a14;
-    box-shadow: 0 0 16px rgba(62,207,110,0.4);
-  }
-  .step-dot.done {
-    background: #1e3a22;
-    border-color: #3ecf6e;
-    color: #3ecf6e;
-  }
-  .step-line {
-    width: 40px;
-    height: 2px;
-    background: #2a3d2e;
-    transition: background 0.3s;
-  }
+  .step-dot.active { background: #3ecf6e; border-color: #3ecf6e; color: #0e1a14; box-shadow: 0 0 16px rgba(62,207,110,0.4); }
+  .step-dot.done { background: #1e3a22; border-color: #3ecf6e; color: #3ecf6e; }
+  .step-line { width: 40px; height: 2px; background: #2a3d2e; transition: background 0.3s; }
   .step-line.done { background: #3ecf6e; }
 
   /* Card */
   .card {
-    background: rgba(20, 35, 22, 0.85);
-    border: 1px solid rgba(62,207,110,0.15);
-    border-radius: 20px;
-    padding: 32px;
-    backdrop-filter: blur(12px);
+    background: rgba(20, 35, 22, 0.85); border: 1px solid rgba(62,207,110,0.15);
+    border-radius: 20px; padding: 32px; backdrop-filter: blur(12px);
     animation: fadeUp 0.4s ease;
   }
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .card-title {
-    font-size: 20px;
-    font-weight: 700;
-    margin-bottom: 6px;
-    color: #f0ebe1;
-  }
-  .card-subtitle {
-    font-size: 13px;
-    color: #5a7a60;
-    margin-bottom: 28px;
-  }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  .card-title { font-size: 20px; font-weight: 700; margin-bottom: 6px; color: #f0ebe1; }
+  .card-subtitle { font-size: 13px; color: #5a7a60; margin-bottom: 28px; }
 
   /* Input */
   .input-group { margin-bottom: 20px; }
-  .input-label {
-    display: block;
-    font-size: 12px;
-    font-weight: 600;
-    color: #5a7a60;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-bottom: 8px;
-  }
-  .input-wrap {
-    display: flex;
-    align-items: center;
-    background: #0e1a14;
-    border: 1.5px solid #2a3d2e;
-    border-radius: 12px;
-    overflow: hidden;
-    transition: border-color 0.2s;
-  }
+  .input-label { display: block; font-size: 12px; font-weight: 600; color: #5a7a60; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
+  .input-wrap { display: flex; align-items: center; background: #0e1a14; border: 1.5px solid #2a3d2e; border-radius: 12px; overflow: hidden; transition: border-color 0.2s; }
   .input-wrap:focus-within { border-color: #3ecf6e; }
   .input-prefix {
-    padding: 0 14px;
-    font-family: 'Space Mono', monospace;
-    font-size: 13px;
-    color: #3ecf6e;
-    font-weight: 700;
-    background: rgba(62,207,110,0.08);
-    height: 48px;
-    display: flex;
-    align-items: center;
-    border-right: 1.5px solid #2a3d2e;
+    padding: 0 14px; font-family: 'Space Mono', monospace; font-size: 13px; color: #3ecf6e;
+    font-weight: 700; background: rgba(62,207,110,0.08); height: 48px; display: flex;
+    align-items: center; border-right: 1.5px solid #2a3d2e;
   }
   input[type="number"], input[type="text"] {
-    flex: 1;
-    background: transparent;
-    border: none;
-    outline: none;
-    padding: 0 16px;
-    height: 48px;
-    font-family: 'Space Mono', monospace;
-    font-size: 15px;
-    color: #f0ebe1;
-    width: 100%;
+    flex: 1; background: transparent; border: none; outline: none; padding: 0 16px;
+    height: 48px; font-family: 'Space Mono', monospace; font-size: 15px; color: #f0ebe1; width: 100%;
   }
   input::placeholder { color: #2e4a34; }
 
-  /* Formula selector */
-  .formula-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    margin-bottom: 20px;
-  }
+  /* Formula */
+  .formula-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
   @media (max-width: 500px) { .formula-grid { grid-template-columns: 1fr; } }
-
   .formula-card {
-    border: 1.5px solid #2a3d2e;
-    border-radius: 14px;
-    padding: 16px 12px;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-align: center;
-    background: #0e1a14;
+    border: 1.5px solid #2a3d2e; border-radius: 14px; padding: 16px 12px; cursor: pointer;
+    transition: all 0.2s; text-align: center; background: #0e1a14;
   }
   .formula-card:hover { border-color: rgba(62,207,110,0.4); }
-  .formula-card.selected {
-    border-color: #3ecf6e;
-    background: rgba(62,207,110,0.08);
-    box-shadow: 0 0 20px rgba(62,207,110,0.12);
-  }
-  .formula-name {
-    font-family: 'Space Mono', monospace;
-    font-size: 14px;
-    font-weight: 700;
-    color: #3ecf6e;
-    margin-bottom: 6px;
-  }
-  .formula-desc {
-    font-size: 10px;
-    color: #5a7a60;
-    line-height: 1.5;
-  }
-
+  .formula-card.selected { border-color: #3ecf6e; background: rgba(62,207,110,0.08); box-shadow: 0 0 20px rgba(62,207,110,0.12); }
+  .formula-name { font-family: 'Space Mono', monospace; font-size: 14px; font-weight: 700; color: #3ecf6e; margin-bottom: 6px; }
+  .formula-desc { font-size: 10px; color: #5a7a60; line-height: 1.5; white-space: pre-line; }
   .formula-breakdown {
-    background: #0a1410;
-    border-radius: 12px;
-    padding: 16px;
-    margin-top: 16px;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    text-align: center;
+    background: #0a1410; border-radius: 12px; padding: 16px; margin-top: 16px;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center;
   }
   .breakdown-item label { font-size: 10px; color: #5a7a60; display: block; margin-bottom: 4px; }
-  .breakdown-item span {
-    font-family: 'Space Mono', monospace;
-    font-size: 16px;
-    font-weight: 700;
-  }
+  .breakdown-item span { font-family: 'Space Mono', monospace; font-size: 16px; font-weight: 700; }
   .breakdown-item.needs span { color: #60a8ff; }
   .breakdown-item.wants span { color: #f5b731; }
   .breakdown-item.savings span { color: #3ecf6e; }
+  .free-mode-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .free-input-box { background: #0a1410; border: 1.5px solid #2a3d2e; border-radius: 12px; padding: 12px; text-align: center; }
+  .free-input-box label { font-size: 10px; color: #5a7a60; display: block; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .free-input-box input { background: transparent; border: none; outline: none; font-family: 'Space Mono', monospace; font-size: 20px; font-weight: 700; width: 60px; text-align: center; height: auto; padding: 0; }
+  .free-input-box.needs input { color: #60a8ff; }
+  .free-input-box.wants input { color: #f5b731; }
+  .free-input-box.savings input { color: #3ecf6e; }
 
-  .free-mode-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 12px;
-  }
-
-  /* Commitments list */
+  /* Commitment */
   .commitment-list { margin-bottom: 16px; }
   .commitment-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: #0a1410;
-    border: 1px solid #1e3322;
-    border-radius: 10px;
-    padding: 10px 14px;
-    margin-bottom: 8px;
+    display: flex; align-items: center; gap: 10px; background: #0a1410;
+    border: 1px solid #1e3322; border-radius: 10px; padding: 10px 14px; margin-bottom: 8px;
   }
   .commitment-name { flex: 1; font-size: 13px; color: #c5d9c8; }
-  .commitment-amount {
-    font-family: 'Space Mono', monospace;
-    font-size: 13px;
-    color: #f5b731;
-    font-weight: 700;
-  }
-  .btn-remove {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #3a5040;
-    font-size: 16px;
-    transition: color 0.2s;
-    padding: 2px;
-  }
+  .commitment-amount { font-family: 'Space Mono', monospace; font-size: 13px; color: #f5b731; font-weight: 700; }
+  .btn-remove { background: none; border: none; cursor: pointer; color: #3a5040; font-size: 16px; transition: color 0.2s; padding: 2px; }
   .btn-remove:hover { color: #e05555; }
-
-  .add-row {
-    display: grid;
-    grid-template-columns: 1fr auto auto;
-    gap: 8px;
-    align-items: center;
-  }
+  .add-row { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center; }
   .add-row input[type="text"], .add-row input[type="number"] {
-    height: 42px;
-    background: #0e1a14;
-    border: 1.5px solid #2a3d2e;
-    border-radius: 10px;
-    padding: 0 12px;
-    font-size: 13px;
+    height: 42px; background: #0e1a14; border: 1.5px solid #2a3d2e; border-radius: 10px;
+    padding: 0 12px; font-size: 13px; font-family: 'Space Mono', monospace; color: #f0ebe1;
   }
+  .add-row input:focus { border-color: #3ecf6e; outline: none; }
+  .commit-amt-wrap { display: flex; align-items: center; background: #0e1a14; border: 1.5px solid #2a3d2e; border-radius: 10px; overflow: hidden; }
+  .commit-amt-wrap:focus-within { border-color: #3ecf6e; }
+  .commit-prefix { padding: 0 10px; font-family: 'Space Mono', monospace; font-size: 12px; color: #3ecf6e; font-weight: 700; background: rgba(62,207,110,0.08); height: 42px; display: flex; align-items: center; border-right: 1.5px solid #2a3d2e; }
+  .commit-amt-wrap input { width: 80px; border: none; border-radius: 0; height: 42px; }
 
   /* Goals */
-  .goal-item {
-    background: #0a1410;
-    border: 1px solid #1e3322;
-    border-radius: 14px;
-    padding: 16px;
-    margin-bottom: 10px;
-    position: relative;
-  }
-  .goal-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 12px;
-  }
-  .goal-name-display {
-    font-size: 14px;
-    font-weight: 600;
-    color: #f0ebe1;
-    flex: 1;
-  }
-  .priority-badge {
-    padding: 3px 10px;
-    border-radius: 100px;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
+  .goal-item { background: #0a1410; border: 1px solid #1e3322; border-radius: 14px; padding: 16px; margin-bottom: 10px; position: relative; }
+  .goal-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .goal-name-display { font-size: 14px; font-weight: 600; color: #f0ebe1; flex: 1; }
+  .priority-badge { padding: 3px 10px; border-radius: 100px; font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
   .priority-high { background: rgba(255,80,80,0.15); color: #ff6060; border: 1px solid rgba(255,80,80,0.3); }
   .priority-medium { background: rgba(245,183,49,0.15); color: #f5b731; border: 1px solid rgba(245,183,49,0.3); }
   .priority-low { background: rgba(100,150,200,0.15); color: #82b4e8; border: 1px solid rgba(100,150,200,0.3); }
-
-  .goal-meta {
-    display: flex;
-    gap: 12px;
-    font-size: 12px;
-    color: #4a6650;
-  }
-  .goal-meta span { display: flex; align-items: center; gap: 4px; }
+  .goal-meta { display: flex; gap: 12px; font-size: 12px; color: #4a6650; flex-wrap: wrap; }
   .goal-meta b { color: #c5d9c8; font-family: 'Space Mono', monospace; }
 
-  .priority-select {
-    display: flex;
-    gap: 6px;
-    margin-top: 10px;
-  }
-  .p-btn {
-    flex: 1;
-    padding: 5px 0;
-    border-radius: 8px;
-    border: 1.5px solid transparent;
-    font-size: 11px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.15s;
-    font-family: 'Sora', sans-serif;
-    background: #0e1a14;
-    color: #4a6650;
-    border-color: #2a3d2e;
-  }
+  .priority-select { display: flex; gap: 6px; margin-top: 10px; }
+  .p-btn { flex: 1; padding: 5px 0; border-radius: 8px; border: 1.5px solid #2a3d2e; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.15s; font-family: 'Sora', sans-serif; background: #0e1a14; color: #4a6650; }
   .p-btn.high.sel { background: rgba(255,80,80,0.15); color: #ff6060; border-color: #ff6060; }
   .p-btn.medium.sel { background: rgba(245,183,49,0.15); color: #f5b731; border-color: #f5b731; }
   .p-btn.low.sel { background: rgba(100,150,200,0.15); color: #82b4e8; border-color: #82b4e8; }
-
-  .timeline-toggle {
-    display: flex;
-    gap: 6px;
-    margin-top: 8px;
-  }
-  .t-btn {
-    flex: 1;
-    padding: 6px;
-    border-radius: 8px;
-    border: 1.5px solid #2a3d2e;
-    background: #0e1a14;
-    color: #4a6650;
-    font-size: 11px;
-    font-weight: 600;
-    cursor: pointer;
-    font-family: 'Sora', sans-serif;
-    transition: all 0.15s;
-  }
+  .timeline-toggle { display: flex; gap: 6px; margin-top: 8px; }
+  .t-btn { flex: 1; padding: 6px; border-radius: 8px; border: 1.5px solid #2a3d2e; background: #0e1a14; color: #4a6650; font-size: 11px; font-weight: 600; cursor: pointer; font-family: 'Sora', sans-serif; transition: all 0.15s; }
   .t-btn.sel { background: rgba(62,207,110,0.1); color: #3ecf6e; border-color: #3ecf6e; }
 
+  /* Add goal form */
+  .add-goal-form { background: #0a1410; border: 1.5px dashed #2a3d2e; border-radius: 14px; padding: 20px; margin-top: 12px; }
+  .add-goal-form .form-label { font-size: 11px; font-weight: 600; color: #5a7a60; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; display: block; }
+  .add-goal-form input { height: 40px; background: #0e1a14; border: 1.5px solid #2a3d2e; border-radius: 10px; padding: 0 12px; font-size: 13px; font-family: 'Space Mono', monospace; color: #f0ebe1; width: 100%; margin-bottom: 12px; }
+  .add-goal-form input:focus { border-color: #3ecf6e; outline: none; }
+  .goal-target-wrap { display: flex; align-items: center; background: #0e1a14; border: 1.5px solid #2a3d2e; border-radius: 10px; overflow: hidden; margin-bottom: 12px; }
+  .goal-target-wrap:focus-within { border-color: #3ecf6e; }
+  .goal-target-wrap .prefix { padding: 0 10px; font-family: 'Space Mono', monospace; font-size: 12px; color: #3ecf6e; font-weight: 700; background: rgba(62,207,110,0.08); height: 40px; display: flex; align-items: center; border-right: 1.5px solid #2a3d2e; }
+  .goal-target-wrap input { border: none; border-radius: 0; height: 40px; margin-bottom: 0; }
+  .month-input-row { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+  .month-input-row input { flex: 1; margin-bottom: 0; }
+  .month-suffix { font-size: 12px; color: #5a7a60; white-space: nowrap; }
+  .form-section-label { font-size: 11px; font-weight: 600; color: #5a7a60; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; display: block; }
+
   /* Buttons */
-  .btn-primary {
-    width: 100%;
-    padding: 14px;
-    background: #3ecf6e;
-    color: #0a1410;
-    border: none;
-    border-radius: 12px;
-    font-family: 'Sora', sans-serif;
-    font-size: 15px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
-    margin-top: 24px;
-  }
+  .btn-primary { width: 100%; padding: 14px; background: #3ecf6e; color: #0a1410; border: none; border-radius: 12px; font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s; margin-top: 24px; }
   .btn-primary:hover { background: #52e07e; box-shadow: 0 0 24px rgba(62,207,110,0.3); }
   .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
-
-  .btn-secondary {
-    background: none;
-    border: 1.5px solid #2a3d2e;
-    color: #5a7a60;
-    border-radius: 12px;
-    padding: 10px 20px;
-    font-family: 'Sora', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    margin-top: 12px;
-  }
+  .btn-secondary { background: none; border: 1.5px solid #2a3d2e; color: #5a7a60; border-radius: 12px; padding: 10px 20px; font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-top: 12px; }
   .btn-secondary:hover { border-color: #3ecf6e; color: #3ecf6e; }
-
-  .btn-add {
-    background: rgba(62,207,110,0.1);
-    border: 1.5px solid rgba(62,207,110,0.3);
-    color: #3ecf6e;
-    border-radius: 10px;
-    padding: 0 16px;
-    height: 42px;
-    font-family: 'Sora', sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
-    white-space: nowrap;
-  }
+  .btn-add { background: rgba(62,207,110,0.1); border: 1.5px solid rgba(62,207,110,0.3); color: #3ecf6e; border-radius: 10px; padding: 0 16px; height: 42px; font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
   .btn-add:hover { background: rgba(62,207,110,0.2); }
-
-  /* Results */
-  .results-summary {
-    background: linear-gradient(135deg, rgba(62,207,110,0.15), rgba(62,207,110,0.05));
-    border: 1px solid rgba(62,207,110,0.3);
-    border-radius: 16px;
-    padding: 24px;
-    margin-bottom: 24px;
-    text-align: center;
-  }
-  .results-label { font-size: 12px; color: #5a7a60; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
-  .results-amount {
-    font-family: 'Space Mono', monospace;
-    font-size: 36px;
-    font-weight: 700;
-    color: #3ecf6e;
-  }
-  .results-sub { font-size: 12px; color: #5a7a60; margin-top: 4px; }
-
-  .budget-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 0;
-    border-bottom: 1px solid #1a2e1e;
-  }
-  .budget-row:last-child { border-bottom: none; }
-  .budget-row-label { font-size: 13px; color: #8a9e90; }
-  .budget-row-amount {
-    font-family: 'Space Mono', monospace;
-    font-size: 13px;
-    font-weight: 700;
-  }
-
-  .goal-result-card {
-    background: #0a1410;
-    border: 1px solid #1e3322;
-    border-radius: 14px;
-    padding: 18px;
-    margin-bottom: 10px;
-    position: relative;
-    overflow: hidden;
-  }
-  .goal-result-card::before {
-    content: '';
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 3px;
-  }
-  .goal-result-card.high::before { background: #ff6060; }
-  .goal-result-card.medium::before { background: #f5b731; }
-  .goal-result-card.low::before { background: #82b4e8; }
-
-  .goal-result-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 12px;
-  }
-  .goal-result-name { font-size: 14px; font-weight: 700; color: #f0ebe1; }
-  .goal-result-target {
-    font-family: 'Space Mono', monospace;
-    font-size: 12px;
-    color: #5a7a60;
-    margin-top: 2px;
-  }
-
-  .progress-bar {
-    height: 6px;
-    background: #1a2e1e;
-    border-radius: 100px;
-    margin: 10px 0;
-    overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%;
-    border-radius: 100px;
-    transition: width 1s ease;
-  }
-  .high .progress-fill { background: linear-gradient(90deg, #ff6060, #ff9090); }
-  .medium .progress-fill { background: linear-gradient(90deg, #f5b731, #ffd87a); }
-  .low .progress-fill { background: linear-gradient(90deg, #60a8ff, #82b4e8); }
-
-  .goal-result-stats {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 8px;
-    margin-top: 12px;
-  }
-  .stat-box {
-    background: #0e1a14;
-    border-radius: 8px;
-    padding: 8px 10px;
-    text-align: center;
-  }
-  .stat-label { font-size: 9px; color: #3a5040; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 3px; }
-  .stat-value { font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; color: #c5d9c8; }
-
-  .warning-box {
-    background: rgba(255,160,50,0.08);
-    border: 1px solid rgba(255,160,50,0.25);
-    border-radius: 10px;
-    padding: 12px 16px;
-    font-size: 12px;
-    color: #f5b731;
-    margin-bottom: 16px;
-  }
-
-  .nav-row {
-    display: flex;
-    gap: 10px;
-    margin-top: 24px;
-  }
+  .nav-row { display: flex; gap: 10px; margin-top: 24px; }
   .nav-row .btn-secondary { flex: 1; margin-top: 0; }
   .nav-row .btn-primary { flex: 2; margin-top: 0; }
 
-  select {
-    background: #0e1a14;
-    border: 1.5px solid #2a3d2e;
-    color: #f0ebe1;
-    border-radius: 10px;
-    padding: 0 12px;
-    height: 42px;
-    font-family: 'Sora', sans-serif;
-    font-size: 13px;
-    width: 100%;
-    outline: none;
+  /* Results */
+  .results-summary { background: linear-gradient(135deg, rgba(62,207,110,0.15), rgba(62,207,110,0.05)); border: 1px solid rgba(62,207,110,0.3); border-radius: 16px; padding: 24px; margin-bottom: 24px; text-align: center; }
+  .results-label { font-size: 12px; color: #5a7a60; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+  .results-amount { font-family: 'Space Mono', monospace; font-size: 36px; font-weight: 700; color: #3ecf6e; }
+  .results-sub { font-size: 12px; color: #5a7a60; margin-top: 4px; }
+  .budget-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #1a2e1e; }
+  .budget-row:last-child { border-bottom: none; }
+  .budget-row-label { font-size: 13px; color: #8a9e90; }
+  .budget-row-amount { font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; color: #f0ebe1; }
+  .goal-result-card { background: #0a1410; border: 1px solid #1e3322; border-radius: 14px; padding: 18px; margin-bottom: 10px; position: relative; overflow: hidden; }
+  .goal-result-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; }
+  .goal-result-card.high::before { background: #ff6060; }
+  .goal-result-card.medium::before { background: #f5b731; }
+  .goal-result-card.low::before { background: #82b4e8; }
+  .goal-result-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+  .goal-result-name { font-size: 14px; font-weight: 700; color: #f0ebe1; }
+  .goal-result-target { font-family: 'Space Mono', monospace; font-size: 12px; color: #5a7a60; margin-top: 2px; }
+  .progress-bar { height: 6px; background: #1a2e1e; border-radius: 100px; margin: 10px 0; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 100px; transition: width 1s ease; }
+  .high .progress-fill { background: linear-gradient(90deg, #ff6060, #ff9090); }
+  .medium .progress-fill { background: linear-gradient(90deg, #f5b731, #ffd87a); }
+  .low .progress-fill { background: linear-gradient(90deg, #60a8ff, #82b4e8); }
+  .goal-result-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 12px; }
+  .stat-box { background: #0e1a14; border-radius: 8px; padding: 8px 10px; text-align: center; }
+  .stat-label { font-size: 9px; color: #3a5040; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 3px; }
+  .stat-value { font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; color: #c5d9c8; }
+  .warning-box { background: rgba(255,160,50,0.08); border: 1px solid rgba(255,160,50,0.25); border-radius: 10px; padding: 12px 16px; font-size: 12px; color: #f5b731; margin-bottom: 16px; }
+  .section-title { font-size: 14px; font-weight: 700; color: #f0ebe1; margin: 20px 0 12px; }
+  .hidden { display: none !important; }
+  .income-preview { text-align: center; margin-top: 12px; background: rgba(62,207,110,0.06); border: 1px solid rgba(62,207,110,0.15); border-radius: 12px; padding: 12px; }
+  .income-preview-amt { font-family: 'Space Mono', monospace; font-size: 22px; font-weight: 700; color: #3ecf6e; }
+  .income-preview-sub { font-size: 11px; color: #5a7a60; margin-top: 2px; }
+  .total-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: rgba(62,207,110,0.06); border: 1px solid rgba(62,207,110,0.15); border-radius: 10px; margin-top: 8px; font-size: 13px; color: #8a9e90; }
+  .total-row b { font-family: 'Space Mono', monospace; color: #f5b731; }
+</style>
+</head>
+<body>
+
+<div class="bg-orb orb1"></div>
+<div class="bg-orb orb2"></div>
+<div class="bg-orb orb3"></div>
+
+<div class="container">
+  <div class="header">
+    <div class="logo-badge">💰 TabungKu</div>
+    <h1>Plan Smart, <span>Simpan Lebih.</span></h1>
+    <p class="subtitle">Kira savings kau, set goals, capai impian — step by step.</p>
+  </div>
+
+  <!-- Steps bar -->
+  <div class="steps-bar" id="stepsBar"></div>
+
+  <!-- Step 1: Income -->
+  <div class="card" id="step1">
+    <div class="card-title">Berapa income bulanan kau? 💸</div>
+    <div class="card-subtitle">Gaji bersih (after EPF/tax) ya, bukan gross.</div>
+    <div class="input-group">
+      <label class="input-label">Monthly Take-Home Pay</label>
+      <div class="input-wrap">
+        <div class="input-prefix">RM</div>
+        <input type="number" id="incomeInput" placeholder="cth: 3500" min="0" oninput="updateIncomePreview()" />
+      </div>
+    </div>
+    <div class="income-preview" id="incomePreview" style="display:none">
+      <div class="income-preview-amt" id="incomePreviewAmt"></div>
+      <div class="income-preview-sub">sebulan</div>
+    </div>
+    <button class="btn-primary" onclick="goToStep(2)">Seterusnya →</button>
+  </div>
+
+  <!-- Step 2: Formula -->
+  <div class="card hidden" id="step2">
+    <div class="card-title">Pilih formula simpanan kau 📊</div>
+    <div class="card-subtitle">Pilih yang paling sesuai dengan lifestyle kau.</div>
+    <div class="formula-grid">
+      <div class="formula-card" id="f-7020" onclick="selectFormula('70/20/10')">
+        <div class="formula-name">70/20/10</div>
+        <div class="formula-desc">70% Keperluan&#10;20% Kehendak&#10;10% Simpanan</div>
+      </div>
+      <div class="formula-card selected" id="f-5030" onclick="selectFormula('50/30/20')">
+        <div class="formula-name">50/30/20</div>
+        <div class="formula-desc">50% Keperluan&#10;30% Kehendak&#10;20% Simpanan</div>
+      </div>
+      <div class="formula-card" id="f-free" onclick="selectFormula('free')">
+        <div class="formula-name">FREE</div>
+        <div class="formula-desc">Tentukan % sendiri</div>
+      </div>
+    </div>
+    <div id="formulaBreakdown" class="formula-breakdown">
+      <div class="breakdown-item needs"><label>Keperluan</label><span id="needsAmt">-</span></div>
+      <div class="breakdown-item wants"><label>Kehendak</label><span id="wantsAmt">-</span></div>
+      <div class="breakdown-item savings"><label>Simpanan</label><span id="savingsAmt">-</span></div>
+    </div>
+    <div id="freeMode" class="hidden" style="margin-top:16px">
+      <div class="free-mode-grid">
+        <div class="free-input-box needs">
+          <label>Keperluan %</label>
+          <input type="number" id="freeNeeds" value="50" min="0" max="100" oninput="updateFreeFormula()" />
+        </div>
+        <div class="free-input-box wants">
+          <label>Kehendak %</label>
+          <input type="number" id="freeWants" value="30" min="0" max="100" oninput="updateFreeFormula()" />
+        </div>
+        <div class="free-input-box savings">
+          <label>Simpanan %</label>
+          <input type="number" id="freeSavings" value="20" min="0" max="100" oninput="updateFreeFormula()" />
+        </div>
+      </div>
+      <div id="freeTotalWarning" class="warning-box hidden" style="margin-top:12px"></div>
+    </div>
+    <div class="nav-row">
+      <button class="btn-secondary" onclick="goToStep(1)">← Balik</button>
+      <button class="btn-primary" onclick="goToStep(3)">Seterusnya →</button>
+    </div>
+  </div>
+
+  <!-- Step 3: Commitments -->
+  <div class="card hidden" id="step3">
+    <div class="card-title">Komitmen bulanan kau 📋</div>
+    <div class="card-subtitle">Sewa, ansuran kereta, loan, subscription — masukkan semua. Boleh skip kalau takde.</div>
+    <div class="commitment-list" id="commitmentList"></div>
+    <div class="add-row">
+      <input type="text" id="commitName" placeholder="cth: Sewa rumah" onkeydown="if(event.key==='Enter')addCommitment()" />
+      <div class="commit-amt-wrap">
+        <div class="commit-prefix">RM</div>
+        <input type="number" id="commitAmt" placeholder="500" onkeydown="if(event.key==='Enter')addCommitment()" />
+      </div>
+      <button class="btn-add" onclick="addCommitment()">+ Add</button>
+    </div>
+    <div id="commitTotal" class="hidden total-row">
+      Total komitmen: <b id="commitTotalAmt"></b>
+    </div>
+    <div id="commitWarning" class="warning-box hidden" style="margin-top:12px"></div>
+    <div class="nav-row">
+      <button class="btn-secondary" onclick="goToStep(2)">← Balik</button>
+      <button class="btn-primary" onclick="goToStep(4)">Seterusnya →</button>
+    </div>
+  </div>
+
+  <!-- Step 4: Goals -->
+  <div class="card hidden" id="step4">
+    <div class="card-title">Impian kau apa? 🎯</div>
+    <div class="card-subtitle">Masukkan goals kau — rumah, kereta, travel, emergency fund, apa je.</div>
+    <div id="goalList"></div>
+    <div class="add-goal-form">
+      <div style="font-size:11px;font-weight:700;color:#3ecf6e;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:14px;">+ TAMBAH GOAL</div>
+      <label class="form-label">Nama Goal</label>
+      <input type="text" id="goalName" placeholder="cth: Emergency Fund" />
+      <label class="form-label">Target Amount</label>
+      <div class="goal-target-wrap">
+        <div class="prefix">RM</div>
+        <input type="number" id="goalTarget" placeholder="10000" />
+      </div>
+      <span class="form-section-label" style="margin-top:4px">Priority</span>
+      <div class="priority-select" id="newGoalPriority">
+        <button class="p-btn high" onclick="setNewPriority('high')">🔴 High</button>
+        <button class="p-btn medium sel" onclick="setNewPriority('medium')">🟡 Medium</button>
+        <button class="p-btn low" onclick="setNewPriority('low')">🔵 Low</button>
+      </div>
+      <span class="form-section-label" style="margin-top:14px">Timeline</span>
+      <div class="timeline-toggle" id="newGoalTimeline">
+        <button class="t-btn sel" onclick="setNewTimeline('auto')">🤖 Auto-kira</button>
+        <button class="t-btn" onclick="setNewTimeline('manual')">📅 Saya tetapkan</button>
+      </div>
+      <div id="manualMonthsRow" class="hidden month-input-row" style="margin-top:10px">
+        <input type="number" id="goalMonths" placeholder="12" style="flex:1;height:40px;background:#0e1a14;border:1.5px solid #2a3d2e;border-radius:10px;padding:0 12px;font-size:13px;font-family:'Space Mono',monospace;color:#f0ebe1;" />
+        <span class="month-suffix">bulan untuk capai</span>
+      </div>
+      <button class="btn-add" style="width:100%;margin-top:14px;height:44px;" onclick="addGoal()">Tambah Goal</button>
+    </div>
+    <div class="nav-row" style="margin-top:20px">
+      <button class="btn-secondary" onclick="goToStep(3)">← Balik</button>
+      <button class="btn-primary" onclick="calcResults()">Kira Sekarang ✨</button>
+    </div>
+  </div>
+
+  <!-- Step 5: Results -->
+  <div class="card hidden" id="step5">
+    <div class="card-title">Breakdown Savings Kau 🏆</div>
+    <div class="card-subtitle">Semua dah dikira & dah rounded — no sen drama.</div>
+    <div id="resultsContent"></div>
+    <div class="nav-row" style="margin-top:20px">
+      <button class="btn-secondary" onclick="restart()">🔄 Restart</button>
+      <button class="btn-primary" onclick="goToStep(4)" style="margin-top:0">✏️ Edit Goals</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ---- State ----
+  let currentStep = 1;
+  let selectedFormula = '50/30/20';
+  let newGoalPriority = 'medium';
+  let newGoalTimeline = 'auto';
+  let commitments = [];
+  let goals = [];
+
+  const FORMULAS = {
+    '70/20/10': { needs: 70, wants: 20, savings: 10 },
+    '50/30/20': { needs: 50, wants: 30, savings: 20 },
+    'free': { needs: null, wants: null, savings: null },
+  };
+
+  function getIncome() { return parseFloat(document.getElementById('incomeInput').value) || 0; }
+  function round(n) { return Math.round(n); }
+  function fmt(n) { return n.toLocaleString('ms-MY'); }
+
+  function getPct() {
+    if (selectedFormula === 'free') {
+      return {
+        needs: parseFloat(document.getElementById('freeNeeds').value) || 0,
+        wants: parseFloat(document.getElementById('freeWants').value) || 0,
+        savings: parseFloat(document.getElementById('freeSavings').value) || 0,
+      };
+    }
+    return FORMULAS[selectedFormula];
   }
 
-  .month-input-wrap {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-top: 8px;
+  // ---- Steps ----
+  function renderSteps() {
+    const bar = document.getElementById('stepsBar');
+    bar.innerHTML = '';
+    for (let s = 1; s <= 5; s++) {
+      const dot = document.createElement('div');
+      dot.className = 'step-dot' + (s === currentStep ? ' active' : s < currentStep ? ' done' : '');
+      dot.textContent = s < currentStep ? '✓' : s;
+      bar.appendChild(dot);
+      if (s < 5) {
+        const line = document.createElement('div');
+        line.className = 'step-line' + (s < currentStep ? ' done' : '');
+        bar.appendChild(line);
+      }
+    }
   }
-  .month-input-wrap input { flex: 1; height: 40px; }
-  .month-suffix { font-size: 12px; color: #5a7a60; }
-`;
 
-const round = (n) => Math.round(n);
+  function goToStep(n) {
+    if (n === 2 && getIncome() <= 0) { alert('Sila masukkan income dulu!'); return; }
+    if (n === 5) { calcResults(); return; }
+    document.getElementById('step' + currentStep).classList.add('hidden');
+    currentStep = n;
+    document.getElementById('step' + currentStep).classList.remove('hidden');
+    renderSteps();
+    if (n === 2) updateFormulaBreakdown();
+    if (n === 3) updateCommitUI();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 
-const FORMULAS = {
-  "70/20/10": { needs: 70, wants: 20, savings: 10, label: "Ketat & Selamat" },
-  "50/30/20": { needs: 50, wants: 30, savings: 20, label: "Balanced Life" },
-  free: { needs: null, wants: null, savings: null, label: "Ikut Suka" },
-};
+  // ---- Step 1 ----
+  function updateIncomePreview() {
+    const inc = getIncome();
+    const preview = document.getElementById('incomePreview');
+    const amt = document.getElementById('incomePreviewAmt');
+    if (inc > 0) {
+      preview.style.display = '';
+      amt.textContent = 'RM ' + fmt(inc);
+    } else {
+      preview.style.display = 'none';
+    }
+  }
 
-export default function App() {
-  const [step, setStep] = useState(1);
-  const [income, setIncome] = useState("");
-  const [formula, setFormula] = useState("50/30/20");
-  const [freePct, setFreePct] = useState({ needs: 50, wants: 30, savings: 20 });
-  const [commitments, setCommitments] = useState([]);
-  const [newCommit, setNewCommit] = useState({ name: "", amount: "" });
-  const [goals, setGoals] = useState([]);
-  const [newGoal, setNewGoal] = useState({ name: "", target: "", priority: "medium", mode: "auto", months: "" });
-  const [results, setResults] = useState(null);
+  // ---- Step 2 ----
+  function selectFormula(f) {
+    selectedFormula = f;
+    ['70/20/10','50/30/20','free'].forEach(key => {
+      const id = key === '70/20/10' ? 'f-7020' : key === '50/30/20' ? 'f-5030' : 'f-free';
+      document.getElementById(id).classList.toggle('selected', key === f);
+    });
+    document.getElementById('freeMode').classList.toggle('hidden', f !== 'free');
+    document.getElementById('formulaBreakdown').classList.toggle('hidden', f === 'free');
+    updateFormulaBreakdown();
+  }
 
-  const inc = parseFloat(income) || 0;
+  function updateFormulaBreakdown() {
+    const inc = getIncome();
+    const pct = getPct();
+    if (selectedFormula !== 'free') {
+      document.getElementById('needsAmt').textContent = 'RM ' + fmt(round(inc * pct.needs / 100));
+      document.getElementById('wantsAmt').textContent = 'RM ' + fmt(round(inc * pct.wants / 100));
+      document.getElementById('savingsAmt').textContent = 'RM ' + fmt(round(inc * pct.savings / 100));
+    }
+  }
 
-  const getPct = () => {
-    if (formula === "free") return freePct;
-    return FORMULAS[formula];
-  };
+  function updateFreeFormula() {
+    const n = parseFloat(document.getElementById('freeNeeds').value) || 0;
+    const w = parseFloat(document.getElementById('freeWants').value) || 0;
+    const s = parseFloat(document.getElementById('freeSavings').value) || 0;
+    const total = n + w + s;
+    const warn = document.getElementById('freeTotalWarning');
+    if (total !== 100) {
+      warn.classList.remove('hidden');
+      warn.textContent = `⚠️ Total kena 100%. Sekarang: ${total}%`;
+    } else {
+      warn.classList.add('hidden');
+    }
+  }
 
-  const savingsPct = getPct().savings || 0;
-  const savingsAmt = round(inc * savingsPct / 100);
-  const totalCommit = commitments.reduce((s, c) => s + c.amount, 0);
+  // ---- Step 3 ----
+  function updateCommitUI() {
+    const list = document.getElementById('commitmentList');
+    list.innerHTML = '';
+    let total = 0;
+    commitments.forEach(c => {
+      total += c.amount;
+      const div = document.createElement('div');
+      div.className = 'commitment-item';
+      div.innerHTML = `<span class="commitment-name">${c.name}</span><span class="commitment-amount">RM ${fmt(c.amount)}</span><button class="btn-remove" onclick="removeCommitment(${c.id})">✕</button>`;
+      list.appendChild(div);
+    });
+    const totalRow = document.getElementById('commitTotal');
+    if (commitments.length > 0) {
+      totalRow.classList.remove('hidden');
+      document.getElementById('commitTotalAmt').textContent = 'RM ' + fmt(total);
+    } else {
+      totalRow.classList.add('hidden');
+    }
+    const savingsAmt = round(getIncome() * (getPct().savings || 0) / 100);
+    const warn = document.getElementById('commitWarning');
+    if (total > savingsAmt && savingsAmt > 0) {
+      warn.classList.remove('hidden');
+      warn.textContent = `⚠️ Komitmen (RM ${fmt(total)}) melebihi savings allocation (RM ${fmt(savingsAmt)}). Consider adjust formula atau reduce komitmen.`;
+    } else {
+      warn.classList.add('hidden');
+    }
+  }
 
-  const addCommitment = () => {
-    if (!newCommit.name || !newCommit.amount) return;
-    setCommitments([...commitments, { id: Date.now(), name: newCommit.name, amount: round(parseFloat(newCommit.amount)) }]);
-    setNewCommit({ name: "", amount: "" });
-  };
+  function addCommitment() {
+    const name = document.getElementById('commitName').value.trim();
+    const amt = parseFloat(document.getElementById('commitAmt').value);
+    if (!name || !amt) return;
+    commitments.push({ id: Date.now(), name, amount: round(amt) });
+    document.getElementById('commitName').value = '';
+    document.getElementById('commitAmt').value = '';
+    updateCommitUI();
+  }
 
-  const addGoal = () => {
-    if (!newGoal.name || !newGoal.target) return;
-    setGoals([...goals, { ...newGoal, id: Date.now(), target: round(parseFloat(newGoal.target)), months: newGoal.months ? parseInt(newGoal.months) : null }]);
-    setNewGoal({ name: "", target: "", priority: "medium", mode: "auto", months: "" });
-  };
+  function removeCommitment(id) {
+    commitments = commitments.filter(c => c.id !== id);
+    updateCommitUI();
+  }
 
-  const calcResults = () => {
-    const availForGoals = savingsAmt; // savings allocation
+  // ---- Step 4 ----
+  function setNewPriority(p) {
+    newGoalPriority = p;
+    document.querySelectorAll('#newGoalPriority .p-btn').forEach(btn => {
+      btn.classList.toggle('sel', btn.classList.contains(p));
+    });
+  }
+
+  function setNewTimeline(t) {
+    newGoalTimeline = t;
+    document.querySelectorAll('#newGoalTimeline .t-btn').forEach((btn, i) => {
+      btn.classList.toggle('sel', (i === 0 && t === 'auto') || (i === 1 && t === 'manual'));
+    });
+    document.getElementById('manualMonthsRow').classList.toggle('hidden', t !== 'manual');
+  }
+
+  function addGoal() {
+    const name = document.getElementById('goalName').value.trim();
+    const target = parseFloat(document.getElementById('goalTarget').value);
+    if (!name || !target) return;
+    const months = newGoalTimeline === 'manual' ? (parseInt(document.getElementById('goalMonths').value) || null) : null;
+    goals.push({ id: Date.now(), name, target: round(target), priority: newGoalPriority, mode: newGoalTimeline, months });
+    document.getElementById('goalName').value = '';
+    document.getElementById('goalTarget').value = '';
+    document.getElementById('goalMonths').value = '';
+    renderGoalList();
+  }
+
+  function removeGoal(id) {
+    goals = goals.filter(g => g.id !== id);
+    renderGoalList();
+  }
+
+  function renderGoalList() {
+    const list = document.getElementById('goalList');
+    list.innerHTML = '';
+    goals.forEach(g => {
+      const div = document.createElement('div');
+      div.className = 'goal-item';
+      div.innerHTML = `
+        <div class="goal-header">
+          <div class="goal-name-display">${g.name}</div>
+          <span class="priority-badge priority-${g.priority}">${g.priority}</span>
+          <button class="btn-remove" onclick="removeGoal(${g.id})">✕</button>
+        </div>
+        <div class="goal-meta">
+          <span>🎯 Target: <b>RM ${fmt(g.target)}</b></span>
+          <span>⏱ ${g.mode === 'manual' && g.months ? g.months + ' bulan' : 'Auto'}</span>
+        </div>`;
+      list.appendChild(div);
+    });
+  }
+
+  // ---- Step 5: Results ----
+  function calcResults() {
+    const inc = getIncome();
+    const pct = getPct();
+    const savingsAmt = round(inc * (pct.savings || 0) / 100);
+    const totalCommit = commitments.reduce((s, c) => s + c.amount, 0);
     const priorityWeight = { high: 3, medium: 2, low: 1 };
     const totalWeight = goals.reduce((s, g) => s + priorityWeight[g.priority], 0);
 
     const goalResults = goals.map(g => {
       let monthlyAlloc, months;
-      if (g.mode === "manual" && g.months) {
+      if (g.mode === 'manual' && g.months) {
         months = g.months;
         monthlyAlloc = round(g.target / months);
       } else {
-        // auto: allocate proportionally by priority
-        const share = totalWeight > 0 ? (priorityWeight[g.priority] / totalWeight) : (1 / goals.length);
-        monthlyAlloc = round(availForGoals * share);
+        const share = totalWeight > 0 ? (priorityWeight[g.priority] / totalWeight) : (goals.length > 0 ? 1 / goals.length : 0);
+        monthlyAlloc = round(savingsAmt * share);
         months = monthlyAlloc > 0 ? Math.ceil(g.target / monthlyAlloc) : 999;
       }
-      return { ...g, monthlyAlloc, months, progress: 0 };
+      return { ...g, monthlyAlloc, months };
     });
 
-    // sort by priority
     const sortOrder = { high: 0, medium: 1, low: 2 };
     goalResults.sort((a, b) => sortOrder[a.priority] - sortOrder[b.priority]);
 
-    setResults({
-      income: inc,
-      formula,
-      pct: getPct(),
-      needsAmt: round(inc * (getPct().needs || 0) / 100),
-      wantsAmt: round(inc * (getPct().wants || 0) / 100),
-      savingsAmt,
-      totalCommit,
-      availForGoals,
-      goals: goalResults,
-    });
-    setStep(5);
-  };
-
-  const stepLabels = ["Income", "Formula", "Komitmen", "Goals", "Hasil"];
-
-  return (
-    <>
-      <style>{FONTS + styles}</style>
-      <div className="app">
-        <div className="bg-orb orb1" />
-        <div className="bg-orb orb2" />
-        <div className="bg-orb orb3" />
-        <div className="container">
-
-          <div className="header">
-            <div className="logo-badge">💰 TabungKu</div>
-            <h1>Plan Smart,<br /><span>Simpan Lebih.</span></h1>
-            <p className="subtitle">Kira savings kau, set goals, capai impian — step by step.</p>
-          </div>
-
-          {/* Steps */}
-          <div className="steps-bar">
-            {[1,2,3,4,5].map((s, i) => (
-              <>
-                <div key={`dot-${s}`} className={`step-dot ${step === s ? "active" : step > s ? "done" : ""}`}>
-                  {step > s ? "✓" : s}
-                </div>
-                {i < 4 && <div key={`line-${s}`} className={`step-line ${step > s ? "done" : ""}`} />}
-              </>
-            ))}
-          </div>
-
-          {/* STEP 1: Income */}
-          {step === 1 && (
-            <div className="card">
-              <div className="card-title">Berapa income bulanan kau? 💸</div>
-              <div className="card-subtitle">Gaji bersih (after EPF/tax) ya, bukan gross.</div>
-              <div className="input-group">
-                <label className="input-label">Monthly Take-Home Pay</label>
-                <div className="input-wrap">
-                  <div className="input-prefix">RM</div>
-                  <input type="number" placeholder="3000" value={income} onChange={e => setIncome(e.target.value)} min="0" />
-                </div>
-              </div>
-              {inc > 0 && (
-                <div style={{ textAlign: "center", padding: "16px", background: "#0a1410", borderRadius: "12px", marginTop: "8px" }}>
-                  <span style={{ fontFamily: "'Space Mono', monospace", fontSize: "28px", fontWeight: 700, color: "#3ecf6e" }}>
-                    RM {inc.toLocaleString()}
-                  </span>
-                  <div style={{ fontSize: "11px", color: "#5a7a60", marginTop: "4px" }}>sebulan</div>
-                </div>
-              )}
-              <button className="btn-primary" disabled={!inc || inc <= 0} onClick={() => setStep(2)}>
-                Seterusnya →
-              </button>
-            </div>
-          )}
-
-          {/* STEP 2: Formula */}
-          {step === 2 && (
-            <div className="card">
-              <div className="card-title">Pilih formula simpanan kau 📊</div>
-              <div className="card-subtitle">Pilih yang paling sesuai dengan lifestyle kau.</div>
-              <div className="formula-grid">
-                {Object.entries(FORMULAS).map(([key, val]) => (
-                  <div key={key} className={`formula-card ${formula === key ? "selected" : ""}`} onClick={() => setFormula(key)}>
-                    <div className="formula-name">{key === "free" ? "FREE" : key}</div>
-                    <div className="formula-desc">
-                      {key === "free" ? "Tentukan % sendiri" : `${val.needs}% Keperluan\n${val.wants}% Kehendak\n${val.savings}% Simpanan`}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {formula !== "free" ? (
-                <div className="formula-breakdown">
-                  <div className="breakdown-item needs">
-                    <label>Keperluan</label>
-                    <span>RM {round(inc * FORMULAS[formula].needs / 100).toLocaleString()}</span>
-                  </div>
-                  <div className="breakdown-item wants">
-                    <label>Kehendak</label>
-                    <span>RM {round(inc * FORMULAS[formula].wants / 100).toLocaleString()}</span>
-                  </div>
-                  <div className="breakdown-item savings">
-                    <label>Simpanan</label>
-                    <span>RM {round(inc * FORMULAS[formula].savings / 100).toLocaleString()}</span>
-                  </div>
-                </div>
-              ) : (
-                <div>
-                  <div className="formula-breakdown free-mode-grid">
-                    {["needs","wants","savings"].map(k => (
-                      <div key={k} className={`breakdown-item ${k}`}>
-                        <label>{k === "needs" ? "Keperluan %" : k === "wants" ? "Kehendak %" : "Simpanan %"}</label>
-                        <input
-                          type="number" min="0" max="100"
-                          value={freePct[k]}
-                          onChange={e => {
-                            const v = parseInt(e.target.value) || 0;
-                            setFreePct(p => ({ ...p, [k]: v }));
-                          }}
-                          style={{ fontFamily: "'Space Mono',monospace", fontSize: 16, color: k==="needs"?"#60a8ff":k==="wants"?"#f5b731":"#3ecf6e", background:"transparent", border:"none", outline:"none", width:"60px", textAlign:"center" }}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                  {freePct.needs + freePct.wants + freePct.savings !== 100 && (
-                    <div className="warning-box" style={{ marginTop: 12 }}>
-                      ⚠️ Total kena 100%. Sekarang: {freePct.needs + freePct.wants + freePct.savings}%
-                    </div>
-                  )}
-                </div>
-              )}
-
-              <div className="nav-row">
-                <button className="btn-secondary" onClick={() => setStep(1)}>← Balik</button>
-                <button className="btn-primary"
-                  disabled={formula === "free" && freePct.needs + freePct.wants + freePct.savings !== 100}
-                  onClick={() => setStep(3)}>
-                  Seterusnya →
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* STEP 3: Commitments */}
-          {step === 3 && (
-            <div className="card">
-              <div className="card-title">Komitmen bulanan kau 📋</div>
-              <div className="card-subtitle">Sewa, ansuran kereta, loan, subscription — masukkan semua. Boleh skip kalau takde.</div>
-
-              <div className="commitment-list">
-                {commitments.map(c => (
-                  <div key={c.id} className="commitment-item">
-                    <span className="commitment-name">{c.name}</span>
-                    <span className="commitment-amount">RM {c.amount.toLocaleString()}</span>
-                    <button className="btn-remove" onClick={() => setCommitments(commitments.filter(x => x.id !== c.id))}>✕</button>
-                  </div>
-                ))}
-              </div>
-
-              <div className="add-row">
-                <input type="text" placeholder="Nama komitmen" value={newCommit.name} onChange={e => setNewCommit(p => ({ ...p, name: e.target.value }))} onKeyDown={e => e.key === "Enter" && addCommitment()} />
-                <div style={{ display:"flex", alignItems:"center", background:"#0e1a14", border:"1.5px solid #2a3d2e", borderRadius:10, overflow:"hidden" }}>
-                  <span style={{ padding:"0 8px", fontFamily:"'Space Mono',monospace", fontSize:11, color:"#3ecf6e", fontWeight:700 }}>RM</span>
-                  <input type="number" placeholder="500" value={newCommit.amount} onChange={e => setNewCommit(p => ({ ...p, amount: e.target.value }))} style={{ width:80 }} onKeyDown={e => e.key === "Enter" && addCommitment()} />
-                </div>
-                <button className="btn-add" onClick={addCommitment}>+ Add</button>
-              </div>
-
-              {commitments.length > 0 && (
-                <div style={{ marginTop: 16, padding:"12px 16px", background:"#0a1410", borderRadius:10, display:"flex", justifyContent:"space-between" }}>
-                  <span style={{ fontSize:12, color:"#5a7a60" }}>Total komitmen</span>
-                  <span style={{ fontFamily:"'Space Mono',monospace", fontSize:14, fontWeight:700, color:"#f5b731" }}>RM {totalCommit.toLocaleString()}</span>
-                </div>
-              )}
-
-              {totalCommit > savingsAmt && savingsAmt > 0 && (
-                <div className="warning-box" style={{ marginTop: 12 }}>
-                  ⚠️ Komitmen (RM {totalCommit}) melebihi savings allocation (RM {savingsAmt}). Consider adjust formula atau reduce komitmen.
-                </div>
-              )}
-
-              <div className="nav-row">
-                <button className="btn-secondary" onClick={() => setStep(2)}>← Balik</button>
-                <button className="btn-primary" onClick={() => setStep(4)}>Seterusnya →</button>
-              </div>
-            </div>
-          )}
-
-          {/* STEP 4: Goals */}
-          {step === 4 && (
-            <div className="card">
-              <div className="card-title">Impian kau apa? 🎯</div>
-              <div className="card-subtitle">Masukkan goals kau — rumah, kereta, travel, emergency fund, apa je.</div>
-
-              <div className="commitment-list">
-                {goals.map((g, i) => (
-                  <div key={g.id} className="goal-item">
-                    <div className="goal-header">
-                      <span className="goal-name-display">{g.name}</span>
-                      <span className={`priority-badge priority-${g.priority}`}>{g.priority}</span>
-                      <button className="btn-remove" onClick={() => setGoals(goals.filter(x => x.id !== g.id))}>✕</button>
-                    </div>
-                    <div className="goal-meta">
-                      <span>🎯 Target: <b>RM {g.target.toLocaleString()}</b></span>
-                      <span>⏱ {g.mode === "manual" && g.months ? `${g.months} bulan` : "Auto"}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Add goal form */}
-              <div style={{ background:"#0a1410", border:"1px dashed #2a3d2e", borderRadius:14, padding:16 }}>
-                <div style={{ fontSize:12, color:"#3ecf6e", fontWeight:700, marginBottom:12, letterSpacing:"0.05em" }}>+ TAMBAH GOAL</div>
-
-                <div className="input-group" style={{ marginBottom:10 }}>
-                  <div className="input-wrap">
-                    <input type="text" placeholder="Nama goal (e.g. Emergency Fund)" value={newGoal.name} onChange={e => setNewGoal(p => ({ ...p, name: e.target.value }))} />
-                  </div>
-                </div>
-
-                <div className="input-group" style={{ marginBottom:10 }}>
-                  <div className="input-wrap">
-                    <div className="input-prefix">RM</div>
-                    <input type="number" placeholder="Target amount" value={newGoal.target} onChange={e => setNewGoal(p => ({ ...p, target: e.target.value }))} />
-                  </div>
-                </div>
-
-                <div style={{ fontSize:11, color:"#5a7a60", marginBottom:6, fontWeight:600, letterSpacing:"0.06em", textTransform:"uppercase" }}>Priority</div>
-                <div className="priority-select" style={{ marginBottom:12 }}>
-                  {["high","medium","low"].map(p => (
-                    <button key={p} className={`p-btn ${p} ${newGoal.priority===p?"sel":""}`} onClick={() => setNewGoal(g => ({ ...g, priority: p }))}>
-                      {p === "high" ? "🔴 High" : p === "medium" ? "🟡 Medium" : "🔵 Low"}
-                    </button>
-                  ))}
-                </div>
-
-                <div style={{ fontSize:11, color:"#5a7a60", marginBottom:6, fontWeight:600, letterSpacing:"0.06em", textTransform:"uppercase" }}>Timeline</div>
-                <div className="timeline-toggle" style={{ marginBottom: newGoal.mode==="manual"?10:0 }}>
-                  <button className={`t-btn ${newGoal.mode==="auto"?"sel":""}`} onClick={() => setNewGoal(g => ({ ...g, mode:"auto" }))}>🤖 Auto-kira</button>
-                  <button className={`t-btn ${newGoal.mode==="manual"?"sel":""}`} onClick={() => setNewGoal(g => ({ ...g, mode:"manual" }))}>📅 Saya tetapkan</button>
-                </div>
-
-                {newGoal.mode === "manual" && (
-                  <div className="month-input-wrap">
-                    <input type="number" placeholder="12" min="1" value={newGoal.months} onChange={e => setNewGoal(g => ({ ...g, months: e.target.value }))} style={{ background:"#0e1a14", border:"1.5px solid #2a3d2e", borderRadius:10, padding:"0 12px", color:"#f0ebe1", fontFamily:"'Space Mono',monospace", fontSize:14 }} />
-                    <span className="month-suffix">bulan untuk capai</span>
-                  </div>
-                )}
-
-                <button className="btn-add" style={{ width:"100%", marginTop:12, height:42 }} onClick={addGoal} disabled={!newGoal.name || !newGoal.target}>
-                  Tambah Goal
-                </button>
-              </div>
-
-              <div className="nav-row">
-                <button className="btn-secondary" onClick={() => setStep(3)}>← Balik</button>
-                <button className="btn-primary" disabled={goals.length === 0} onClick={calcResults}>
-                  Kira Sekarang ✨
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* STEP 5: Results */}
-          {step === 5 && results && (
-            <div className="card">
-              <div className="card-title">Breakdown Savings Kau 🏆</div>
-              <div className="card-subtitle">Semua dah dikira & dah rounded — no sen drama.</div>
-
-              <div className="results-summary">
-                <div className="results-label">Monthly Savings Available</div>
-                <div className="results-amount">RM {results.savingsAmt.toLocaleString()}</div>
-                <div className="results-sub">{results.pct.savings}% daripada RM {results.income.toLocaleString()} income kau</div>
-              </div>
-
-              {/* Budget breakdown */}
-              <div style={{ background:"#0a1410", borderRadius:12, padding:"4px 16px", marginBottom:20 }}>
-                <div className="budget-row">
-                  <span className="budget-row-label">💼 Income</span>
-                  <span className="budget-row-amount" style={{ color:"#f0ebe1" }}>RM {results.income.toLocaleString()}</span>
-                </div>
-                {results.formula !== "free" ? (
-                  <>
-                    <div className="budget-row">
-                      <span className="budget-row-label">🏠 Keperluan ({results.pct.needs}%)</span>
-                      <span className="budget-row-amount" style={{ color:"#60a8ff" }}>RM {results.needsAmt.toLocaleString()}</span>
-                    </div>
-                    <div className="budget-row">
-                      <span className="budget-row-label">🎮 Kehendak ({results.pct.wants}%)</span>
-                      <span className="budget-row-amount" style={{ color:"#f5b731" }}>RM {results.wantsAmt.toLocaleString()}</span>
-                    </div>
-                  </>
-                ) : null}
-                <div className="budget-row">
-                  <span className="budget-row-label">💰 Simpanan ({results.pct.savings}%)</span>
-                  <span className="budget-row-amount" style={{ color:"#3ecf6e" }}>RM {results.savingsAmt.toLocaleString()}</span>
-                </div>
-                {results.totalCommit > 0 && (
-                  <div className="budget-row">
-                    <span className="budget-row-label">📋 Total Komitmen</span>
-                    <span className="budget-row-amount" style={{ color:"#f5b731" }}>RM {results.totalCommit.toLocaleString()}</span>
-                  </div>
-                )}
-              </div>
-
-              {/* Goals */}
-              <div style={{ marginBottom:16, fontSize:13, fontWeight:700, color:"#5a7a60", letterSpacing:"0.06em", textTransform:"uppercase" }}>
-                Goals Breakdown
-              </div>
-
-              {results.goals.map((g, i) => {
-                const yrs = Math.floor(g.months / 12);
-                const mths = g.months % 12;
-                const timeStr = yrs > 0 ? `${yrs} thn ${mths > 0 ? mths+" bln" : ""}` : `${g.months} bulan`;
-                const pctOfSavings = results.savingsAmt > 0 ? Math.round((g.monthlyAlloc / results.savingsAmt) * 100) : 0;
-
-                return (
-                  <div key={g.id} className={`goal-result-card ${g.priority}`}>
-                    <div className="goal-result-header">
-                      <div>
-                        <div className="goal-result-name">{g.name}</div>
-                        <div className="goal-result-target">Target: RM {g.target.toLocaleString()}</div>
-                      </div>
-                      <span className={`priority-badge priority-${g.priority}`}>{g.priority}</span>
-                    </div>
-                    <div className="progress-bar">
-                      <div className="progress-fill" style={{ width: `${Math.min(pctOfSavings, 100)}%` }} />
-                    </div>
-                    <div className="goal-result-stats">
-                      <div className="stat-box">
-                        <div className="stat-label">Simpan/Bulan</div>
-                        <div className="stat-value">RM {g.monthlyAlloc.toLocaleString()}</div>
-                      </div>
-                      <div className="stat-box">
-                        <div className="stat-label">Tempoh</div>
-                        <div className="stat-value">{timeStr}</div>
-                      </div>
-                      <div className="stat-box">
-                        <div className="stat-label">% Savings</div>
-                        <div className="stat-value">{pctOfSavings}%</div>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-
-              {results.totalCommit > 0 && (
-                <div style={{ background:"#0a1410", borderRadius:10, padding:"12px 16px", marginTop:8, fontSize:12, color:"#8a9e90" }}>
-                  💡 Komitmen bulanan RM {results.totalCommit.toLocaleString()} telah dikira sebagai sebahagian daripada perbelanjaan keperluan kau.
-                </div>
-              )}
-
-              <div style={{ display:"flex", gap:10, marginTop:24 }}>
-                <button className="btn-secondary" style={{ margin:0, flex:1 }} onClick={() => { setStep(1); setGoals([]); setCommitments([]); setIncome(""); setResults(null); }}>
-                  🔄 Restart
-                </button>
-                <button className="btn-secondary" style={{ margin:0, flex:1 }} onClick={() => setStep(4)}>
-                  ✏️ Edit Goals
-                </button>
-              </div>
-            </div>
-          )}
-
-        </div>
+    let html = `
+      <div class="results-summary">
+        <div class="results-label">Monthly Savings Available</div>
+        <div class="results-amount">RM ${fmt(savingsAmt)}</div>
+        <div class="results-sub">${pct.savings}% daripada RM ${fmt(inc)} income kau</div>
       </div>
-    </>
-  );
-}
+      <div class="card-title" style="margin-bottom:12px">💼 Budget Breakdown</div>
+      <div style="background:#0a1410;border-radius:12px;padding:16px 20px">
+        <div class="budget-row"><span class="budget-row-label">💼 Income</span><span class="budget-row-amount">RM ${fmt(inc)}</span></div>`;
+
+    if (selectedFormula !== 'free') {
+      html += `<div class="budget-row"><span class="budget-row-label">🏠 Keperluan (${pct.needs}%)</span><span class="budget-row-amount">RM ${fmt(round(inc * pct.needs / 100))}</span></div>`;
+      html += `<div class="budget-row"><span class="budget-row-label">🎮 Kehendak (${pct.wants}%)</span><span class="budget-row-amount">RM ${fmt(round(inc * pct.wants / 100))}</span></div>`;
+    }
+    html += `<div class="budget-row"><span class="budget-row-label">💰 Simpanan (${pct.savings}%)</span><span class="budget-row-amount" style="color:#3ecf6e">RM ${fmt(savingsAmt)}</span></div>`;
+    if (totalCommit > 0) {
+      html += `<div class="budget-row"><span class="budget-row-label">📋 Total Komitmen</span><span class="budget-row-amount" style="color:#f5b731">RM ${fmt(totalCommit)}</span></div>`;
+    }
+    html += `</div>`;
+
+    if (goalResults.length > 0) {
+      html += `<div class="section-title">🎯 Goals Breakdown</div>`;
+      goalResults.forEach(g => {
+        const yrs = Math.floor(g.months / 12);
+        const mths = g.months % 12;
+        const timeStr = yrs > 0 ? `${yrs} thn${mths > 0 ? ' ' + mths + ' bln' : ''}` : `${g.months} bulan`;
+        const pctOfSavings = savingsAmt > 0 ? Math.round((g.monthlyAlloc / savingsAmt) * 100) : 0;
+        const barPct = Math.min(100, pctOfSavings);
+        html += `
+          <div class="goal-result-card ${g.priority}">
+            <div class="goal-result-header">
+              <div>
+                <div class="goal-result-name">${g.name}</div>
+                <div class="goal-result-target">Target: RM ${fmt(g.target)}</div>
+              </div>
+              <span class="priority-badge priority-${g.priority}">${g.priority}</span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" style="width:${barPct}%"></div></div>
+            <div class="goal-result-stats">
+              <div class="stat-box"><div class="stat-label">Simpan/Bulan</div><div class="stat-value">RM ${fmt(g.monthlyAlloc)}</div></div>
+              <div class="stat-box"><div class="stat-label">Tempoh</div><div class="stat-value">${timeStr}</div></div>
+              <div class="stat-box"><div class="stat-label">% Savings</div><div class="stat-value">${pctOfSavings}%</div></div>
+            </div>
+          </div>`;
+      });
+    }
+
+    if (totalCommit > 0) {
+      html += `<div class="warning-box" style="margin-top:16px">💡 Komitmen bulanan RM ${fmt(totalCommit)} telah dikira sebagai sebahagian daripada perbelanjaan keperluan kau.</div>`;
+    }
+
+    document.getElementById('resultsContent').innerHTML = html;
+    document.getElementById('step' + currentStep).classList.add('hidden');
+    currentStep = 5;
+    document.getElementById('step5').classList.remove('hidden');
+    renderSteps();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function restart() {
+    commitments = [];
+    goals = [];
+    document.getElementById('incomeInput').value = '';
+    document.getElementById('commitName').value = '';
+    document.getElementById('commitAmt').value = '';
+    document.getElementById('goalName').value = '';
+    document.getElementById('goalTarget').value = '';
+    document.getElementById('goalMonths').value = '';
+    updateIncomePreview();
+    renderGoalList();
+    updateCommitUI();
+    selectFormula('50/30/20');
+    document.getElementById('step' + currentStep).classList.add('hidden');
+    currentStep = 1;
+    document.getElementById('step1').classList.remove('hidden');
+    renderSteps();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // Init
+  renderSteps();
+  updateFormulaBreakdown();
+</script>
+</body>
+</html>
