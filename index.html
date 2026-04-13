@@ -3,204 +3,250 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Achieve It 💰</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+<title>TabungKu — Plan Smart, Simpan Lebih</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --bg: #060e09; --card-bg: #0c1810; --card-border: #1a2e1e;
-    --green: #3ecf6e; --green-dim: rgba(62,207,110,0.12);
-    --yellow: #f5b731; --blue: #60a8ff; --red: #ff6060;
-    --text: #e8f5e9; --muted: #8fbc94; --dim: #5a8060;
-    --mono: 'Space Mono', monospace; --sans: 'Sora', sans-serif;
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Sora', sans-serif; background: #0e1a14; color: #f0ebe1; min-height: 100vh; }
+
+  .bg-orb { position: fixed; border-radius: 50%; filter: blur(80px); opacity: 0.18; pointer-events: none; z-index: 0; }
+  .orb1 { width: 500px; height: 500px; background: #3ecf6e; top: -100px; right: -100px; }
+  .orb2 { width: 400px; height: 400px; background: #f5b731; bottom: -50px; left: -100px; }
+  .orb3 { width: 300px; height: 300px; background: #3ecf6e; top: 50%; left: 40%; }
+
+  .container { max-width: 680px; margin: 0 auto; padding: 40px 20px 80px; position: relative; z-index: 1; }
+
+  .header { text-align: center; margin-bottom: 48px; }
+  .logo-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(62,207,110,0.12); border: 1px solid rgba(62,207,110,0.3);
+    border-radius: 100px; padding: 6px 16px; font-size: 12px; font-weight: 600;
+    color: #3ecf6e; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 20px;
   }
-  body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; overflow-x: hidden; }
-  #particles-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
-  .orb { position: fixed; border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: 0; animation: orbFloat 12s ease-in-out infinite; }
-  .orb1 { width: 320px; height: 320px; background: radial-gradient(circle, rgba(62,207,110,0.18), transparent 70%); top: -80px; right: -60px; }
-  .orb2 { width: 260px; height: 260px; background: radial-gradient(circle, rgba(245,183,49,0.12), transparent 70%); bottom: 10%; left: -80px; animation-delay: -5s; }
-  .orb3 { width: 200px; height: 200px; background: radial-gradient(circle, rgba(96,168,255,0.1), transparent 70%); top: 45%; right: 5%; animation-delay: -9s; }
-  @keyframes orbFloat { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-28px) scale(1.06)} }
-  .container { position: relative; z-index: 1; max-width: 440px; margin: 0 auto; padding: 24px 16px 60px; }
-  .header { text-align: center; margin-bottom: 32px; padding-top: 12px; }
-  .logo-badge { display: inline-block; background: var(--green-dim); border: 1px solid rgba(62,207,110,0.3); border-radius: 100px; padding: 6px 18px; font-size: 13px; font-weight: 700; color: var(--green); letter-spacing: 0.06em; margin-bottom: 16px; animation: badgePulse 3s ease-in-out infinite; }
-  @keyframes badgePulse { 0%,100%{box-shadow:0 0 0 0 rgba(62,207,110,0.3)} 50%{box-shadow:0 0 20px 4px rgba(62,207,110,0.15)} }
-  .header h1 { font-size: 30px; font-weight: 800; line-height: 1.2; color: #e8f5e9; letter-spacing: -0.02em; }
-  .header h1 span { color: var(--green); }
-  .subtitle { font-size: 14px; color: var(--muted); margin-top: 8px; line-height: 1.5; }
-  .steps-bar { display: flex; align-items: center; justify-content: center; margin-bottom: 6px; }
-  .step-dot { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 12px; font-weight: 700; transition: all 0.35s cubic-bezier(.34,1.56,.64,1); border: 2px solid #2a4d2e; color: #6db875; background: #0c1810; flex-shrink: 0; }
-  .step-dot.active { background: var(--green); color: #060e09; border-color: var(--green); box-shadow: 0 0 0 6px rgba(62,207,110,0.18), 0 0 24px rgba(62,207,110,0.35); transform: scale(1.18); }
-  .step-dot.done { background: rgba(62,207,110,0.2); color: var(--green); border-color: var(--green); }
-  .step-line { flex: 1; height: 2px; background: #1e3322; transition: background 0.4s; max-width: 44px; }
-  .step-line.done { background: var(--green); }
-  .steps-labels { display: flex; justify-content: space-between; padding: 6px 0 0; margin-bottom: 20px; }
-  .step-label { font-size: 9px; color: #6db875; text-transform: uppercase; letter-spacing: 0.07em; text-align: center; flex: 1; transition: color 0.3s; }
-  .step-label.active { color: var(--green); font-weight: 700; }
-  .step-label.done { color: var(--muted); }
-  .card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 20px; padding: 24px; margin-bottom: 16px; animation: cardIn 0.4s cubic-bezier(.22,1,.36,1); box-shadow: 0 4px 40px rgba(0,0,0,0.4); }
-  @keyframes cardIn { from{opacity:0;transform:translateY(22px) scale(0.97)} to{opacity:1;transform:none} }
-  .card-title { font-size: 18px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
-  .card-subtitle { font-size: 13px; color: var(--muted); line-height: 1.55; margin-bottom: 20px; }
-  .input-label { font-size: 11px; font-weight: 700; color: var(--dim); letter-spacing: 0.08em; text-transform: uppercase; display: block; margin-bottom: 8px; }
-  .input-wrap { display: flex; align-items: center; background: #0e1a14; border: 1.5px solid #2a3d2e; border-radius: 14px; overflow: hidden; transition: border-color 0.2s, box-shadow 0.2s; }
-  .input-wrap:focus-within { border-color: var(--green); box-shadow: 0 0 0 3px rgba(62,207,110,0.1); }
-  .input-prefix { padding: 0 16px; font-family: var(--mono); font-size: 14px; font-weight: 700; color: var(--green); background: rgba(62,207,110,0.08); height: 52px; display: flex; align-items: center; border-right: 1.5px solid #2a3d2e; white-space: nowrap; }
-  .input-wrap input { flex: 1; background: transparent; border: none; outline: none; font-family: var(--mono); font-size: 20px; font-weight: 700; color: var(--text); padding: 0 16px; height: 52px; }
-  .input-wrap input::placeholder { color: #2e4e36; }
-  .income-preview { text-align: center; margin-top: 16px; background: var(--green-dim); border: 1px solid rgba(62,207,110,0.2); border-radius: 14px; padding: 16px; animation: fadeIn 0.3s ease; }
-  @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
-  .income-preview-amt { font-family: var(--mono); font-size: 28px; font-weight: 700; color: var(--green); }
-  .income-preview-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
-  .formula-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 16px; }
-  .formula-card { background: #0a1410; border: 1.5px solid #1e3322; border-radius: 14px; padding: 14px 10px; text-align: center; cursor: pointer; transition: all 0.2s cubic-bezier(.34,1.56,.64,1); }
-  .formula-card:hover { border-color: #3a5a40; transform: translateY(-2px); }
-  .formula-card.selected { border-color: var(--green); background: var(--green-dim); box-shadow: 0 0 20px rgba(62,207,110,0.15); }
-  .formula-name { font-family: var(--mono); font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
-  .formula-desc { font-size: 10px; color: var(--muted); line-height: 1.5; white-space: pre-line; }
-  .formula-card.selected .formula-name { color: var(--green); }
-  .formula-breakdown { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 16px; }
-  .breakdown-item { background: #0a1410; border-radius: 12px; padding: 12px; text-align: center; border: 1px solid #1e3322; }
-  .breakdown-item label { font-size: 10px; color: var(--muted); display: block; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.05em; }
-  .breakdown-item span { font-family: var(--mono); font-size: 14px; font-weight: 700; }
-  .breakdown-item.needs span { color: var(--blue); }
-  .breakdown-item.wants span { color: var(--yellow); }
-  .breakdown-item.savings span { color: var(--green); }
-  .free-mode-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 14px; }
-  .free-input-box { background: #0a1410; border: 1.5px solid #1e3322; border-radius: 12px; padding: 12px; text-align: center; }
-  .free-input-box label { font-size: 10px; color: var(--muted); display: block; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.06em; }
-  .free-input-box input { background: transparent; border: none; outline: none; font-family: var(--mono); font-size: 22px; font-weight: 700; width: 60px; text-align: center; padding: 0; }
-  .free-input-box.needs input { color: var(--blue); }
-  .free-input-box.wants input { color: var(--yellow); }
-  .free-input-box.savings input { color: var(--green); }
-  .commitment-item { display: flex; align-items: center; gap: 10px; background: #0a1410; border: 1px solid #1e3322; border-radius: 12px; padding: 12px 14px; margin-bottom: 8px; animation: slideIn 0.25s ease; }
-  @keyframes slideIn { from{opacity:0;transform:translateX(-12px)} to{opacity:1;transform:none} }
+  h1 { font-size: clamp(28px, 5vw, 42px); font-weight: 800; line-height: 1.1; color: #f0ebe1; }
+  h1 span { color: #3ecf6e; }
+  .subtitle { margin-top: 12px; color: #8a9e90; font-size: 15px; font-weight: 300; }
+
+  /* Steps */
+  .steps-bar { display: flex; align-items: center; justify-content: center; gap: 0; margin-bottom: 40px; }
+  .step-dot {
+    width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center;
+    justify-content: center; font-size: 12px; font-weight: 700; font-family: 'Space Mono', monospace;
+    transition: all 0.3s; border: 2px solid #2a3d2e; background: #1a2e1e; color: #4a6650; flex-shrink: 0;
+  }
+  .step-dot.active { background: #3ecf6e; border-color: #3ecf6e; color: #0e1a14; box-shadow: 0 0 16px rgba(62,207,110,0.4); }
+  .step-dot.done { background: #1e3a22; border-color: #3ecf6e; color: #3ecf6e; }
+  .step-line { width: 40px; height: 2px; background: #2a3d2e; transition: background 0.3s; }
+  .step-line.done { background: #3ecf6e; }
+
+  /* Card */
+  .card {
+    background: rgba(20, 35, 22, 0.85); border: 1px solid rgba(62,207,110,0.15);
+    border-radius: 20px; padding: 32px; backdrop-filter: blur(12px);
+    animation: fadeUp 0.4s ease;
+  }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  .card-title { font-size: 20px; font-weight: 700; margin-bottom: 6px; color: #f0ebe1; }
+  .card-subtitle { font-size: 13px; color: #5a7a60; margin-bottom: 28px; }
+
+  /* Input */
+  .input-group { margin-bottom: 20px; }
+  .input-label { display: block; font-size: 12px; font-weight: 600; color: #5a7a60; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
+  .input-wrap { display: flex; align-items: center; background: #0e1a14; border: 1.5px solid #2a3d2e; border-radius: 12px; overflow: hidden; transition: border-color 0.2s; }
+  .input-wrap:focus-within { border-color: #3ecf6e; }
+  .input-prefix {
+    padding: 0 14px; font-family: 'Space Mono', monospace; font-size: 13px; color: #3ecf6e;
+    font-weight: 700; background: rgba(62,207,110,0.08); height: 48px; display: flex;
+    align-items: center; border-right: 1.5px solid #2a3d2e;
+  }
+  input[type="number"], input[type="text"] {
+    flex: 1; background: transparent; border: none; outline: none; padding: 0 16px;
+    height: 48px; font-family: 'Space Mono', monospace; font-size: 15px; color: #f0ebe1; width: 100%;
+  }
+  input::placeholder { color: #2e4a34; }
+
+  /* Formula */
+  .formula-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+  @media (max-width: 500px) { .formula-grid { grid-template-columns: 1fr; } }
+  .formula-card {
+    border: 1.5px solid #2a3d2e; border-radius: 14px; padding: 16px 12px; cursor: pointer;
+    transition: all 0.2s; text-align: center; background: #0e1a14;
+  }
+  .formula-card:hover { border-color: rgba(62,207,110,0.4); }
+  .formula-card.selected { border-color: #3ecf6e; background: rgba(62,207,110,0.08); box-shadow: 0 0 20px rgba(62,207,110,0.12); }
+  .formula-name { font-family: 'Space Mono', monospace; font-size: 14px; font-weight: 700; color: #3ecf6e; margin-bottom: 6px; }
+  .formula-desc { font-size: 10px; color: #5a7a60; line-height: 1.5; white-space: pre-line; }
+  .formula-breakdown {
+    background: #0a1410; border-radius: 12px; padding: 16px; margin-top: 16px;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center;
+  }
+  .breakdown-item label { font-size: 10px; color: #5a7a60; display: block; margin-bottom: 4px; }
+  .breakdown-item span { font-family: 'Space Mono', monospace; font-size: 16px; font-weight: 700; }
+  .breakdown-item.needs span { color: #60a8ff; }
+  .breakdown-item.wants span { color: #f5b731; }
+  .breakdown-item.savings span { color: #3ecf6e; }
+  .free-mode-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .free-input-box { background: #0a1410; border: 1.5px solid #2a3d2e; border-radius: 12px; padding: 12px; text-align: center; }
+  .free-input-box label { font-size: 10px; color: #5a7a60; display: block; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .free-input-box input { background: transparent; border: none; outline: none; font-family: 'Space Mono', monospace; font-size: 20px; font-weight: 700; width: 60px; text-align: center; height: auto; padding: 0; }
+  .free-input-box.needs input { color: #60a8ff; }
+  .free-input-box.wants input { color: #f5b731; }
+  .free-input-box.savings input { color: #3ecf6e; }
+
+  /* Commitment */
+  .commitment-list { margin-bottom: 16px; }
+  .commitment-item {
+    display: flex; align-items: center; gap: 10px; background: #0a1410;
+    border: 1px solid #1e3322; border-radius: 10px; padding: 10px 14px; margin-bottom: 8px;
+  }
   .commitment-name { flex: 1; font-size: 13px; color: #c5d9c8; }
-  .commitment-amount { font-family: var(--mono); font-size: 13px; color: var(--yellow); font-weight: 700; }
-  .btn-remove { background: none; border: none; cursor: pointer; color: #3a5040; font-size: 16px; transition: color 0.2s; padding: 2px 6px; border-radius: 6px; }
-  .btn-remove:hover { color: var(--red); background: rgba(255,96,96,0.1); }
+  .commitment-amount { font-family: 'Space Mono', monospace; font-size: 13px; color: #f5b731; font-weight: 700; }
+  .btn-remove { background: none; border: none; cursor: pointer; color: #3a5040; font-size: 16px; transition: color 0.2s; padding: 2px; }
+  .btn-remove:hover { color: #e05555; }
   .add-row { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center; }
-  .add-row input[type="text"], .add-row input[type="number"] { height: 44px; background: #0e1a14; border: 1.5px solid #2a3d2e; border-radius: 12px; padding: 0 12px; font-size: 13px; font-family: var(--mono); color: var(--text); width: 100%; outline: none; transition: border-color 0.2s; }
-  .add-row input:focus { border-color: var(--green); }
-  .commit-amt-wrap { display: flex; align-items: center; background: #0e1a14; border: 1.5px solid #2a3d2e; border-radius: 12px; overflow: hidden; transition: border-color 0.2s; }
-  .commit-amt-wrap:focus-within { border-color: var(--green); }
-  .commit-prefix { padding: 0 10px; font-family: var(--mono); font-size: 12px; color: var(--green); font-weight: 700; background: rgba(62,207,110,0.08); height: 44px; display: flex; align-items: center; border-right: 1.5px solid #2a3d2e; }
-  .commit-amt-wrap input { width: 80px; border: none; height: 44px; background: transparent; outline: none; font-family: var(--mono); font-size: 14px; color: var(--text); padding: 0 10px; }
-  .goal-item { background: #0a1410; border: 1px solid #1e3322; border-radius: 14px; padding: 16px; margin-bottom: 10px; animation: slideIn 0.25s ease; }
-  .goal-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-  .goal-name-display { font-size: 14px; font-weight: 700; color: var(--text); flex: 1; }
+  .add-row input[type="text"], .add-row input[type="number"] {
+    height: 42px; background: #0e1a14; border: 1.5px solid #2a3d2e; border-radius: 10px;
+    padding: 0 12px; font-size: 13px; font-family: 'Space Mono', monospace; color: #f0ebe1;
+  }
+  .add-row input:focus { border-color: #3ecf6e; outline: none; }
+  .commit-amt-wrap { display: flex; align-items: center; background: #0e1a14; border: 1.5px solid #2a3d2e; border-radius: 10px; overflow: hidden; }
+  .commit-amt-wrap:focus-within { border-color: #3ecf6e; }
+  .commit-prefix { padding: 0 10px; font-family: 'Space Mono', monospace; font-size: 12px; color: #3ecf6e; font-weight: 700; background: rgba(62,207,110,0.08); height: 42px; display: flex; align-items: center; border-right: 1.5px solid #2a3d2e; }
+  .commit-amt-wrap input { width: 80px; border: none; border-radius: 0; height: 42px; }
+
+  /* Goals */
+  .goal-item { background: #0a1410; border: 1px solid #1e3322; border-radius: 14px; padding: 16px; margin-bottom: 10px; position: relative; }
+  .goal-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .goal-name-display { font-size: 14px; font-weight: 600; color: #f0ebe1; flex: 1; }
   .priority-badge { padding: 3px 10px; border-radius: 100px; font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
   .priority-high { background: rgba(255,80,80,0.15); color: #ff6060; border: 1px solid rgba(255,80,80,0.3); }
   .priority-medium { background: rgba(245,183,49,0.15); color: #f5b731; border: 1px solid rgba(245,183,49,0.3); }
   .priority-low { background: rgba(100,150,200,0.15); color: #82b4e8; border: 1px solid rgba(100,150,200,0.3); }
-  .goal-meta { display: flex; gap: 12px; font-size: 12px; color: var(--muted); flex-wrap: wrap; }
-  .goal-meta b { color: #c5d9c8; font-family: var(--mono); }
+  .goal-meta { display: flex; gap: 12px; font-size: 12px; color: #4a6650; flex-wrap: wrap; }
+  .goal-meta b { color: #c5d9c8; font-family: 'Space Mono', monospace; }
+
   .priority-select { display: flex; gap: 6px; margin-top: 10px; }
-  .p-btn { flex: 1; padding: 7px 0; border-radius: 10px; border: 1.5px solid #2a3d2e; font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.15s; font-family: var(--sans); background: #0e1a14; color: var(--muted); }
+  .p-btn { flex: 1; padding: 5px 0; border-radius: 8px; border: 1.5px solid #2a3d2e; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.15s; font-family: 'Sora', sans-serif; background: #0e1a14; color: #4a6650; }
   .p-btn.high.sel { background: rgba(255,80,80,0.15); color: #ff6060; border-color: #ff6060; }
   .p-btn.medium.sel { background: rgba(245,183,49,0.15); color: #f5b731; border-color: #f5b731; }
   .p-btn.low.sel { background: rgba(100,150,200,0.15); color: #82b4e8; border-color: #82b4e8; }
   .timeline-toggle { display: flex; gap: 6px; margin-top: 8px; }
-  .t-btn { flex: 1; padding: 8px; border-radius: 10px; border: 1.5px solid #2a3d2e; background: #0e1a14; color: var(--muted); font-size: 11px; font-weight: 700; cursor: pointer; font-family: var(--sans); transition: all 0.15s; }
-  .t-btn.sel { background: rgba(62,207,110,0.1); color: var(--green); border-color: var(--green); }
-  .add-goal-form { background: #0a1410; border: 1.5px dashed #2a3d2e; border-radius: 16px; padding: 20px; margin-top: 12px; }
-  .form-label { font-size: 11px; font-weight: 700; color: var(--dim); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; display: block; }
-  .add-goal-form input { height: 42px; background: #0e1a14; border: 1.5px solid #2a3d2e; border-radius: 10px; padding: 0 12px; font-size: 13px; font-family: var(--mono); color: var(--text); width: 100%; margin-bottom: 12px; outline: none; transition: border-color 0.2s; }
-  .add-goal-form input:focus { border-color: var(--green); }
-  .goal-target-wrap { display: flex; align-items: center; background: #0e1a14; border: 1.5px solid #2a3d2e; border-radius: 10px; overflow: hidden; margin-bottom: 12px; transition: border-color 0.2s; }
-  .goal-target-wrap:focus-within { border-color: var(--green); }
-  .goal-target-wrap .prefix { padding: 0 10px; font-family: var(--mono); font-size: 12px; color: var(--green); font-weight: 700; background: rgba(62,207,110,0.08); height: 42px; display: flex; align-items: center; border-right: 1.5px solid #2a3d2e; }
-  .goal-target-wrap input { border: none; border-radius: 0; height: 42px; margin-bottom: 0; }
+  .t-btn { flex: 1; padding: 6px; border-radius: 8px; border: 1.5px solid #2a3d2e; background: #0e1a14; color: #4a6650; font-size: 11px; font-weight: 600; cursor: pointer; font-family: 'Sora', sans-serif; transition: all 0.15s; }
+  .t-btn.sel { background: rgba(62,207,110,0.1); color: #3ecf6e; border-color: #3ecf6e; }
+
+  /* Add goal form */
+  .add-goal-form { background: #0a1410; border: 1.5px dashed #2a3d2e; border-radius: 14px; padding: 20px; margin-top: 12px; }
+  .add-goal-form .form-label { font-size: 11px; font-weight: 600; color: #5a7a60; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; display: block; }
+  .add-goal-form input { height: 40px; background: #0e1a14; border: 1.5px solid #2a3d2e; border-radius: 10px; padding: 0 12px; font-size: 13px; font-family: 'Space Mono', monospace; color: #f0ebe1; width: 100%; margin-bottom: 12px; }
+  .add-goal-form input:focus { border-color: #3ecf6e; outline: none; }
+  .goal-target-wrap { display: flex; align-items: center; background: #0e1a14; border: 1.5px solid #2a3d2e; border-radius: 10px; overflow: hidden; margin-bottom: 12px; }
+  .goal-target-wrap:focus-within { border-color: #3ecf6e; }
+  .goal-target-wrap .prefix { padding: 0 10px; font-family: 'Space Mono', monospace; font-size: 12px; color: #3ecf6e; font-weight: 700; background: rgba(62,207,110,0.08); height: 40px; display: flex; align-items: center; border-right: 1.5px solid #2a3d2e; }
+  .goal-target-wrap input { border: none; border-radius: 0; height: 40px; margin-bottom: 0; }
   .month-input-row { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
   .month-input-row input { flex: 1; margin-bottom: 0; }
-  .month-suffix { font-size: 12px; color: var(--muted); white-space: nowrap; }
-  .form-section-label { font-size: 11px; font-weight: 700; color: var(--dim); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; display: block; }
-  .btn-primary { width: 100%; padding: 15px; background: var(--green); color: #060e09; border: none; border-radius: 14px; font-family: var(--sans); font-size: 15px; font-weight: 800; cursor: pointer; transition: all 0.2s cubic-bezier(.34,1.56,.64,1); margin-top: 20px; position: relative; overflow: hidden; }
-  .btn-primary:hover { background: #52e07e; box-shadow: 0 0 32px rgba(62,207,110,0.4); transform: translateY(-1px); }
-  .btn-primary:disabled { opacity: 0.35; cursor: not-allowed; transform: none; box-shadow: none; }
-  .btn-secondary { background: none; border: 1.5px solid #2a3d2e; color: var(--muted); border-radius: 14px; padding: 12px 20px; font-family: var(--sans); font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; margin-top: 12px; }
-  .btn-secondary:hover { border-color: var(--green); color: var(--green); background: var(--green-dim); }
-  .btn-add { background: rgba(62,207,110,0.1); border: 1.5px solid rgba(62,207,110,0.35); color: var(--green); border-radius: 12px; padding: 0 16px; height: 44px; font-family: var(--sans); font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+  .month-suffix { font-size: 12px; color: #5a7a60; white-space: nowrap; }
+  .form-section-label { font-size: 11px; font-weight: 600; color: #5a7a60; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; display: block; }
+
+  /* Buttons */
+  .btn-primary { width: 100%; padding: 14px; background: #3ecf6e; color: #0a1410; border: none; border-radius: 12px; font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s; margin-top: 24px; }
+  .btn-primary:hover { background: #52e07e; box-shadow: 0 0 24px rgba(62,207,110,0.3); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-secondary { background: none; border: 1.5px solid #2a3d2e; color: #5a7a60; border-radius: 12px; padding: 10px 20px; font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-top: 12px; }
+  .btn-secondary:hover { border-color: #3ecf6e; color: #3ecf6e; }
+  .btn-add { background: rgba(62,207,110,0.1); border: 1.5px solid rgba(62,207,110,0.3); color: #3ecf6e; border-radius: 10px; padding: 0 16px; height: 42px; font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
   .btn-add:hover { background: rgba(62,207,110,0.2); }
-  .nav-row { display: flex; gap: 10px; margin-top: 20px; }
+  .nav-row { display: flex; gap: 10px; margin-top: 24px; }
   .nav-row .btn-secondary { flex: 1; margin-top: 0; }
   .nav-row .btn-primary { flex: 2; margin-top: 0; }
-  .results-summary { background: linear-gradient(135deg, rgba(62,207,110,0.18), rgba(62,207,110,0.05)); border: 1px solid rgba(62,207,110,0.35); border-radius: 18px; padding: 28px; margin-bottom: 24px; text-align: center; }
-  .results-label { font-size: 11px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
-  .results-amount { font-family: var(--mono); font-size: 40px; font-weight: 700; color: var(--green); animation: countUp 0.8s ease; }
-  @keyframes countUp { from{opacity:0;transform:scale(0.85)} to{opacity:1;transform:none} }
-  .results-sub { font-size: 12px; color: var(--muted); margin-top: 6px; }
-  .budget-row { display: flex; justify-content: space-between; align-items: center; padding: 11px 0; border-bottom: 1px solid #1a2e1e; }
+
+  /* Results */
+  .results-summary { background: linear-gradient(135deg, rgba(62,207,110,0.15), rgba(62,207,110,0.05)); border: 1px solid rgba(62,207,110,0.3); border-radius: 16px; padding: 24px; margin-bottom: 24px; text-align: center; }
+  .results-label { font-size: 12px; color: #5a7a60; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+  .results-amount { font-family: 'Space Mono', monospace; font-size: 36px; font-weight: 700; color: #3ecf6e; }
+  .results-sub { font-size: 12px; color: #5a7a60; margin-top: 4px; }
+  .budget-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #1a2e1e; }
   .budget-row:last-child { border-bottom: none; }
   .budget-row-label { font-size: 13px; color: #8a9e90; }
-  .budget-row-amount { font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--text); }
-  .goal-result-card { background: #0a1410; border: 1px solid #1e3322; border-radius: 16px; padding: 20px; margin-bottom: 12px; position: relative; overflow: hidden; animation: cardIn 0.4s ease; }
+  .budget-row-amount { font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; color: #f0ebe1; }
+  .goal-result-card { background: #0a1410; border: 1px solid #1e3322; border-radius: 14px; padding: 18px; margin-bottom: 10px; position: relative; overflow: hidden; }
   .goal-result-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; }
   .goal-result-card.high::before { background: #ff6060; }
   .goal-result-card.medium::before { background: #f5b731; }
   .goal-result-card.low::before { background: #82b4e8; }
   .goal-result-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
-  .goal-result-name { font-size: 15px; font-weight: 700; color: var(--text); }
-  .goal-result-target { font-family: var(--mono); font-size: 12px; color: var(--muted); margin-top: 3px; }
-  .progress-bar { height: 7px; background: #1a2e1e; border-radius: 100px; margin: 10px 0; overflow: hidden; }
-  .progress-fill { height: 100%; border-radius: 100px; transition: width 1.2s cubic-bezier(.22,1,.36,1); width: 0%; }
+  .goal-result-name { font-size: 14px; font-weight: 700; color: #f0ebe1; }
+  .goal-result-target { font-family: 'Space Mono', monospace; font-size: 12px; color: #5a7a60; margin-top: 2px; }
+  .progress-bar { height: 6px; background: #1a2e1e; border-radius: 100px; margin: 10px 0; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 100px; transition: width 1s ease; }
   .high .progress-fill { background: linear-gradient(90deg, #ff6060, #ff9090); }
   .medium .progress-fill { background: linear-gradient(90deg, #f5b731, #ffd87a); }
   .low .progress-fill { background: linear-gradient(90deg, #60a8ff, #82b4e8); }
   .goal-result-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 12px; }
-  .stat-box { background: #0e1a14; border-radius: 10px; padding: 10px; text-align: center; }
-  .stat-label { font-size: 9px; color: #4a6650; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 4px; }
-  .stat-value { font-family: var(--mono); font-size: 13px; font-weight: 700; color: #c5d9c8; }
-  .warning-box { background: rgba(255,160,50,0.08); border: 1px solid rgba(255,160,50,0.25); border-radius: 10px; padding: 12px 16px; font-size: 12px; color: #f5b731; margin-bottom: 12px; }
-  .section-title { font-size: 15px; font-weight: 800; color: var(--text); margin: 22px 0 14px; }
+  .stat-box { background: #0e1a14; border-radius: 8px; padding: 8px 10px; text-align: center; }
+  .stat-label { font-size: 9px; color: #3a5040; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 3px; }
+  .stat-value { font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; color: #c5d9c8; }
+  .warning-box { background: rgba(255,160,50,0.08); border: 1px solid rgba(255,160,50,0.25); border-radius: 10px; padding: 12px 16px; font-size: 12px; color: #f5b731; margin-bottom: 16px; }
+  .section-title { font-size: 14px; font-weight: 700; color: #f0ebe1; margin: 20px 0 12px; }
   .hidden { display: none !important; }
-  .total-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: rgba(62,207,110,0.06); border: 1px solid rgba(62,207,110,0.15); border-radius: 10px; margin-top: 10px; font-size: 13px; color: var(--muted); }
-  .total-row b { font-family: var(--mono); color: var(--yellow); }
-  .toast { position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(100px); background: #1a2e1e; border: 1px solid rgba(62,207,110,0.3); border-radius: 100px; padding: 10px 22px; font-size: 13px; font-weight: 600; color: var(--green); z-index: 9999; transition: transform 0.35s cubic-bezier(.34,1.56,.64,1); pointer-events: none; white-space: nowrap; }
-  .toast.show { transform: translateX(-50%) translateY(0); }
-  .ripple { position: absolute; border-radius: 50%; background: rgba(62,207,110,0.25); transform: scale(0); animation: rippleAnim 0.5s linear; pointer-events: none; }
-  @keyframes rippleAnim { to { transform: scale(4); opacity: 0; } }
+  .income-preview { text-align: center; margin-top: 12px; background: rgba(62,207,110,0.06); border: 1px solid rgba(62,207,110,0.15); border-radius: 12px; padding: 12px; }
+  .income-preview-amt { font-family: 'Space Mono', monospace; font-size: 22px; font-weight: 700; color: #3ecf6e; }
+  .income-preview-sub { font-size: 11px; color: #5a7a60; margin-top: 2px; }
+  .total-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: rgba(62,207,110,0.06); border: 1px solid rgba(62,207,110,0.15); border-radius: 10px; margin-top: 8px; font-size: 13px; color: #8a9e90; }
+  .total-row b { font-family: 'Space Mono', monospace; color: #f5b731; }
 </style>
 </head>
 <body>
-<canvas id="particles-canvas"></canvas>
-<div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div>
-<div id="toast" class="toast"></div>
+
+<div class="bg-orb orb1"></div>
+<div class="bg-orb orb2"></div>
+<div class="bg-orb orb3"></div>
 
 <div class="container">
   <div class="header">
-    <div class="logo-badge">💰 Achieve it 💰</div>
+    <div class="logo-badge">💰 TabungKu</div>
     <h1>Plan Smart, <span>Simpan Lebih.</span></h1>
-    <p class="subtitle">Kira savings, set goals, capai impian — step by step.</p>
+    <p class="subtitle">Kira savings kau, set goals, capai impian — step by step.</p>
   </div>
 
+  <!-- Steps bar -->
   <div class="steps-bar" id="stepsBar"></div>
-  <div class="steps-labels" id="stepsLabels"></div>
 
-  <!-- Step 1 -->
+  <!-- Step 1: Income -->
   <div class="card" id="step1">
     <div class="card-title">Berapa income bulanan kau? 💸</div>
-    <div class="card-subtitle">Gaji bersih (after EPF/SOCSO/tax) ya, bukan gross.</div>
-    <label class="input-label">Monthly Take-Home Pay</label>
-    <div class="input-wrap">
-      <div class="input-prefix">RM</div>
-      <input type="number" id="incomeInput" placeholder="cth: 3500" min="0" autocomplete="off" />
+    <div class="card-subtitle">Gaji bersih (after EPF/tax) ya, bukan gross.</div>
+    <div class="input-group">
+      <label class="input-label">Monthly Take-Home Pay</label>
+      <div class="input-wrap">
+        <div class="input-prefix">RM</div>
+        <input type="number" id="incomeInput" placeholder="cth: 3500" min="0" oninput="updateIncomePreview()" />
+      </div>
     </div>
-    <div class="income-preview hidden" id="incomePreview">
+    <div class="income-preview" id="incomePreview" style="display:none">
       <div class="income-preview-amt" id="incomePreviewAmt"></div>
       <div class="income-preview-sub">sebulan</div>
     </div>
     <button class="btn-primary" onclick="goToStep(2)">Seterusnya →</button>
   </div>
 
-  <!-- Step 2 -->
+  <!-- Step 2: Formula -->
   <div class="card hidden" id="step2">
     <div class="card-title">Pilih formula simpanan kau 📊</div>
     <div class="card-subtitle">Pilih yang paling sesuai dengan lifestyle kau.</div>
     <div class="formula-grid">
-      <div class="formula-card" id="f-7020" onclick="selectFormula('70/20/10')"><div class="formula-name">70/20/10</div><div class="formula-desc">70% Keperluan&#10;20% Kehendak&#10;10% Simpanan</div></div>
-      <div class="formula-card selected" id="f-5030" onclick="selectFormula('50/30/20')"><div class="formula-name">50/30/20</div><div class="formula-desc">50% Keperluan&#10;30% Kehendak&#10;20% Simpanan</div></div>
-      <div class="formula-card" id="f-free" onclick="selectFormula('free')"><div class="formula-name">FREE</div><div class="formula-desc">Tentukan % sendiri</div></div>
+      <div class="formula-card" id="f-7020" onclick="selectFormula('70/20/10')">
+        <div class="formula-name">70/20/10</div>
+        <div class="formula-desc">70% Keperluan&#10;20% Kehendak&#10;10% Simpanan</div>
+      </div>
+      <div class="formula-card selected" id="f-5030" onclick="selectFormula('50/30/20')">
+        <div class="formula-name">50/30/20</div>
+        <div class="formula-desc">50% Keperluan&#10;30% Kehendak&#10;20% Simpanan</div>
+      </div>
+      <div class="formula-card" id="f-free" onclick="selectFormula('free')">
+        <div class="formula-name">FREE</div>
+        <div class="formula-desc">Tentukan % sendiri</div>
+      </div>
     </div>
     <div id="formulaBreakdown" class="formula-breakdown">
       <div class="breakdown-item needs"><label>Keperluan</label><span id="needsAmt">-</span></div>
@@ -209,9 +255,18 @@
     </div>
     <div id="freeMode" class="hidden" style="margin-top:16px">
       <div class="free-mode-grid">
-        <div class="free-input-box needs"><label>Keperluan %</label><input type="number" id="freeNeeds" value="50" min="0" max="100" oninput="updateFreeFormula()" /></div>
-        <div class="free-input-box wants"><label>Kehendak %</label><input type="number" id="freeWants" value="30" min="0" max="100" oninput="updateFreeFormula()" /></div>
-        <div class="free-input-box savings"><label>Simpanan %</label><input type="number" id="freeSavings" value="20" min="0" max="100" oninput="updateFreeFormula()" /></div>
+        <div class="free-input-box needs">
+          <label>Keperluan %</label>
+          <input type="number" id="freeNeeds" value="50" min="0" max="100" oninput="updateFreeFormula()" />
+        </div>
+        <div class="free-input-box wants">
+          <label>Kehendak %</label>
+          <input type="number" id="freeWants" value="30" min="0" max="100" oninput="updateFreeFormula()" />
+        </div>
+        <div class="free-input-box savings">
+          <label>Simpanan %</label>
+          <input type="number" id="freeSavings" value="20" min="0" max="100" oninput="updateFreeFormula()" />
+        </div>
       </div>
       <div id="freeTotalWarning" class="warning-box hidden" style="margin-top:12px"></div>
     </div>
@@ -221,17 +276,22 @@
     </div>
   </div>
 
-  <!-- Step 3 -->
+  <!-- Step 3: Commitments -->
   <div class="card hidden" id="step3">
     <div class="card-title">Komitmen bulanan kau 📋</div>
     <div class="card-subtitle">Sewa, ansuran kereta, loan, subscription — masukkan semua. Boleh skip kalau takde.</div>
     <div class="commitment-list" id="commitmentList"></div>
     <div class="add-row">
-      <input type="text" id="commitName" placeholder="cth: Sewa rumah" onkeydown="if(event.key==='Enter')addCommitment()" autocomplete="off" />
-      <div class="commit-amt-wrap"><div class="commit-prefix">RM</div><input type="number" id="commitAmt" placeholder="500" onkeydown="if(event.key==='Enter')addCommitment()" autocomplete="off" /></div>
+      <input type="text" id="commitName" placeholder="cth: Sewa rumah" onkeydown="if(event.key==='Enter')addCommitment()" />
+      <div class="commit-amt-wrap">
+        <div class="commit-prefix">RM</div>
+        <input type="number" id="commitAmt" placeholder="500" onkeydown="if(event.key==='Enter')addCommitment()" />
+      </div>
       <button class="btn-add" onclick="addCommitment()">+ Add</button>
     </div>
-    <div id="commitTotal" class="hidden total-row">Total komitmen: <b id="commitTotalAmt"></b></div>
+    <div id="commitTotal" class="hidden total-row">
+      Total komitmen: <b id="commitTotalAmt"></b>
+    </div>
     <div id="commitWarning" class="warning-box hidden" style="margin-top:12px"></div>
     <div class="nav-row">
       <button class="btn-secondary" onclick="goToStep(2)">← Balik</button>
@@ -239,17 +299,20 @@
     </div>
   </div>
 
-  <!-- Step 4 -->
+  <!-- Step 4: Goals -->
   <div class="card hidden" id="step4">
     <div class="card-title">Impian kau apa? 🎯</div>
     <div class="card-subtitle">Masukkan goals kau — rumah, kereta, travel, emergency fund, apa je.</div>
     <div id="goalList"></div>
     <div class="add-goal-form">
-      <div style="font-size:11px;font-weight:800;color:var(--green);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:14px;">+ TAMBAH GOAL</div>
+      <div style="font-size:11px;font-weight:700;color:#3ecf6e;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:14px;">+ TAMBAH GOAL</div>
       <label class="form-label">Nama Goal</label>
-      <input type="text" id="goalName" placeholder="cth: Emergency Fund" autocomplete="off" />
+      <input type="text" id="goalName" placeholder="cth: Emergency Fund" />
       <label class="form-label">Target Amount</label>
-      <div class="goal-target-wrap"><div class="prefix">RM</div><input type="number" id="goalTarget" placeholder="10000" autocomplete="off" /></div>
+      <div class="goal-target-wrap">
+        <div class="prefix">RM</div>
+        <input type="number" id="goalTarget" placeholder="10000" />
+      </div>
       <span class="form-section-label" style="margin-top:4px">Priority</span>
       <div class="priority-select" id="newGoalPriority">
         <button class="p-btn high" onclick="setNewPriority('high')">🔴 High</button>
@@ -262,10 +325,10 @@
         <button class="t-btn" onclick="setNewTimeline('manual')">📅 Saya tetapkan</button>
       </div>
       <div id="manualMonthsRow" class="hidden month-input-row" style="margin-top:10px">
-        <input type="number" id="goalMonths" placeholder="12" style="flex:1;height:40px;background:#0e1a14;border:1.5px solid #2a3d2e;border-radius:10px;padding:0 12px;font-size:13px;font-family:var(--mono);color:var(--text);outline:none;" />
+        <input type="number" id="goalMonths" placeholder="12" style="flex:1;height:40px;background:#0e1a14;border:1.5px solid #2a3d2e;border-radius:10px;padding:0 12px;font-size:13px;font-family:'Space Mono',monospace;color:#f0ebe1;" />
         <span class="month-suffix">bulan untuk capai</span>
       </div>
-      <button class="btn-add" style="width:100%;margin-top:14px;height:46px;" onclick="addGoal()">Tambah Goal ✨</button>
+      <button class="btn-add" style="width:100%;margin-top:14px;height:44px;" onclick="addGoal()">Tambah Goal</button>
     </div>
     <div class="nav-row" style="margin-top:20px">
       <button class="btn-secondary" onclick="goToStep(3)">← Balik</button>
@@ -273,10 +336,10 @@
     </div>
   </div>
 
-  <!-- Step 5 -->
+  <!-- Step 5: Results -->
   <div class="card hidden" id="step5">
     <div class="card-title">Breakdown Savings Kau 🏆</div>
-    <div class="card-subtitle">Semua dah dikira & rounded — siap guna! 🎉</div>
+    <div class="card-subtitle">Semua dah dikira & dah rounded — no sen drama.</div>
     <div id="resultsContent"></div>
     <div class="nav-row" style="margin-top:20px">
       <button class="btn-secondary" onclick="restart()">🔄 Restart</button>
@@ -286,264 +349,351 @@
 </div>
 
 <script>
-// ── Audio Engine ──────────────────────────────────────────────────────
-let actx = null;
-function getACtx() { if (!actx) { try { actx = new (window.AudioContext||window.webkitAudioContext)(); } catch(e){} } return actx; }
-function playTone(freq, type, dur, vol=0.15) {
-  try {
-    const c = getACtx(); if (!c) return;
-    const o = c.createOscillator(), g = c.createGain();
-    o.connect(g); g.connect(c.destination);
-    o.type = type; o.frequency.setValueAtTime(freq, c.currentTime);
-    g.gain.setValueAtTime(0, c.currentTime);
-    g.gain.linearRampToValueAtTime(vol, c.currentTime + 0.01);
-    g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + dur);
-    o.start(); o.stop(c.currentTime + dur + 0.05);
-  } catch(e) {}
-}
-function sfxClick() { playTone(660,'sine',0.1,0.1); setTimeout(()=>playTone(880,'sine',0.08,0.07),55); }
-function sfxStep() { playTone(523,'sine',0.14,0.13); setTimeout(()=>playTone(659,'sine',0.11,0.09),75); }
-function sfxSuccess() { [523,659,784,1047].forEach((f,i)=>setTimeout(()=>playTone(f,'sine',0.18,0.14),i*75)); }
-function sfxAdd() { playTone(440,'triangle',0.1,0.11); setTimeout(()=>playTone(550,'triangle',0.1,0.09),65); }
-function sfxRemove() { playTone(330,'sawtooth',0.08,0.08); }
-function sfxTick() { try { const c=getACtx(); if(!c)return; const o=c.createOscillator(),g=c.createGain(); o.connect(g);g.connect(c.destination); o.type='sine';o.frequency.value=900; g.gain.setValueAtTime(0.05,c.currentTime); g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.06); o.start();o.stop(c.currentTime+0.07); } catch(e){} }
+  // ---- State ----
+  let currentStep = 1;
+  let selectedFormula = '50/30/20';
+  let newGoalPriority = 'medium';
+  let newGoalTimeline = 'auto';
+  let commitments = [];
+  let goals = [];
 
-// ── Particles ─────────────────────────────────────────────────────────
-const cvs = document.getElementById('particles-canvas');
-const pc = cvs.getContext('2d');
-let PW, PH, parts = [];
-function resizeCvs() { PW = cvs.width = window.innerWidth; PH = cvs.height = window.innerHeight; }
-resizeCvs(); window.addEventListener('resize', resizeCvs);
-function mkPart() {
-  return { x: Math.random()*PW, y: Math.random()*PH+PH*0.1,
-    r: Math.random()*1.8+0.3, vx:(Math.random()-0.5)*0.25, vy:-(Math.random()*0.35+0.08),
-    alpha: Math.random()*0.45+0.1, life:1, decay:Math.random()*0.0015+0.0008,
-    col: ['#3ecf6e','#3ecf6e','#f5b731','#60a8ff'][Math.floor(Math.random()*4)] };
-}
-for(let i=0;i<90;i++) parts.push(mkPart());
-(function loop() {
-  pc.clearRect(0,0,PW,PH);
-  parts.forEach((p,i)=>{ p.x+=p.vx; p.y+=p.vy; p.life-=p.decay;
-    if(p.life<=0||p.y<-8) parts[i]=mkPart();
-    pc.beginPath(); pc.arc(p.x,p.y,p.r,0,Math.PI*2);
-    pc.fillStyle=p.col; pc.globalAlpha=p.alpha*p.life; pc.fill(); });
-  pc.globalAlpha=1; requestAnimationFrame(loop);
-})();
+  const FORMULAS = {
+    '70/20/10': { needs: 70, wants: 20, savings: 10 },
+    '50/30/20': { needs: 50, wants: 30, savings: 20 },
+    'free': { needs: null, wants: null, savings: null },
+  };
 
-// ── State ─────────────────────────────────────────────────────────────
-let curStep=1, selFormula='50/30/20', newPri='medium', newTl='auto';
-let commits=[], goals=[], incVal=0;
-const FORMULAS={'70/20/10':{needs:70,wants:20,savings:10},'50/30/20':{needs:50,wants:30,savings:20},'free':{needs:null,wants:null,savings:null}};
-const LABELS=['Income','Formula','Komitmen','Goals','Hasil'];
-function getInc(){return incVal;}
-function round(n){return Math.round(n);}
-function fmt(n){return n.toLocaleString('ms-MY');}
-function getPct(){
-  if(selFormula==='free') return {needs:parseFloat(document.getElementById('freeNeeds').value)||0,wants:parseFloat(document.getElementById('freeWants').value)||0,savings:parseFloat(document.getElementById('freeSavings').value)||0};
-  return FORMULAS[selFormula];
-}
+  function getIncome() { return parseFloat(document.getElementById('incomeInput').value) || 0; }
+  function round(n) { return Math.round(n); }
+  function fmt(n) { return n.toLocaleString('ms-MY'); }
 
-// ── FIX: Income input — stores value in variable, never disrupts focus ─
-document.getElementById('incomeInput').addEventListener('input', function() {
-  incVal = parseFloat(this.value)||0;
-  const p=document.getElementById('incomePreview'), a=document.getElementById('incomePreviewAmt');
-  if(incVal>0){ p.classList.remove('hidden'); a.textContent='RM '+fmt(incVal); sfxTick(); }
-  else p.classList.add('hidden');
-});
-
-// ── Toast ─────────────────────────────────────────────────────────────
-let toastTimer;
-function showToast(msg) {
-  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
-  clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
-}
-
-// ── Ripple ────────────────────────────────────────────────────────────
-document.addEventListener('click', e=>{
-  const b=e.target.closest('.btn-primary,.btn-secondary,.btn-add'); if(!b) return;
-  const r=b.getBoundingClientRect(), sz=Math.max(r.width,r.height);
-  const sp=document.createElement('span'); sp.className='ripple';
-  sp.style.cssText=`width:${sz}px;height:${sz}px;left:${e.clientX-r.left-sz/2}px;top:${e.clientY-r.top-sz/2}px;position:absolute;`;
-  b.appendChild(sp); setTimeout(()=>sp.remove(),500);
-});
-
-// ── Steps ─────────────────────────────────────────────────────────────
-function renderSteps() {
-  const bar=document.getElementById('stepsBar'), lbl=document.getElementById('stepsLabels');
-  bar.innerHTML=''; lbl.innerHTML='';
-  for(let s=1;s<=5;s++){
-    const d=document.createElement('div');
-    d.className='step-dot'+(s===curStep?' active':s<curStep?' done':'');
-    d.textContent=s<curStep?'✓':s; bar.appendChild(d);
-    if(s<5){const l=document.createElement('div');l.className='step-line'+(s<curStep?' done':'');bar.appendChild(l);}
-    const lb=document.createElement('div');
-    lb.className='step-label'+(s===curStep?' active':s<curStep?' done':'');
-    lb.textContent=LABELS[s-1]; lbl.appendChild(lb);
+  function getPct() {
+    if (selectedFormula === 'free') {
+      return {
+        needs: parseFloat(document.getElementById('freeNeeds').value) || 0,
+        wants: parseFloat(document.getElementById('freeWants').value) || 0,
+        savings: parseFloat(document.getElementById('freeSavings').value) || 0,
+      };
+    }
+    return FORMULAS[selectedFormula];
   }
-}
 
-function goToStep(n) {
-  if(n===2&&getInc()<=0){showToast('⚠️ Masukkan income dulu!');sfxRemove();return;}
-  if(n===5){calcResults();return;}
-  sfxStep();
-  document.getElementById('step'+curStep).classList.add('hidden');
-  curStep=n;
-  document.getElementById('step'+curStep).classList.remove('hidden');
-  renderSteps();
-  if(n===2)updateBreakdown();
-  if(n===3)updateCommitUI();
-  window.scrollTo({top:0,behavior:'smooth'});
-  showToast('Step '+n+' / 5 — '+LABELS[n-1]);
-}
-
-// ── Step 2 ────────────────────────────────────────────────────────────
-function selectFormula(f) {
-  sfxClick(); selFormula=f;
-  ['70/20/10','50/30/20','free'].forEach(k=>{
-    const id=k==='70/20/10'?'f-7020':k==='50/30/20'?'f-5030':'f-free';
-    document.getElementById(id).classList.toggle('selected',k===f);
-  });
-  document.getElementById('freeMode').classList.toggle('hidden',f!=='free');
-  document.getElementById('formulaBreakdown').classList.toggle('hidden',f==='free');
-  updateBreakdown();
-}
-function updateBreakdown() {
-  const inc=getInc(), p=getPct();
-  if(selFormula!=='free'){
-    document.getElementById('needsAmt').textContent='RM '+fmt(round(inc*p.needs/100));
-    document.getElementById('wantsAmt').textContent='RM '+fmt(round(inc*p.wants/100));
-    document.getElementById('savingsAmt').textContent='RM '+fmt(round(inc*p.savings/100));
+  // ---- Steps ----
+  function renderSteps() {
+    const bar = document.getElementById('stepsBar');
+    bar.innerHTML = '';
+    for (let s = 1; s <= 5; s++) {
+      const dot = document.createElement('div');
+      dot.className = 'step-dot' + (s === currentStep ? ' active' : s < currentStep ? ' done' : '');
+      dot.textContent = s < currentStep ? '✓' : s;
+      bar.appendChild(dot);
+      if (s < 5) {
+        const line = document.createElement('div');
+        line.className = 'step-line' + (s < currentStep ? ' done' : '');
+        bar.appendChild(line);
+      }
+    }
   }
-}
-function updateFreeFormula() {
-  const n=parseFloat(document.getElementById('freeNeeds').value)||0;
-  const w=parseFloat(document.getElementById('freeWants').value)||0;
-  const s=parseFloat(document.getElementById('freeSavings').value)||0;
-  const tot=n+w+s, warn=document.getElementById('freeTotalWarning');
-  if(tot!==100){warn.classList.remove('hidden');warn.textContent=`⚠️ Total kena 100%. Sekarang: ${tot}%`;}
-  else warn.classList.add('hidden');
-}
 
-// ── Step 3 ────────────────────────────────────────────────────────────
-function updateCommitUI() {
-  const list=document.getElementById('commitmentList'); list.innerHTML=''; let tot=0;
-  commits.forEach(c=>{
-    tot+=c.amount;
-    const d=document.createElement('div'); d.className='commitment-item';
-    d.innerHTML=`<span class="commitment-name">${c.name}</span><span class="commitment-amount">RM ${fmt(c.amount)}</span><button class="btn-remove" onclick="removeCommit(${c.id})">✕</button>`;
-    list.appendChild(d);
-  });
-  const tr=document.getElementById('commitTotal');
-  if(commits.length>0){tr.classList.remove('hidden');document.getElementById('commitTotalAmt').textContent='RM '+fmt(tot);}
-  else tr.classList.add('hidden');
-  const sv=round(getInc()*(getPct().savings||0)/100);
-  const w=document.getElementById('commitWarning');
-  if(tot>sv&&sv>0){w.classList.remove('hidden');w.textContent=`⚠️ Komitmen (RM ${fmt(tot)}) melebihi savings (RM ${fmt(sv)}). Consider adjust formula.`;}
-  else w.classList.add('hidden');
-}
-function addCommitment() {
-  const name=document.getElementById('commitName').value.trim();
-  const amt=parseFloat(document.getElementById('commitAmt').value);
-  if(!name||!amt){showToast('Isi nama & jumlah dulu!');return;}
-  commits.push({id:Date.now(),name,amount:round(amt)});
-  document.getElementById('commitName').value='';
-  document.getElementById('commitAmt').value='';
-  document.getElementById('commitName').focus();
-  updateCommitUI(); sfxAdd(); showToast('✅ '+name+' ditambah!');
-}
-function removeCommit(id) {
-  const c=commits.find(x=>x.id===id);
-  commits=commits.filter(x=>x.id!==id);
-  updateCommitUI(); sfxRemove(); if(c) showToast('🗑️ '+c.name+' dibuang');
-}
-
-// ── Step 4 ────────────────────────────────────────────────────────────
-function setNewPriority(p) {
-  sfxClick(); newPri=p;
-  document.querySelectorAll('#newGoalPriority .p-btn').forEach(b=>b.classList.toggle('sel',b.classList.contains(p)));
-}
-function setNewTimeline(t) {
-  sfxClick(); newTl=t;
-  document.querySelectorAll('#newGoalTimeline .t-btn').forEach((b,i)=>b.classList.toggle('sel',(i===0&&t==='auto')||(i===1&&t==='manual')));
-  document.getElementById('manualMonthsRow').classList.toggle('hidden',t!=='manual');
-}
-function addGoal() {
-  const name=document.getElementById('goalName').value.trim();
-  const target=parseFloat(document.getElementById('goalTarget').value);
-  if(!name||!target){showToast('Isi nama & target dulu!');return;}
-  const months=newTl==='manual'?(parseInt(document.getElementById('goalMonths').value)||null):null;
-  goals.push({id:Date.now(),name,target:round(target),priority:newPri,mode:newTl,months});
-  document.getElementById('goalName').value='';
-  document.getElementById('goalTarget').value='';
-  document.getElementById('goalMonths').value='';
-  renderGoalList(); sfxAdd(); showToast('🎯 '+name+' ditambah!');
-}
-function removeGoal(id) {
-  const g=goals.find(x=>x.id===id);
-  goals=goals.filter(x=>x.id!==id);
-  renderGoalList(); sfxRemove(); if(g) showToast('🗑️ '+g.name+' dibuang');
-}
-function renderGoalList() {
-  const list=document.getElementById('goalList'); list.innerHTML='';
-  goals.forEach(g=>{
-    const d=document.createElement('div'); d.className='goal-item';
-    d.innerHTML=`<div class="goal-header"><div class="goal-name-display">${g.name}</div><span class="priority-badge priority-${g.priority}">${g.priority}</span><button class="btn-remove" onclick="removeGoal(${g.id})">✕</button></div><div class="goal-meta"><span>🎯 Target: <b>RM ${fmt(g.target)}</b></span><span>⏱ ${g.mode==='manual'&&g.months?g.months+' bulan':'Auto'}</span></div>`;
-    list.appendChild(d);
-  });
-}
-
-// ── Step 5 ────────────────────────────────────────────────────────────
-function calcResults() {
-  const inc=getInc(), pct=getPct();
-  const sv=round(inc*(pct.savings||0)/100);
-  const tc=commits.reduce((s,c)=>s+c.amount,0);
-  const pw={high:3,medium:2,low:1};
-  const tw=goals.reduce((s,g)=>s+pw[g.priority],0);
-  const gr=goals.map(g=>{
-    let ma,mo;
-    if(g.mode==='manual'&&g.months){mo=g.months;ma=round(g.target/mo);}
-    else{const sh=tw>0?(pw[g.priority]/tw):(goals.length>0?1/goals.length:0);ma=round(sv*sh);mo=ma>0?Math.ceil(g.target/ma):999;}
-    return{...g,monthlyAlloc:ma,months:mo};
-  }).sort((a,b)=>({high:0,medium:1,low:2}[a.priority]-{high:0,medium:1,low:2}[b.priority]));
-
-  let html=`<div class="results-summary"><div class="results-label">Monthly Savings Available</div><div class="results-amount">RM ${fmt(sv)}</div><div class="results-sub">${pct.savings}% daripada RM ${fmt(inc)} income kau</div></div><div class="section-title">💼 Budget Breakdown</div><div style="background:#0a1410;border-radius:14px;padding:16px 20px"><div class="budget-row"><span class="budget-row-label">💼 Income</span><span class="budget-row-amount">RM ${fmt(inc)}</span></div>`;
-  if(selFormula!=='free'){
-    html+=`<div class="budget-row"><span class="budget-row-label">🏠 Keperluan (${pct.needs}%)</span><span class="budget-row-amount">RM ${fmt(round(inc*pct.needs/100))}</span></div>`;
-    html+=`<div class="budget-row"><span class="budget-row-label">🎮 Kehendak (${pct.wants}%)</span><span class="budget-row-amount">RM ${fmt(round(inc*pct.wants/100))}</span></div>`;
+  function goToStep(n) {
+    if (n === 2 && getIncome() <= 0) { alert('Sila masukkan income dulu!'); return; }
+    if (n === 5) { calcResults(); return; }
+    document.getElementById('step' + currentStep).classList.add('hidden');
+    currentStep = n;
+    document.getElementById('step' + currentStep).classList.remove('hidden');
+    renderSteps();
+    if (n === 2) updateFormulaBreakdown();
+    if (n === 3) updateCommitUI();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
-  html+=`<div class="budget-row"><span class="budget-row-label">💰 Simpanan (${pct.savings}%)</span><span class="budget-row-amount" style="color:var(--green)">RM ${fmt(sv)}</span></div>`;
-  if(tc>0) html+=`<div class="budget-row"><span class="budget-row-label">📋 Total Komitmen</span><span class="budget-row-amount" style="color:var(--yellow)">RM ${fmt(tc)}</span></div>`;
-  html+=`</div>`;
 
-  if(gr.length>0){
-    html+=`<div class="section-title">🎯 Goals Breakdown</div>`;
-    gr.forEach(g=>{
-      const yrs=Math.floor(g.months/12),mths=g.months%12;
-      const ts=yrs>0?`${yrs} thn${mths>0?' '+mths+' bln':''}`:`${g.months} bulan`;
-      const pc2=sv>0?Math.round((g.monthlyAlloc/sv)*100):0;
-      html+=`<div class="goal-result-card ${g.priority}"><div class="goal-result-header"><div><div class="goal-result-name">${g.name}</div><div class="goal-result-target">Target: RM ${fmt(g.target)}</div></div><span class="priority-badge priority-${g.priority}">${g.priority}</span></div><div class="progress-bar"><div class="progress-fill" id="bar-${g.id}"></div></div><div class="goal-result-stats"><div class="stat-box"><div class="stat-label">Simpan/Bulan</div><div class="stat-value">RM ${fmt(g.monthlyAlloc)}</div></div><div class="stat-box"><div class="stat-label">Tempoh</div><div class="stat-value">${ts}</div></div><div class="stat-box"><div class="stat-label">% Savings</div><div class="stat-value">${pc2}%</div></div></div></div>`;
+  // ---- Step 1 ----
+  function updateIncomePreview() {
+    const inc = getIncome();
+    const preview = document.getElementById('incomePreview');
+    const amt = document.getElementById('incomePreviewAmt');
+    if (inc > 0) {
+      preview.style.display = '';
+      amt.textContent = 'RM ' + fmt(inc);
+    } else {
+      preview.style.display = 'none';
+    }
+  }
+
+  // ---- Step 2 ----
+  function selectFormula(f) {
+    selectedFormula = f;
+    ['70/20/10','50/30/20','free'].forEach(key => {
+      const id = key === '70/20/10' ? 'f-7020' : key === '50/30/20' ? 'f-5030' : 'f-free';
+      document.getElementById(id).classList.toggle('selected', key === f);
     });
-    setTimeout(()=>gr.forEach(g=>{ const el=document.getElementById('bar-'+g.id); if(el) el.style.width=Math.min(100,sv>0?Math.round((g.monthlyAlloc/sv)*100):0)+'%'; }),200);
+    document.getElementById('freeMode').classList.toggle('hidden', f !== 'free');
+    document.getElementById('formulaBreakdown').classList.toggle('hidden', f === 'free');
+    updateFormulaBreakdown();
   }
-  if(tc>0) html+=`<div class="warning-box" style="margin-top:16px">💡 Komitmen bulanan RM ${fmt(tc)} telah dikira sebagai sebahagian daripada perbelanjaan keperluan kau.</div>`;
 
-  document.getElementById('resultsContent').innerHTML=html;
-  document.getElementById('step'+curStep).classList.add('hidden');
-  curStep=5; document.getElementById('step5').classList.remove('hidden');
-  renderSteps(); window.scrollTo({top:0,behavior:'smooth'}); sfxSuccess(); showToast('🏆 Plan kau siap! Lets gooo!');
-}
+  function updateFormulaBreakdown() {
+    const inc = getIncome();
+    const pct = getPct();
+    if (selectedFormula !== 'free') {
+      document.getElementById('needsAmt').textContent = 'RM ' + fmt(round(inc * pct.needs / 100));
+      document.getElementById('wantsAmt').textContent = 'RM ' + fmt(round(inc * pct.wants / 100));
+      document.getElementById('savingsAmt').textContent = 'RM ' + fmt(round(inc * pct.savings / 100));
+    }
+  }
 
-function restart() {
-  commits=[];goals=[];incVal=0;
-  ['incomeInput','commitName','commitAmt','goalName','goalTarget','goalMonths'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('incomePreview').classList.add('hidden');
-  renderGoalList(); updateCommitUI(); selectFormula('50/30/20');
-  document.getElementById('step'+curStep).classList.add('hidden');
-  curStep=1; document.getElementById('step1').classList.remove('hidden');
-  renderSteps(); window.scrollTo({top:0,behavior:'smooth'}); sfxClick(); showToast('🔄 Reset! Mula semula.');
-}
+  function updateFreeFormula() {
+    const n = parseFloat(document.getElementById('freeNeeds').value) || 0;
+    const w = parseFloat(document.getElementById('freeWants').value) || 0;
+    const s = parseFloat(document.getElementById('freeSavings').value) || 0;
+    const total = n + w + s;
+    const warn = document.getElementById('freeTotalWarning');
+    if (total !== 100) {
+      warn.classList.remove('hidden');
+      warn.textContent = `⚠️ Total kena 100%. Sekarang: ${total}%`;
+    } else {
+      warn.classList.add('hidden');
+    }
+  }
 
-renderSteps(); updateBreakdown();
+  // ---- Step 3 ----
+  function updateCommitUI() {
+    const list = document.getElementById('commitmentList');
+    list.innerHTML = '';
+    let total = 0;
+    commitments.forEach(c => {
+      total += c.amount;
+      const div = document.createElement('div');
+      div.className = 'commitment-item';
+      div.innerHTML = `<span class="commitment-name">${c.name}</span><span class="commitment-amount">RM ${fmt(c.amount)}</span><button class="btn-remove" onclick="removeCommitment(${c.id})">✕</button>`;
+      list.appendChild(div);
+    });
+    const totalRow = document.getElementById('commitTotal');
+    if (commitments.length > 0) {
+      totalRow.classList.remove('hidden');
+      document.getElementById('commitTotalAmt').textContent = 'RM ' + fmt(total);
+    } else {
+      totalRow.classList.add('hidden');
+    }
+    const savingsAmt = round(getIncome() * (getPct().savings || 0) / 100);
+    const warn = document.getElementById('commitWarning');
+    if (total > savingsAmt && savingsAmt > 0) {
+      warn.classList.remove('hidden');
+      warn.textContent = `⚠️ Komitmen (RM ${fmt(total)}) melebihi savings allocation (RM ${fmt(savingsAmt)}). Consider adjust formula atau reduce komitmen.`;
+    } else {
+      warn.classList.add('hidden');
+    }
+  }
+
+  function addCommitment() {
+    const name = document.getElementById('commitName').value.trim();
+    const amt = parseFloat(document.getElementById('commitAmt').value);
+    if (!name || !amt) return;
+    commitments.push({ id: Date.now(), name, amount: round(amt) });
+    document.getElementById('commitName').value = '';
+    document.getElementById('commitAmt').value = '';
+    updateCommitUI();
+  }
+
+  function removeCommitment(id) {
+    commitments = commitments.filter(c => c.id !== id);
+    updateCommitUI();
+  }
+
+  // ---- Step 4 ----
+  function setNewPriority(p) {
+    newGoalPriority = p;
+    document.querySelectorAll('#newGoalPriority .p-btn').forEach(btn => {
+      btn.classList.toggle('sel', btn.classList.contains(p));
+    });
+  }
+
+  function setNewTimeline(t) {
+    newGoalTimeline = t;
+    document.querySelectorAll('#newGoalTimeline .t-btn').forEach((btn, i) => {
+      btn.classList.toggle('sel', (i === 0 && t === 'auto') || (i === 1 && t === 'manual'));
+    });
+    document.getElementById('manualMonthsRow').classList.toggle('hidden', t !== 'manual');
+  }
+
+  function addGoal() {
+    const name = document.getElementById('goalName').value.trim();
+    const target = parseFloat(document.getElementById('goalTarget').value);
+    if (!name || !target) return;
+    const months = newGoalTimeline === 'manual' ? (parseInt(document.getElementById('goalMonths').value) || null) : null;
+    goals.push({ id: Date.now(), name, target: round(target), priority: newGoalPriority, mode: newGoalTimeline, months });
+    document.getElementById('goalName').value = '';
+    document.getElementById('goalTarget').value = '';
+    document.getElementById('goalMonths').value = '';
+    renderGoalList();
+  }
+
+  function removeGoal(id) {
+    goals = goals.filter(g => g.id !== id);
+    renderGoalList();
+  }
+
+  function renderGoalList() {
+    const list = document.getElementById('goalList');
+    list.innerHTML = '';
+    goals.forEach(g => {
+      const div = document.createElement('div');
+      div.className = 'goal-item';
+      div.innerHTML = `
+        <div class="goal-header">
+          <div class="goal-name-display">${g.name}</div>
+          <span class="priority-badge priority-${g.priority}">${g.priority}</span>
+          <button class="btn-remove" onclick="removeGoal(${g.id})">✕</button>
+        </div>
+        <div class="goal-meta">
+          <span>🎯 Target: <b>RM ${fmt(g.target)}</b></span>
+          <span>⏱ ${g.mode === 'manual' && g.months ? g.months + ' bulan' : 'Auto'}</span>
+        </div>`;
+      list.appendChild(div);
+    });
+  }
+
+  // ---- Step 5: Results ----
+  function calcResults() {
+    const inc = getIncome();
+    const pct = getPct();
+    const savingsAmt = round(inc * (pct.savings || 0) / 100);
+    const totalCommit = commitments.reduce((s, c) => s + c.amount, 0);
+
+    // Sort goals: high → medium → low, then process sequentially
+    const sortOrder = { high: 0, medium: 1, low: 2 };
+    const sorted = [...goals].sort((a, b) => sortOrder[a.priority] - sortOrder[b.priority]);
+
+    // Sequential: each goal starts after the previous one finishes
+    // Manual goals run in parallel (user-defined), auto goals are sequential
+    let cursor = 0; // months elapsed so far from sequential auto goals
+
+    const goalResults = sorted.map(g => {
+      let monthlyAlloc, months, startMonth, endMonth;
+      if (g.mode === 'manual' && g.months) {
+        // Manual: user sets their own timeline, runs from month 0
+        months = g.months;
+        monthlyAlloc = round(g.target / months);
+        startMonth = 0;
+        endMonth = months;
+      } else {
+        // Auto: full savings dedicated, starts after previous auto goal ends
+        monthlyAlloc = savingsAmt;
+        months = savingsAmt > 0 ? Math.ceil(g.target / savingsAmt) : 999;
+        startMonth = cursor;
+        endMonth = cursor + months;
+        cursor = endMonth;
+      }
+      return { ...g, monthlyAlloc, months, startMonth, endMonth };
+    });
+
+    let html = `
+      <div class="results-summary">
+        <div class="results-label">Monthly Savings Available</div>
+        <div class="results-amount">RM ${fmt(savingsAmt)}</div>
+        <div class="results-sub">${pct.savings}% daripada RM ${fmt(inc)} income kau</div>
+      </div>
+      <div class="card-title" style="margin-bottom:12px">💼 Budget Breakdown</div>
+      <div style="background:#0a1410;border-radius:12px;padding:16px 20px">
+        <div class="budget-row"><span class="budget-row-label">💼 Income</span><span class="budget-row-amount">RM ${fmt(inc)}</span></div>`;
+
+    if (selectedFormula !== 'free') {
+      html += `<div class="budget-row"><span class="budget-row-label">🏠 Keperluan (${pct.needs}%)</span><span class="budget-row-amount">RM ${fmt(round(inc * pct.needs / 100))}</span></div>`;
+      html += `<div class="budget-row"><span class="budget-row-label">🎮 Kehendak (${pct.wants}%)</span><span class="budget-row-amount">RM ${fmt(round(inc * pct.wants / 100))}</span></div>`;
+    }
+    html += `<div class="budget-row"><span class="budget-row-label">💰 Simpanan (${pct.savings}%)</span><span class="budget-row-amount" style="color:#3ecf6e">RM ${fmt(savingsAmt)}</span></div>`;
+    if (totalCommit > 0) {
+      html += `<div class="budget-row"><span class="budget-row-label">📋 Total Komitmen</span><span class="budget-row-amount" style="color:#f5b731">RM ${fmt(totalCommit)}</span></div>`;
+    }
+    if (goalResults.length > 0) {
+      const totalMonths = Math.max(...goalResults.map(g => g.endMonth));
+      const totYrs = Math.floor(totalMonths / 12);
+      const totMths = totalMonths % 12;
+      const totStr = totYrs > 0 ? `${totYrs} thn${totMths > 0 ? ' ' + totMths + ' bln' : ''}` : `${totalMonths} bln`;
+      html += `<div class="budget-row" style="padding-top:14px;border-top:1px dashed #2a3d2e;border-bottom:none;margin-top:4px">
+        <span class="budget-row-label">🏁 Semua goals capai dalam</span>
+        <span class="budget-row-amount" style="color:#3ecf6e;font-size:15px">${totStr}</span>
+      </div>`;
+    }
+    html += `</div>`;
+
+    if (goalResults.length > 0) {
+      html += `<div class="section-title">🎯 Goals Breakdown</div>`;
+      goalResults.forEach(g => {
+        const durYrs = Math.floor(g.months / 12);
+        const durMths = g.months % 12;
+        const durStr = durYrs > 0 ? `${durYrs} thn${durMths > 0 ? ' ' + durMths + ' bln' : ''}` : `${g.months} bln`;
+
+        // When will they finish?
+        const finishMonth = g.endMonth;
+        const finYrs = Math.floor(finishMonth / 12);
+        const finMths = finishMonth % 12;
+        const finStr = finishMonth === 0 ? 'Bulan ini' : finYrs > 0 ? `${finYrs} thn${finMths > 0 ? ' ' + finMths + ' bln' : ''}` : `${finishMonth} bln`;
+
+        // Start info for non-first auto goals
+        const isDelayed = g.mode !== 'manual' && g.startMonth > 0;
+        const startYrs = Math.floor(g.startMonth / 12);
+        const startMths = g.startMonth % 12;
+        const startStr = startYrs > 0 ? `${startYrs} thn${startMths > 0 ? ' ' + startMths + ' bln' : ''}` : `${g.startMonth} bln`;
+
+        const pctOfSavings = savingsAmt > 0 ? Math.round((g.monthlyAlloc / savingsAmt) * 100) : 0;
+        const barPct = Math.min(100, Math.round((g.months / (g.endMonth || g.months)) * 100));
+
+        html += `
+          <div class="goal-result-card ${g.priority}">
+            <div class="goal-result-header">
+              <div>
+                <div class="goal-result-name">${g.name}</div>
+                <div class="goal-result-target">Target: RM ${fmt(g.target)}</div>
+              </div>
+              <span class="priority-badge priority-${g.priority}">${g.priority}</span>
+            </div>
+            ${isDelayed ? `<div style="font-size:11px;color:#5a7a60;margin-bottom:6px">⏳ Mula lepas ${startStr} (tunggu goal sebelum settle dulu)</div>` : ''}
+            <div class="progress-bar"><div class="progress-fill" style="width:${barPct}%"></div></div>
+            <div class="goal-result-stats">
+              <div class="stat-box"><div class="stat-label">Simpan/Bulan</div><div class="stat-value">RM ${fmt(g.monthlyAlloc)}</div></div>
+              <div class="stat-box"><div class="stat-label">Tempoh Simpan</div><div class="stat-value">${durStr}</div></div>
+              <div class="stat-box"><div class="stat-label">Capai Dalam</div><div class="stat-value">${finStr}</div></div>
+            </div>
+          </div>`;
+      });
+    }
+
+    if (totalCommit > 0) {
+      html += `<div class="warning-box" style="margin-top:16px">💡 Komitmen bulanan RM ${fmt(totalCommit)} telah dikira sebagai sebahagian daripada perbelanjaan keperluan kau.</div>`;
+    }
+
+    document.getElementById('resultsContent').innerHTML = html;
+    document.getElementById('step' + currentStep).classList.add('hidden');
+    currentStep = 5;
+    document.getElementById('step5').classList.remove('hidden');
+    renderSteps();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function restart() {
+    commitments = [];
+    goals = [];
+    document.getElementById('incomeInput').value = '';
+    document.getElementById('commitName').value = '';
+    document.getElementById('commitAmt').value = '';
+    document.getElementById('goalName').value = '';
+    document.getElementById('goalTarget').value = '';
+    document.getElementById('goalMonths').value = '';
+    updateIncomePreview();
+    renderGoalList();
+    updateCommitUI();
+    selectFormula('50/30/20');
+    document.getElementById('step' + currentStep).classList.add('hidden');
+    currentStep = 1;
+    document.getElementById('step1').classList.remove('hidden');
+    renderSteps();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // Init
+  renderSteps();
+  updateFormulaBreakdown();
 </script>
 </body>
 </html>
