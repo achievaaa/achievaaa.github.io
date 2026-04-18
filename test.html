@@ -2,7 +2,7 @@
 <html lang="ms">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover" />
 <title>TabungKu — Plan Smart, Simpan Lebih</title>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
 <style>
@@ -144,43 +144,69 @@
   .breakdown-item.wants span { color: #f5b731; }
   .breakdown-item.savings span { color: #3ecf6e; }
   
-  /* Free mode input grid */
+  /* FREE MODE INPUT GRID - FIXED FOR MOBILE (single line, no wrap) */
   .free-mode-grid { 
-    display: grid; 
-    grid-template-columns: repeat(3, 1fr); 
-    gap: 12px; 
+    display: flex; 
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 10px; 
     margin-bottom: 16px; 
+    justify-content: space-between;
   }
   .free-input-box { 
     background: #0a1410; 
     border: 1.5px solid #2a3d2e; 
     border-radius: 12px; 
-    padding: 12px; 
+    padding: 10px 8px; 
     text-align: center; 
+    flex: 1;
+    min-width: 0; /* Allows shrinking */
   }
   .free-input-box label { 
-    font-size: 10px; 
+    font-size: 9px; 
     color: #5a7a60; 
     display: block; 
-    margin-bottom: 6px; 
+    margin-bottom: 4px; 
     text-transform: uppercase; 
-    letter-spacing: 0.06em; 
+    letter-spacing: 0.05em;
+    white-space: nowrap;
   }
   .free-input-box input { 
     background: transparent; 
     border: none; 
     outline: none; 
     font-family: 'Space Mono', monospace; 
-    font-size: 20px; 
+    font-size: 16px; 
     font-weight: 700; 
-    width: 60px; 
+    width: 100%;
+    min-width: 40px;
+    max-width: 70px;
     text-align: center; 
     height: auto; 
-    padding: 0; 
+    padding: 4px 0;
+    margin: 0 auto;
+    display: block;
+  }
+  .free-input-box input::-webkit-outer-spin-button,
+  .free-input-box input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .free-input-box input[type=number] {
+    -moz-appearance: textfield;
+    appearance: textfield;
   }
   .free-input-box.needs input { color: #60a8ff; }
   .free-input-box.wants input { color: #f5b731; }
   .free-input-box.savings input { color: #3ecf6e; }
+  
+  /* For very small screens, reduce font and padding */
+  @media (max-width: 480px) {
+    .free-mode-grid { gap: 6px; }
+    .free-input-box { padding: 8px 4px; }
+    .free-input-box label { font-size: 8px; }
+    .free-input-box input { font-size: 14px; max-width: 55px; }
+  }
 
   /* Commitment */
   .commitment-list { margin-bottom: 16px; }
@@ -205,7 +231,7 @@
 
   /* Goals */
   .goal-item { background: #0a1410; border: 1px solid #1e3322; border-radius: 14px; padding: 16px; margin-bottom: 10px; position: relative; }
-  .goal-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .goal-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
   .goal-name-display { font-size: 14px; font-weight: 600; color: #f0ebe1; flex: 1; }
   .priority-badge { padding: 3px 10px; border-radius: 100px; font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
   .priority-high { background: rgba(255,80,80,0.15); color: #ff6060; border: 1px solid rgba(255,80,80,0.3); }
@@ -330,11 +356,11 @@
     <div class="formula-grid">
       <div class="formula-card" id="f-7020" onclick="selectFormula('70/20/10')">
         <div class="formula-name">70/20/10</div>
-        <div class="formula-desc">70% Keperluan&#10;20% Kehendak&#10;10% Simpanan</div>
+        <div class="formula-desc">70% Keperluan<br>20% Kehendak<br>10% Simpanan</div>
       </div>
       <div class="formula-card selected" id="f-5030" onclick="selectFormula('50/30/20')">
         <div class="formula-name">50/30/20</div>
-        <div class="formula-desc">50% Keperluan&#10;30% Kehendak&#10;20% Simpanan</div>
+        <div class="formula-desc">50% Keperluan<br>30% Kehendak<br>20% Simpanan</div>
       </div>
       <div class="formula-card" id="f-free" onclick="selectFormula('free')">
         <div class="formula-name">FREE</div>
@@ -342,14 +368,14 @@
       </div>
     </div>
     
-    <!-- Breakdown untuk fixed formula (SAME DESIGN) -->
+    <!-- Breakdown untuk fixed formula -->
     <div id="formulaBreakdown" class="formula-breakdown">
       <div class="breakdown-item needs"><label>Keperluan</label><span id="needsAmt">-</span></div>
       <div class="breakdown-item wants"><label>Kehendak</label><span id="wantsAmt">-</span></div>
       <div class="breakdown-item savings"><label>Simpanan</label><span id="savingsAmt">-</span></div>
     </div>
     
-    <!-- Free mode section -->
+    <!-- Free mode section - FIXED for mobile -->
     <div id="freeMode" class="hidden" style="margin-top:16px">
       <div class="free-mode-grid">
         <div class="free-input-box needs">
@@ -366,7 +392,7 @@
         </div>
       </div>
       <div id="freeTotalWarning" class="warning-box hidden" style="margin-top:0; margin-bottom:12px"></div>
-      <!-- Breakdown untuk FREE mode - SAME DESIGN seperti formula lain -->
+      <!-- Breakdown untuk FREE mode -->
       <div id="freeBreakdown" class="free-breakdown">
         <div class="breakdown-item needs"><label>Keperluan</label><span id="freeNeedsAmount">RM 0</span></div>
         <div class="breakdown-item wants"><label>Kehendak</label><span id="freeWantsAmount">RM 0</span></div>
@@ -492,7 +518,7 @@
     }
   }
 
-  // Steps UI - Fixed alignment
+  // Steps UI
   function renderSteps() {
     const container = document.getElementById('stepsContainer');
     const labelsContainer = document.getElementById('stepsLabels');
@@ -544,7 +570,6 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  // Step 1
   function updateIncomePreview() {
     const inc = getIncome();
     const preview = document.getElementById('incomePreview');
@@ -558,7 +583,6 @@
     updateAllPreviews();
   }
 
-  // Step 2
   function selectFormula(f) {
     selectedFormula = f;
     ['70/20/10','50/30/20','free'].forEach(key => {
@@ -604,7 +628,6 @@
     
     const inc = getIncome();
     if (inc > 0) {
-      // Update FREE breakdown with SAME DESIGN as formula breakdown
       document.getElementById('freeNeedsAmount').textContent = 'RM ' + fmt(round(inc * needs / 100));
       document.getElementById('freeWantsAmount').textContent = 'RM ' + fmt(round(inc * wants / 100));
       document.getElementById('freeSavingsAmount').textContent = 'RM ' + fmt(round(inc * savings / 100));
@@ -615,7 +638,6 @@
     }
   }
 
-  // Step 3
   function updateCommitUI() {
     const list = document.getElementById('commitmentList');
     list.innerHTML = '';
@@ -660,7 +682,6 @@
     updateCommitUI();
   }
 
-  // Step 4
   function setNewPriority(p) {
     newGoalPriority = p;
     document.querySelectorAll('#newGoalPriority .p-btn').forEach(btn => {
@@ -713,7 +734,6 @@
     });
   }
 
-  // Step 5: Results
   function calcResults() {
     const inc = getIncome();
     const pct = getPct();
