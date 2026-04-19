@@ -4,10 +4,12 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>TabungKu — Plan Smart, Simpan Lebih</title>
+<link rel="icon" href="logo.png" type="image/png" />
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: 'Sora', sans-serif; background: #0e1a14; color: #f0ebe1; min-height: 100vh; }
+  html, body { overflow-x: hidden; max-width: 100vw; }
 
   .bg-orb { position: fixed; border-radius: 50%; filter: blur(80px); opacity: 0.18; pointer-events: none; z-index: 0; }
   .orb1 { width: 500px; height: 500px; background: #3ecf6e; top: -100px; right: -100px; }
@@ -26,7 +28,6 @@
   .user-header.visible { display: flex; }
   .user-header-left { display: flex; align-items: center; gap: 10px; }
   .logo-text { font-size: 16px; font-weight: 800; color: #3ecf6e; letter-spacing: -0.02em; }
-  .header-divider { width: 1px; height: 20px; background: #2a3d2e; margin: 0 4px; }
   .user-header-right { display: flex; align-items: center; gap: 10px; }
   .user-avatar {
     width: 32px; height: 32px; border-radius: 50%; border: 2px solid #3ecf6e;
@@ -36,50 +37,73 @@
   }
   .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
   .user-name-btn { font-size: 13px; font-weight: 600; color: #c5d9c8; cursor: pointer; }
-  .menu-btn { background: none; border: none; cursor: pointer; color: #5a7a60; font-size: 20px; padding: 4px; transition: color 0.2s; }
-  .menu-btn:hover { color: #3ecf6e; }
+  .menu-btn {
+    background: rgba(62,207,110,0.08); border: 1px solid rgba(62,207,110,0.2);
+    cursor: pointer; color: #3ecf6e; font-size: 16px; padding: 6px 10px;
+    border-radius: 8px; transition: all 0.2s; line-height: 1;
+  }
+  .menu-btn:hover { background: rgba(62,207,110,0.16); }
 
-  /* ===== BOTTOM SHEET MENU ===== */
-  .sheet-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.55);
-    z-index: 490; display: none; backdrop-filter: blur(2px);
+  /* ===== SIDE PANEL MENU ===== */
+  .panel-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+    z-index: 490; display: none; backdrop-filter: blur(3px);
   }
-  .sheet-overlay.visible { display: block; }
-  .bottom-sheet {
-    position: fixed; bottom: -320px; left: 0; right: 0;
-    background: #0e1a14; border-top: 1px solid rgba(62,207,110,0.18);
-    border-radius: 20px 20px 0 0; z-index: 500;
-    padding: 0 16px 32px; transition: bottom 0.3s cubic-bezier(.32,.72,0,1);
-    box-shadow: 0 -8px 40px rgba(0,0,0,0.5);
+  .panel-overlay.visible { display: block; }
+
+  .side-panel {
+    position: fixed; top: 0; right: -320px; width: 288px;
+    height: 100dvh; min-height: 100vh;
+    background: #0a1410; border-left: 1px solid rgba(62,207,110,0.15);
+    z-index: 500; transition: right 0.35s cubic-bezier(.32,.72,0,1);
+    overflow-y: auto; display: flex; flex-direction: column;
+    box-shadow: -10px 0 60px rgba(0,0,0,0.7);
   }
-  .bottom-sheet.open { bottom: 0; }
-  .sheet-handle {
-    width: 36px; height: 4px; background: #2a3d2e; border-radius: 100px;
-    margin: 12px auto 20px;
+  .side-panel.open { right: 0; }
+
+  .side-panel-top {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 16px 16px 0;
   }
-  .sheet-user-info {
-    display: flex; align-items: center; gap: 12px;
-    padding: 14px 4px 14px; border-bottom: 1px solid #1e3322; margin-bottom: 8px;
+  .side-panel-brand { font-size: 14px; font-weight: 800; color: #3ecf6e; }
+  .side-panel-close {
+    background: rgba(62,207,110,0.06); border: 1px solid rgba(62,207,110,0.15);
+    color: #5a7a60; width: 32px; height: 32px; border-radius: 8px;
+    font-size: 16px; cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
   }
-  .sheet-avatar {
-    width: 40px; height: 40px; border-radius: 50%; border: 2px solid #3ecf6e;
+  .side-panel-close:hover { color: #f0ebe1; border-color: rgba(62,207,110,0.35); background: rgba(62,207,110,0.1); }
+
+  .side-panel-user-info {
+    padding: 20px 20px 18px; border-bottom: 1px solid #1e3322; margin-top: 12px;
+  }
+  .side-panel-avatar {
+    width: 52px; height: 52px; border-radius: 50%; border: 2px solid #3ecf6e;
     background: #1a2e1e; display: flex; align-items: center; justify-content: center;
-    font-size: 16px; font-weight: 700; color: #3ecf6e; flex-shrink: 0; overflow: hidden;
+    font-size: 20px; font-weight: 700; color: #3ecf6e; margin-bottom: 12px; overflow: hidden;
+    flex-shrink: 0;
   }
-  .sheet-avatar img { width: 100%; height: 100%; object-fit: cover; }
-  .sheet-user-name { font-size: 14px; font-weight: 700; color: #f0ebe1; }
-  .sheet-user-email { font-size: 11px; color: #3a5040; margin-top: 2px; word-break: break-all; }
-  .menu-item {
-    display: flex; align-items: center; gap: 12px; padding: 14px 4px;
-    border-bottom: 1px solid #1a2e1e; cursor: pointer; transition: color 0.15s;
-    font-size: 14px; color: #8a9e90; font-weight: 500; border-top: none;
-    background: none; width: 100%; text-align: left; font-family: 'Sora', sans-serif;
-    border-left: none; border-right: none;
+  .side-panel-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .side-panel-user-name { font-size: 16px; font-weight: 700; color: #f0ebe1; margin-bottom: 4px; }
+  .side-panel-user-email { font-size: 11px; color: #3a5040; word-break: break-all; line-height: 1.4; }
+
+  .side-panel-menu { padding: 12px; flex: 1; }
+  .side-menu-item {
+    display: flex; align-items: center; gap: 12px;
+    width: 100%; padding: 13px 14px; background: none;
+    border: none; border-radius: 10px; cursor: pointer;
+    font-family: 'Sora', sans-serif; font-size: 14px;
+    color: #8a9e90; font-weight: 500; text-align: left;
+    transition: all 0.15s; margin-bottom: 3px;
   }
-  .menu-item:last-child { border-bottom: none; }
-  .menu-item:hover { color: #f0ebe1; }
-  .menu-item.danger:hover { color: #e05555; }
-  .menu-item-icon { font-size: 18px; width: 24px; text-align: center; flex-shrink: 0; }
+  .side-menu-item:hover { background: rgba(62,207,110,0.08); color: #f0ebe1; }
+  .side-menu-item.danger:hover { background: rgba(220,60,60,0.08); color: #e05555; }
+  .side-menu-icon { font-size: 18px; width: 24px; text-align: center; flex-shrink: 0; }
+
+  .side-panel-footer {
+    padding: 16px 20px; border-top: 1px solid #1a2e1e;
+    font-size: 10px; color: #2e4a34; text-align: center; letter-spacing: 0.04em;
+  }
 
   /* ===== AUTH MODAL ===== */
   .modal-overlay {
@@ -249,7 +273,7 @@
   .btn-close-celebration { width: 100%; padding: 13px; background: #3ecf6e; color: #0a1410; border: none; border-radius: 10px; font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
   .btn-close-celebration:hover { background: #52e07e; }
 
-  /* Edit Plan Popup formula */
+  /* Edit Plan Popup */
   .formula-mini-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
   .formula-mini-card { border: 1.5px solid #2a3d2e; border-radius: 10px; padding: 10px 8px; cursor: pointer; transition: all 0.2s; text-align: center; background: #0a1410; }
   .formula-mini-card:hover { border-color: rgba(62,207,110,0.4); }
@@ -273,12 +297,9 @@
   .logo-badge {
     display: inline-flex; align-items: center; gap: 8px;
     background: rgba(62,207,110,0.12); border: 1px solid rgba(62,207,110,0.3);
-    border-radius: 100px; padding: 6px 16px; font-size: 12px; font-weight: 600;
-    color: #3ecf6e; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 20px;
+    border-radius: 100px; padding: 6px 16px; font-size: 13px; font-weight: 700;
+    color: #3ecf6e; letter-spacing: -0.01em; margin-bottom: 20px;
   }
-  .logo-badge-actions { display: flex; gap: 8px; align-items: center; margin-bottom: 20px; flex-wrap: wrap; justify-content: center; }
-  .btn-auth { background: rgba(62,207,110,0.1); border: 1px solid rgba(62,207,110,0.3); color: #3ecf6e; border-radius: 100px; padding: 6px 14px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'Sora', sans-serif; transition: all 0.2s; }
-  .btn-auth:hover { background: rgba(62,207,110,0.2); }
   h1 { font-size: clamp(28px, 5vw, 42px); font-weight: 800; line-height: 1.1; color: #f0ebe1; }
   h1 span { color: #3ecf6e; }
   .subtitle { margin-top: 12px; color: #8a9e90; font-size: 15px; font-weight: 300; }
@@ -295,15 +316,9 @@
   .step-label-text { font-size: 10px; color: #5a7a60; text-align: center; font-weight: 500; transition: color 0.3s; white-space: nowrap; }
   .step-label-text.active { color: #3ecf6e; font-weight: 600; }
   .step-label-text.done { color: #3ecf6e; }
-  @media (max-width: 550px) {
-    .step-dot { width: 32px; height: 32px; font-size: 12px; }
-    .step-line { width: 40px; }
-    .step-label-wrapper { width: 32px; }
-    .step-label-spacer { width: 40px; }
-    .step-label-text { font-size: 9px; white-space: normal; text-align: center; line-height: 1.2; }
-  }
   .card { background: rgba(20, 35, 22, 0.85); border: 1px solid rgba(62,207,110,0.15); border-radius: 20px; padding: 32px; backdrop-filter: blur(12px); animation: fadeUp 0.4s ease; }
   @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes spin { to { transform: rotate(360deg); } }
   .card-title { font-size: 20px; font-weight: 700; margin-bottom: 6px; color: #f0ebe1; }
   .card-subtitle { font-size: 13px; color: #5a7a60; margin-bottom: 28px; }
   .step-badge { display: inline-block; background: rgba(62,207,110,0.15); border-radius: 100px; padding: 4px 12px; font-size: 11px; font-weight: 600; color: #3ecf6e; margin-bottom: 16px; letter-spacing: 0.05em; }
@@ -315,7 +330,6 @@
   input[type="number"], input[type="text"] { flex: 1; background: transparent; border: none; outline: none; padding: 0 16px; height: 48px; font-family: 'Space Mono', monospace; font-size: 15px; color: #f0ebe1; width: 100%; }
   input::placeholder { color: #2e4a34; }
   .formula-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
-  @media (max-width: 500px) { .formula-grid { grid-template-columns: 1fr; } }
   .formula-card { border: 1.5px solid #2a3d2e; border-radius: 14px; padding: 16px 12px; cursor: pointer; transition: all 0.2s; text-align: center; background: #0e1a14; }
   .formula-card:hover { border-color: rgba(62,207,110,0.4); }
   .formula-card.selected { border-color: #3ecf6e; background: rgba(62,207,110,0.08); box-shadow: 0 0 20px rgba(62,207,110,0.12); }
@@ -354,8 +368,6 @@
   .priority-high { background: rgba(255,80,80,0.15); color: #ff6060; border: 1px solid rgba(255,80,80,0.3); }
   .priority-medium { background: rgba(245,183,49,0.15); color: #f5b731; border: 1px solid rgba(245,183,49,0.3); }
   .priority-low { background: rgba(100,150,200,0.15); color: #82b4e8; border: 1px solid rgba(100,150,200,0.3); }
-  .goal-meta { display: flex; gap: 12px; font-size: 12px; color: #4a6650; flex-wrap: wrap; }
-  .goal-meta b { color: #c5d9c8; font-family: 'Space Mono', monospace; }
   .priority-select-planner { display: flex; gap: 6px; margin-top: 10px; }
   .timeline-toggle { display: flex; gap: 6px; margin-top: 8px; }
   .t-btn { flex: 1; padding: 6px; border-radius: 8px; border: 1.5px solid #2a3d2e; background: #0e1a14; color: #4a6650; font-size: 11px; font-weight: 600; cursor: pointer; font-family: 'Sora', sans-serif; transition: all 0.15s; }
@@ -390,7 +402,7 @@
   .budget-row:last-child { border-bottom: none; }
   .budget-row-label { font-size: 13px; color: #8a9e90; }
   .budget-row-amount { font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; color: #f0ebe1; }
-  .goal-result-card { background: #0a1410; border: 1px solid #1e3322; border-radius: 14px; padding: 18px; margin-bottom: 10px; position: relative; overflow: hidden; }
+  .goal-result-card { background: #0a1410; border: 1px solid #1e3322; border-radius: 14px; padding: 18px; margin-bottom: 10px; position: relative; overflow: hidden; word-break: break-word; }
   .goal-result-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; }
   .goal-result-card.high::before { background: #ff6060; }
   .goal-result-card.medium::before { background: #f5b731; }
@@ -421,7 +433,6 @@
   .btn-save-plan { background: #3ecf6e; color: #0a1410; border: none; border-radius: 8px; padding: 8px 16px; font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
   .btn-save-plan:hover { background: #52e07e; }
   .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(62,207,110,0.3); border-top-color: #3ecf6e; border-radius: 50%; animation: spin 0.6s linear infinite; vertical-align: middle; margin-right: 6px; }
-  @keyframes spin { to { transform: rotate(360deg); } }
 
   /* ===== GUEST FOOTER ===== */
   .guest-footer {
@@ -459,16 +470,12 @@
   .dash-breakdown-row-label { color: #8a9e90; }
   .dash-breakdown-row-val { font-family: 'Space Mono', monospace; font-weight: 700; color: #f0ebe1; }
 
-  /* ===== DANGER ZONE (Delete Account) ===== */
+  /* ===== DANGER ZONE ===== */
   .danger-zone-card { background: rgba(30,10,10,0.8); border: 1px solid rgba(220,60,60,0.2); border-radius: 16px; padding: 20px; margin-bottom: 16px; }
   .danger-zone-title { font-size: 11px; font-weight: 700; color: #e05555; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
   .danger-zone-desc { font-size: 12px; color: #5a7a60; margin-bottom: 14px; line-height: 1.6; }
   .btn-delete-account { background: rgba(220,60,60,0.12); border: 1px solid rgba(220,60,60,0.35); color: #e05555; border-radius: 10px; padding: 10px 20px; font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
   .btn-delete-account:hover { background: rgba(220,60,60,0.22); }
-
-  /* Confirm delete popup */
-  .confirm-delete-input { width: 100%; background: #0a1410; border: 1.5px solid rgba(220,60,60,0.3); border-radius: 10px; padding: 10px 14px; font-family: 'Sora', sans-serif; font-size: 14px; color: #f0ebe1; outline: none; margin-top: 6px; transition: border-color 0.2s; }
-  .confirm-delete-input:focus { border-color: #e05555; }
   .btn-confirm-delete { flex: 2; padding: 11px; background: #e05555; color: #fff; border: none; border-radius: 10px; font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
   .btn-confirm-delete:hover { background: #c04040; }
   .btn-confirm-delete:disabled { opacity: 0.4; cursor: not-allowed; }
@@ -483,11 +490,20 @@
     background: #0e1a14; border: 1px solid rgba(62,207,110,0.3);
     border-radius: 100px; padding: 10px 20px; font-size: 13px; color: #3ecf6e;
     font-weight: 600; z-index: 999; animation: toastIn 0.3s ease;
+    max-width: calc(100vw - 40px); white-space: normal; text-align: center;
   }
   .toast.error { border-color: rgba(220,60,60,0.3); color: #e05555; }
   @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(10px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
 
-  /* ===== RESPONSIVE FIXES ===== */
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 550px) {
+    .step-dot { width: 32px; height: 32px; font-size: 12px; }
+    .step-line { width: 40px; }
+    .step-label-wrapper { width: 32px; }
+    .step-label-spacer { width: 40px; }
+    .step-label-text { font-size: 9px; white-space: normal; text-align: center; line-height: 1.2; }
+    .formula-grid { grid-template-columns: 1fr; }
+  }
   @media (max-width: 480px) {
     .container { padding: 20px 14px 60px; }
     .user-header { padding: 10px 14px; border-radius: 12px; margin-bottom: 20px; }
@@ -512,10 +528,10 @@
     .plan-card { padding: 16px; }
     .settings-card { padding: 16px; }
     .section-header { flex-wrap: wrap; gap: 8px; }
-    .dropdown-menu { right: -10px; min-width: 180px; }
     .save-plan-banner { flex-direction: column; align-items: flex-start; gap: 10px; }
     .free-mode-grid { gap: 8px; }
     .free-input-box input { width: 48px; font-size: 18px; }
+    .side-panel { width: 100%; right: -100%; }
   }
   @media (max-width: 360px) {
     .step-line { width: 24px; }
@@ -527,11 +543,20 @@
     .formula-name { font-size: 12px; }
     .formula-card { padding: 12px 8px; }
   }
-  /* Prevent horizontal overflow globally */
-  html, body { overflow-x: hidden; max-width: 100vw; }
+  /* Tablet */
+  @media (min-width: 600px) and (max-width: 1024px) {
+    .container { padding: 40px 32px 80px; max-width: 720px; }
+    .card { padding: 36px; }
+    .formula-grid { grid-template-columns: repeat(3, 1fr); }
+    .goal-result-stats { grid-template-columns: 1fr 1fr 1fr; }
+    .side-panel { width: 320px; right: -340px; }
+    .side-panel.open { right: 0; }
+    h1 { font-size: 38px; }
+  }
+  @media (min-width: 1025px) {
+    .container { max-width: 720px; padding: 60px 40px 100px; }
+  }
   img, input, button, select, textarea { max-width: 100%; }
-  .goal-result-card { word-break: break-word; }
-  .toast { max-width: calc(100vw - 40px); white-space: normal; text-align: center; }
 </style>
 </head>
 <body>
@@ -550,8 +575,6 @@
     </div>
     <div id="authError" class="auth-error"></div>
     <div id="authSuccess" class="auth-success"></div>
-
-    <!-- Login Form -->
     <div id="loginForm">
       <div class="auth-field">
         <label>E-mel</label>
@@ -568,8 +591,6 @@
       </div>
       <button class="auth-btn" id="btnLogin" type="button" onclick="doLogin()">Log Masuk</button>
     </div>
-
-    <!-- Register Form -->
     <div id="registerForm" class="hidden">
       <div class="auth-field">
         <label>Nama Pengguna <span style="color:#5a7a60;font-size:10px">(*unik)</span></label>
@@ -599,25 +620,34 @@
       </div>
       <button class="auth-btn" id="btnRegister" type="button" onclick="doRegister()">Daftar Sekarang</button>
     </div>
-
     <span class="auth-cancel" onclick="closeAuthModal()">Batal — Teruskan sebagai tetamu</span>
   </div>
 </div>
 
-<!-- ===== BOTTOM SHEET MENU ===== -->
-<div class="sheet-overlay" id="sheetOverlay" onclick="closeMenu()"></div>
-<div class="bottom-sheet" id="bottomSheet">
-  <div class="sheet-handle"></div>
-  <div class="sheet-user-info">
-    <div class="sheet-avatar" id="sheetAvatar"></div>
-    <div>
-      <div class="sheet-user-name" id="sheetDisplayName"></div>
-      <div class="sheet-user-email" id="sheetEmail"></div>
-    </div>
+<!-- ===== SIDE PANEL MENU ===== -->
+<div class="panel-overlay" id="panelOverlay" onclick="closeMenu()"></div>
+<div class="side-panel" id="sidePanel">
+  <div class="side-panel-top">
+    <span class="side-panel-brand">💰 TabungKu</span>
+    <button class="side-panel-close" onclick="closeMenu()">✕</button>
   </div>
-  <button class="menu-item" onclick="showDashboard(); closeMenu()"><span class="menu-item-icon">📊</span> Papan Pemuka</button>
-  <button class="menu-item" onclick="showSettings(); closeMenu()"><span class="menu-item-icon">⚙️</span> Tetapan Akaun</button>
-  <button class="menu-item danger" onclick="doLogout(); closeMenu()"><span class="menu-item-icon">🚪</span> Log Keluar</button>
+  <div class="side-panel-user-info">
+    <div class="side-panel-avatar" id="sidePanelAvatar"></div>
+    <div class="side-panel-user-name" id="sidePanelName"></div>
+    <div class="side-panel-user-email" id="sidePanelEmail"></div>
+  </div>
+  <div class="side-panel-menu">
+    <button class="side-menu-item" onclick="showDashboard(); closeMenu()">
+      <span class="side-menu-icon">📊</span> Papan Pemuka
+    </button>
+    <button class="side-menu-item" onclick="showSettings(); closeMenu()">
+      <span class="side-menu-icon">⚙️</span> Tetapan Akaun
+    </button>
+    <button class="side-menu-item danger" onclick="doLogout(); closeMenu()">
+      <span class="side-menu-icon">🚪</span> Log Keluar
+    </button>
+  </div>
+  <div class="side-panel-footer">TabungKu · Plan Smart, Simpan Lebih</div>
 </div>
 
 <!-- ===== DELETE ACCOUNT CONFIRM POPUP ===== -->
@@ -625,12 +655,12 @@
   <div class="popup">
     <div class="popup-title" style="color:#e05555">⚠️ Padam Akaun</div>
     <div style="font-size:13px;color:#8a9e90;margin-bottom:16px;line-height:1.7">
-      Tindakan ini <b style="color:#f0ebe1">tidak boleh dibatalkan</b>. Semua data plan, goals, dan pencapaian kau akan dipadam secara kekal.
+      Tindakan ini <b style="color:#f0ebe1">tidak boleh dibatalkan</b>. Semua data pelan, matlamat, dan pencapaian kau akan dipadam secara kekal.
     </div>
     <div style="margin-bottom:14px">
       <div style="font-size:11px;font-weight:600;color:#5a7a60;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px">Taip kata laluan untuk sahkan</div>
       <div class="auth-input-wrap" style="border-color:rgba(220,60,60,0.3)">
-        <input type="password" id="deleteAccountPw" placeholder="Kata laluan semasa" autocomplete="off" class="confirm-delete-input" style="border:none;background:transparent;height:44px;padding:0 14px;font-family:'Sora',sans-serif;font-size:14px;color:#f0ebe1;outline:none;width:100%" />
+        <input type="password" id="deleteAccountPw" placeholder="Kata laluan semasa" autocomplete="off" style="border:none;background:transparent;height:44px;padding:0 14px;font-family:'Sora',sans-serif;font-size:14px;color:#f0ebe1;outline:none;width:100%" />
         <button class="pw-toggle" type="button" onclick="togglePw('deleteAccountPw',this)">👁</button>
       </div>
     </div>
@@ -652,14 +682,14 @@
       <div style="font-size:11px;color:#5a7a60" id="updateProgressPct">0%</div>
     </div>
     <div class="popup-field">
-      <label>Berapa tambahan simpanan (RM)?</label>
+      <label>Jumlah tambahan simpanan (RM)</label>
       <div class="popup-input-wrap">
         <div class="popup-prefix">RM</div>
         <input type="number" class="popup-input" id="updateAmount" placeholder="500" oninput="previewUpdate()" />
       </div>
     </div>
     <div class="popup-preview" id="updatePreview" style="display:none">
-      Selepas kemas kini: <b id="updateAfterAmt">RM 0</b> (<b id="updateAfterPct">0%</b> lengkap)
+      Selepas kemas kini: <b id="updateAfterAmt">RM 0</b> (<b id="updateAfterPct">0%</b> selesai)
     </div>
     <div class="popup-actions">
       <button class="popup-btn-cancel" onclick="closePopup('popupUpdateGoal')">Batal</button>
@@ -671,9 +701,9 @@
 <!-- ===== POPUP: GOAL BARU (DASHBOARD) ===== -->
 <div class="popup-overlay" id="popupNewGoal">
   <div class="popup">
-    <div class="popup-title">🎯 Goal Baru</div>
+    <div class="popup-title">🎯 Matlamat Baru</div>
     <div class="popup-field">
-      <label>Nama Goal</label>
+      <label>Nama Matlamat</label>
       <input type="text" class="popup-input-full" id="newGoalNamePopup" placeholder="cth: iPhone 16 Pro" />
     </div>
     <div class="popup-field">
@@ -701,7 +731,7 @@
 <!-- ===== POPUP: EDIT PLAN ===== -->
 <div class="popup-overlay" id="popupEditPlan">
   <div class="popup" style="max-width:440px">
-    <div class="popup-title">✏️ Edit Plan</div>
+    <div class="popup-title">✏️ Sunting Pelan</div>
     <div class="popup-field">
       <label>Pendapatan Bulanan</label>
       <div class="popup-input-wrap">
@@ -715,27 +745,27 @@
       <div class="formula-mini-grid">
         <div class="formula-mini-card" id="ef-7020" onclick="selectEditFormula('70/20/10')">
           <div class="formula-mini-name">70/20/10</div>
-          <div class="formula-mini-desc">70% Keperluan<br>20% Kemahuan<br>10% Simpan</div>
+          <div class="formula-mini-desc">70% Keperluan<br>20% Kehendak<br>10% Simpanan</div>
         </div>
         <div class="formula-mini-card selected" id="ef-5030" onclick="selectEditFormula('50/30/20')">
           <div class="formula-mini-name">50/30/20</div>
-          <div class="formula-mini-desc">50% Keperluan<br>30% Kemahuan<br>20% Simpan</div>
+          <div class="formula-mini-desc">50% Keperluan<br>30% Kehendak<br>20% Simpanan</div>
         </div>
         <div class="formula-mini-card" id="ef-free" onclick="selectEditFormula('free')">
           <div class="formula-mini-name">BEBAS</div>
-          <div class="formula-mini-desc">Set sendiri %</div>
+          <div class="formula-mini-desc">Tetapkan % sendiri</div>
         </div>
       </div>
       <div id="editFreeGrid" class="free-edit-grid hidden">
         <div class="free-edit-box needs"><label>Keperluan %</label><input type="number" id="ef-needs" value="50" min="0" max="100" oninput="updateEditPlanPreview()" /></div>
-        <div class="free-edit-box wants"><label>Kemahuan %</label><input type="number" id="ef-wants" value="30" min="0" max="100" oninput="updateEditPlanPreview()" /></div>
+        <div class="free-edit-box wants"><label>Kehendak %</label><input type="number" id="ef-wants" value="30" min="0" max="100" oninput="updateEditPlanPreview()" /></div>
         <div class="free-edit-box savings"><label>Simpanan %</label><input type="number" id="ef-savings" value="20" min="0" max="100" oninput="updateEditPlanPreview()" /></div>
       </div>
     </div>
     <div class="edit-plan-preview" id="editPlanPreview">
-      <div style="font-size:10px;color:#3a5040;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px">Akan kira semula:</div>
+      <div style="font-size:10px;color:#3a5040;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px">Anggaran baharu:</div>
       <div class="preview-row"><span>💰 Simpanan bulanan</span><span class="preview-arrow" id="epSavingsChange">-</span></div>
-      <div class="preview-row" style="margin-top:4px"><span>🎯 Timeline goals</span><span class="preview-arrow" style="color:#5a7a60;font-size:10px">akan dikira semula</span></div>
+      <div class="preview-row" style="margin-top:4px"><span>🎯 Tempoh matlamat</span><span class="preview-arrow" style="color:#5a7a60;font-size:10px">akan dikira semula</span></div>
     </div>
     <div class="popup-actions">
       <button class="popup-btn-cancel" onclick="closePopup('popupEditPlan')">Batal</button>
@@ -754,9 +784,9 @@
     <div class="celebration-stats">
       <div class="c-stat-row"><span class="c-stat-label">Sasaran</span><span class="c-stat-value" id="celebTarget">-</span></div>
       <div class="c-stat-row"><span class="c-stat-label">Masa diambil</span><span class="c-stat-value" id="celebTime">-</span></div>
-      <div class="c-stat-row"><span class="c-stat-label">Simpanan bulanan purata</span><span class="c-stat-value" id="celebMonthly">-</span></div>
+      <div class="c-stat-row"><span class="c-stat-label">Simpanan purata sebulan</span><span class="c-stat-value" id="celebMonthly">-</span></div>
     </div>
-    <div class="celebration-tagline">Hebat! Teruskan! 💪</div>
+    <div class="celebration-tagline">Hebat! Teruskan usaha! 💪</div>
     <button class="btn-close-celebration" onclick="closeCelebration()">TUTUP</button>
   </div>
 </div>
@@ -780,7 +810,7 @@
   <div id="dashboardView">
     <div class="dash-greeting">Hai, <span id="dashUsername">Pengguna</span>! 👋</div>
 
-    <!-- Budget Breakdown Summary -->
+    <!-- Budget Breakdown -->
     <div class="dash-breakdown-card" id="dashBreakdownCard" style="display:none">
       <div class="plan-card-header" style="margin-bottom:0">
         <span class="plan-card-title">💼 Budget Breakdown</span>
@@ -791,33 +821,34 @@
         <div class="dash-breakdown-item savings"><label>Simpanan</label><span class="val" id="dbSavings">-</span></div>
       </div>
       <div style="margin-top:12px;background:#0a1410;border-radius:10px;padding:12px 14px">
-        <div class="dash-breakdown-row"><span class="dash-breakdown-row-label">💼 Income</span><span class="dash-breakdown-row-val" id="dbIncome">-</span></div>
+        <div class="dash-breakdown-row"><span class="dash-breakdown-row-label">💼 Pendapatan</span><span class="dash-breakdown-row-val" id="dbIncome">-</span></div>
         <div class="dash-breakdown-row" id="dbCommitRow" style="display:none"><span class="dash-breakdown-row-label">📋 Komitmen</span><span class="dash-breakdown-row-val" style="color:#f5b731" id="dbCommit">-</span></div>
         <div class="dash-breakdown-row"><span class="dash-breakdown-row-label">💰 Simpanan/bulan</span><span class="dash-breakdown-row-val" style="color:#3ecf6e" id="dbSavingsMonthly">-</span></div>
       </div>
     </div>
+
     <div class="plan-card" id="planCardArea">
       <div class="plan-card-header">
-        <span class="plan-card-title">📋 Plan Aktif</span>
-        <button class="btn-edit" onclick="openEditPlan()">Sunting Plan</button>
+        <span class="plan-card-title">📋 Pelan Aktif</span>
+        <button class="btn-edit" onclick="openEditPlan()">Sunting Pelan</button>
       </div>
       <div id="planCardContent">
         <div class="empty-state">
           <div class="empty-state-icon">📝</div>
-          <div class="empty-state-text">Tiada plan lagi. <a href="#" onclick="switchToPlanner()" style="color:#3ecf6e">Buat plan sekarang →</a></div>
+          <div class="empty-state-text">Tiada pelan lagi. <a href="#" onclick="switchToPlanner(); return false;" style="color:#3ecf6e">Buat pelan sekarang →</a></div>
         </div>
       </div>
     </div>
 
     <!-- Goals Aktif -->
     <div class="section-header">
-      <span class="section-title-dash">🎯 Goal Aktif</span>
-      <button class="btn-add-goal" onclick="openNewGoalPopup()">+ Tambah Goal</button>
+      <span class="section-title-dash">🎯 Matlamat Aktif</span>
+      <button class="btn-add-goal" onclick="openNewGoalPopup()">+ Tambah Matlamat</button>
     </div>
     <div id="dashGoalList">
       <div class="empty-state">
         <div class="empty-state-icon">🎯</div>
-        <div class="empty-state-text">Tiada goal lagi. Tambah goal pertama kau!</div>
+        <div class="empty-state-text">Tiada matlamat lagi. Tambah matlamat pertama kau!</div>
       </div>
     </div>
 
@@ -833,7 +864,7 @@
 
   <!-- ===== SETTINGS VIEW ===== -->
   <div id="settingsView">
-    <button class="btn-back" onclick="showDashboard()">← Balik ke Dashboard</button>
+    <button class="btn-back" onclick="showDashboard()">← Balik ke Papan Pemuka</button>
     <div class="card-title" style="margin-bottom:20px">⚙️ Tetapan Akaun</div>
     <div class="settings-card">
       <div class="settings-section-title">Profil</div>
@@ -862,31 +893,30 @@
         <div class="settings-pw-wrap"><input type="password" id="settingsOldPw" placeholder="••••••••" autocomplete="current-password" /><button class="pw-toggle" type="button" onclick="togglePw('settingsOldPw',this)">👁</button></div>
       </div>
       <div style="margin-bottom:12px">
-        <div class="settings-row-label" style="margin-bottom:6px">Kata Laluan Baru</div>
+        <div class="settings-row-label" style="margin-bottom:6px">Kata Laluan Baharu</div>
         <div class="settings-pw-wrap"><input type="password" id="settingsNewPw" placeholder="••••••••" autocomplete="new-password" /><button class="pw-toggle" type="button" onclick="togglePw('settingsNewPw',this)">👁</button></div>
       </div>
       <div style="margin-bottom:12px">
-        <div class="settings-row-label" style="margin-bottom:6px">Sahkan Kata Laluan Baru</div>
+        <div class="settings-row-label" style="margin-bottom:6px">Sahkan Kata Laluan Baharu</div>
         <div class="settings-pw-wrap"><input type="password" id="settingsConfirmPw" placeholder="••••••••" autocomplete="new-password" /><button class="pw-toggle" type="button" onclick="togglePw('settingsConfirmPw',this)">👁</button></div>
       </div>
       <button class="btn-settings-save" onclick="changePassword()">Tukar Kata Laluan</button>
     </div>
     <div class="danger-zone-card">
       <div class="danger-zone-title">⚠️ Zon Bahaya</div>
-      <div class="danger-zone-desc">Memadam akaun akan menghapuskan semua data kau secara kekal termasuk plan, goals, dan pencapaian. Tindakan ini tidak boleh dibatalkan.</div>
+      <div class="danger-zone-desc">Memadam akaun akan menghapuskan semua data kau secara kekal termasuk pelan, matlamat, dan pencapaian. Tindakan ini tidak boleh dibatalkan.</div>
       <button class="btn-delete-account" onclick="openDeleteAccountPopup()">🗑 Padam Akaun Saya</button>
     </div>
   </div>
 
   <!-- ===== PLANNER (GUEST / WIZARD) ===== -->
-  <div id="plannerView">
+  <div id="plannerView" style="display:none">
     <div class="header" id="plannerHeader">
       <div class="logo-badge">💰 TabungKu</div>
       <h1>Plan Smart, <span>Simpan Lebih.</span></h1>
-      <p class="subtitle">Kira savings kau, set goals, capai impian — step by step.</p>
+      <p class="subtitle">Kira simpanan kau, tetapkan matlamat, capai impian — langkah demi langkah.</p>
     </div>
 
-    <!-- Steps -->
     <div class="steps-wrapper">
       <div class="steps-container" id="stepsContainer"></div>
       <div class="steps-labels" id="stepsLabels"></div>
@@ -894,11 +924,11 @@
 
     <!-- Step 1: Income -->
     <div class="card" id="step1">
-      <div class="step-badge">STEP 1 / 5</div>
-      <div class="card-title">Berapa income bulanan kau? 💸</div>
-      <div class="card-subtitle">Gaji bersih (after EPF/tax) ya, bukan gross.</div>
+      <div class="step-badge">LANGKAH 1 / 5</div>
+      <div class="card-title">Berapa pendapatan bulanan kau? 💸</div>
+      <div class="card-subtitle">Gaji bersih (selepas EPF/cukai) ya, bukan gaji kasar.</div>
       <div class="input-group">
-        <label class="input-label">Monthly Take-Home Pay</label>
+        <label class="input-label">Gaji Bersih Bulanan</label>
         <div class="input-wrap">
           <div class="input-prefix">RM</div>
           <input type="number" id="incomeInput" placeholder="cth: 3500" min="0" oninput="updateIncomePreview(); updateAllPreviews()" />
@@ -913,9 +943,9 @@
 
     <!-- Step 2: Formula -->
     <div class="card hidden" id="step2">
-      <div class="step-badge">STEP 2 / 5</div>
+      <div class="step-badge">LANGKAH 2 / 5</div>
       <div class="card-title">Pilih formula simpanan kau 📊</div>
-      <div class="card-subtitle">Pilih yang paling sesuai dengan lifestyle kau.</div>
+      <div class="card-subtitle">Pilih yang paling sesuai dengan gaya hidup kau.</div>
       <div class="formula-grid">
         <div class="formula-card" id="f-7020" onclick="selectFormula('70/20/10')">
           <div class="formula-name">70/20/10</div>
@@ -926,7 +956,7 @@
           <div class="formula-desc">50% Keperluan&#10;30% Kehendak&#10;20% Simpanan</div>
         </div>
         <div class="formula-card" id="f-free" onclick="selectFormula('free')">
-          <div class="formula-name">FREE</div>
+          <div class="formula-name">BEBAS</div>
           <div class="formula-desc">Tentukan % sendiri</div>
         </div>
       </div>
@@ -956,9 +986,9 @@
 
     <!-- Step 3: Commitments -->
     <div class="card hidden" id="step3">
-      <div class="step-badge">STEP 3 / 5</div>
+      <div class="step-badge">LANGKAH 3 / 5</div>
       <div class="card-title">Komitmen bulanan kau 📋</div>
-      <div class="card-subtitle">Sewa, ansuran kereta, loan, subscription — masukkan semua. Boleh skip kalau takde.</div>
+      <div class="card-subtitle">Sewa, ansuran kereta, pinjaman, langganan — masukkan semua. Boleh langkau jika tiada.</div>
       <div class="commitment-list" id="commitmentList"></div>
       <div class="add-row">
         <input type="text" id="commitName" placeholder="cth: Sewa rumah" onkeydown="if(event.key==='Enter')addCommitment()" />
@@ -966,9 +996,9 @@
           <div class="commit-prefix">RM</div>
           <input type="number" id="commitAmt" placeholder="500" onkeydown="if(event.key==='Enter')addCommitment()" />
         </div>
-        <button class="btn-add" onclick="addCommitment()">+ Add</button>
+        <button class="btn-add" onclick="addCommitment()">+ Tambah</button>
       </div>
-      <div id="commitTotal" class="hidden total-row">Total komitmen: <b id="commitTotalAmt"></b></div>
+      <div id="commitTotal" class="hidden total-row">Jumlah komitmen: <b id="commitTotalAmt"></b></div>
       <div id="commitWarning" class="warning-box hidden" style="margin-top:12px"></div>
       <div class="nav-row">
         <button class="btn-secondary" onclick="goToStep(2)">← Balik</button>
@@ -978,26 +1008,26 @@
 
     <!-- Step 4: Goals -->
     <div class="card hidden" id="step4">
-      <div class="step-badge">STEP 4 / 5</div>
+      <div class="step-badge">LANGKAH 4 / 5</div>
       <div class="card-title">Impian kau apa? 🎯</div>
-      <div class="card-subtitle">Masukkan goals kau — rumah, kereta, travel, emergency fund, apa je.</div>
+      <div class="card-subtitle">Masukkan matlamat kau — rumah, kereta, perjalanan, tabung kecemasan, apa sahaja.</div>
       <div id="goalList"></div>
       <div class="add-goal-form">
-        <div style="font-size:11px;font-weight:700;color:#3ecf6e;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:14px;">+ TAMBAH GOAL</div>
-        <label class="form-label">Nama Goal</label>
-        <input type="text" id="goalName" placeholder="cth: Emergency Fund" />
-        <label class="form-label">Target Amount</label>
+        <div style="font-size:11px;font-weight:700;color:#3ecf6e;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:14px;">+ TAMBAH MATLAMAT</div>
+        <label class="form-label">Nama Matlamat</label>
+        <input type="text" id="goalName" placeholder="cth: Tabung Kecemasan" />
+        <label class="form-label">Jumlah Sasaran</label>
         <div class="goal-target-wrap">
           <div class="prefix">RM</div>
           <input type="number" id="goalTarget" placeholder="10000" />
         </div>
-        <span class="form-section-label" style="margin-top:4px">Priority</span>
+        <span class="form-section-label" style="margin-top:4px">Keutamaan</span>
         <div class="priority-select-planner" id="newGoalPriorityPlanner">
-          <button class="p-btn high" onclick="setNewPriority('high')">🔴 High</button>
-          <button class="p-btn medium sel" onclick="setNewPriority('medium')">🟡 Medium</button>
-          <button class="p-btn low" onclick="setNewPriority('low')">🔵 Low</button>
+          <button class="p-btn high" onclick="setNewPriority('high')">🔴 Tinggi</button>
+          <button class="p-btn medium sel" onclick="setNewPriority('medium')">🟡 Sederhana</button>
+          <button class="p-btn low" onclick="setNewPriority('low')">🔵 Rendah</button>
         </div>
-        <span class="form-section-label" style="margin-top:14px">Timeline</span>
+        <span class="form-section-label" style="margin-top:14px">Tempoh</span>
         <div class="timeline-toggle" id="newGoalTimeline">
           <button class="t-btn sel" onclick="setNewTimeline('auto')">🤖 Auto-kira</button>
           <button class="t-btn" onclick="setNewTimeline('manual')">📅 Saya tetapkan</button>
@@ -1006,7 +1036,7 @@
           <input type="number" id="goalMonths" placeholder="12" style="flex:1;height:40px;background:#0e1a14;border:1.5px solid #2a3d2e;border-radius:10px;padding:0 12px;font-size:13px;font-family:'Space Mono',monospace;color:#f0ebe1;" />
           <span class="month-suffix">bulan untuk capai</span>
         </div>
-        <button class="btn-add" style="width:100%;margin-top:14px;height:44px;" onclick="addGoal()">Tambah Goal</button>
+        <button class="btn-add" style="width:100%;margin-top:14px;height:44px;" onclick="addGoal()">Tambah Matlamat</button>
       </div>
       <div class="nav-row" style="margin-top:20px">
         <button class="btn-secondary" onclick="goToStep(3)">← Balik</button>
@@ -1016,23 +1046,19 @@
 
     <!-- Step 5: Results -->
     <div class="card hidden" id="step5">
-      <div class="step-badge">STEP 5 / 5 — RESULT</div>
-      <div class="card-title">Breakdown Savings Kau 🏆</div>
-      <div class="card-subtitle">Semua dah dikira & dah rounded — no sen drama.</div>
-      <div id="savePlanBanner" class="save-plan-banner hidden">
-        <div class="save-plan-text">💡 <b>Log masuk</b> untuk simpan plan & track progress goal kau!</div>
-        <button class="btn-save-plan" onclick="openAuthModal()">Log Masuk / Daftar</button>
-      </div>
+      <div class="step-badge">LANGKAH 5 / 5 — KEPUTUSAN</div>
+      <div class="card-title">Pecahan Simpanan Kau 🏆</div>
+      <div class="card-subtitle">Semua telah dikira & dibundarkan — tiada drama sen.</div>
       <div id="resultsContent"></div>
       <div class="nav-row" style="margin-top:20px">
-        <button class="btn-secondary" onclick="restart()">🔄 Restart</button>
-        <button class="btn-primary" onclick="goToStep(4)" style="margin-top:0">✏️ Edit Goals</button>
+        <button class="btn-secondary" onclick="restart()">🔄 Mula Semula</button>
+        <button class="btn-primary" onclick="goToStep(4)" style="margin-top:0">✏️ Sunting Matlamat</button>
       </div>
     </div>
   </div><!-- end plannerView -->
 
   <!-- GUEST FOOTER -->
-  <div id="guestFooter" class="guest-footer">
+  <div id="guestFooter" class="guest-footer" style="display:none">
     <button class="btn-auth-footer" onclick="openAuthModal()">Log Masuk / Daftar</button>
   </div>
 
@@ -1058,10 +1084,8 @@
   const auth = getAuth(app);
   const db = getFirestore(app);
 
-  // Expose to global
   window._fb = { auth, db, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updatePassword, reauthenticateWithCredential, EmailAuthProvider, doc, setDoc, getDoc, updateDoc, collection, addDoc, getDocs, deleteDoc, query, where, orderBy };
 
-  // Auth state listener
   onAuthStateChanged(auth, async (user) => {
     if (user) {
       const uDoc = await getDoc(doc(db, 'users', user.uid));
@@ -1109,15 +1133,14 @@
 
     const username = u.username || u.email.split('@')[0];
     document.getElementById('headerUsername').textContent = username;
-    document.getElementById('sheetDisplayName').textContent = username;
-    document.getElementById('sheetEmail').textContent = u.email;
+    document.getElementById('sidePanelName').textContent = username;
+    document.getElementById('sidePanelEmail').textContent = u.email;
 
-    // Sheet avatar
-    const sheetAv = document.getElementById('sheetAvatar');
+    const sidePanelAv = document.getElementById('sidePanelAvatar');
     if (u.avatarUrl) {
-      sheetAv.innerHTML = `<img src="${u.avatarUrl}" onerror="this.parentElement.textContent='${username[0].toUpperCase()}'" />`;
+      sidePanelAv.innerHTML = `<img src="${u.avatarUrl}" onerror="this.parentElement.textContent='${username[0].toUpperCase()}'" />`;
     } else {
-      sheetAv.textContent = username[0].toUpperCase();
+      sidePanelAv.textContent = username[0].toUpperCase();
     }
 
     const avatar = document.getElementById('headerAvatar');
@@ -1134,6 +1157,7 @@
   function enterGuestMode() {
     document.getElementById('plannerView').style.display = 'block';
     document.getElementById('guestFooter').style.display = 'block';
+    document.getElementById('plannerHeader').style.display = 'block';
     document.getElementById('dashboardView').classList.remove('visible');
     document.getElementById('settingsView').classList.remove('visible');
     document.getElementById('userHeader').classList.remove('visible');
@@ -1142,29 +1166,33 @@
   }
 
   function switchToPlanner() {
+    const isLoggedIn = !!window.currentUser;
     document.getElementById('dashboardView').classList.remove('visible');
     document.getElementById('settingsView').classList.remove('visible');
     document.getElementById('plannerView').style.display = 'block';
-    document.getElementById('guestFooter').style.display = 'block';
+    // Hide logo header and guest footer for logged-in users
+    document.getElementById('plannerHeader').style.display = isLoggedIn ? 'none' : 'block';
+    document.getElementById('guestFooter').style.display = isLoggedIn ? 'none' : 'block';
     window.scrollTo({ top: 0, behavior: 'smooth' });
     return false;
   }
 
   function toggleMenu(e) {
     e.stopPropagation();
-    const sheet = document.getElementById('bottomSheet');
-    const overlay = document.getElementById('sheetOverlay');
-    const isOpen = sheet.classList.contains('open');
-    if (isOpen) { sheet.classList.remove('open'); overlay.classList.remove('visible'); }
-    else { sheet.classList.add('open'); overlay.classList.add('visible'); }
+    const panel = document.getElementById('sidePanel');
+    const overlay = document.getElementById('panelOverlay');
+    const isOpen = panel.classList.contains('open');
+    if (isOpen) { panel.classList.remove('open'); overlay.classList.remove('visible'); }
+    else { panel.classList.add('open'); overlay.classList.add('visible'); }
   }
 
   function closeMenu() {
-    const sheet = document.getElementById('bottomSheet');
-    const overlay = document.getElementById('sheetOverlay');
-    if (sheet) sheet.classList.remove('open');
+    const panel = document.getElementById('sidePanel');
+    const overlay = document.getElementById('panelOverlay');
+    if (panel) panel.classList.remove('open');
     if (overlay) overlay.classList.remove('visible');
   }
+
   async function showDashboard() {
     document.getElementById('settingsView').classList.remove('visible');
     document.getElementById('dashboardView').classList.add('visible');
@@ -1201,7 +1229,6 @@
         ${totalCommit > 0 ? `<div class="plan-row">Komitmen: <b>RM ${fmt(totalCommit)}</b> (${commitStr})</div>` : ''}
       `;
 
-      // Populate breakdown card
       document.getElementById('dashBreakdownCard').style.display = 'block';
       document.getElementById('dbNeeds').textContent = 'RM ' + fmt(needsAmt);
       document.getElementById('dbWants').textContent = 'RM ' + fmt(wantsAmt);
@@ -1214,12 +1241,11 @@
 
       window._currentPlan = planData.plan;
     } else {
-      document.getElementById('planCardContent').innerHTML = `<div class="empty-state"><div class="empty-state-icon">📝</div><div class="empty-state-text">Tiada plan lagi. <a href="#" onclick="switchToPlanner(); return false;" style="color:#3ecf6e">Buat plan sekarang →</a></div></div>`;
+      document.getElementById('planCardContent').innerHTML = `<div class="empty-state"><div class="empty-state-icon">📝</div><div class="empty-state-text">Tiada pelan lagi. <a href="#" onclick="switchToPlanner(); return false;" style="color:#3ecf6e">Buat pelan sekarang →</a></div></div>`;
       document.getElementById('dashBreakdownCard').style.display = 'none';
       window._currentPlan = null;
     }
 
-    // Load goals
     const goalsSnap = await getDocs(collection(db, 'users', u.uid, 'goals'));
     dashGoals = [];
     dashAchievements = [];
@@ -1237,23 +1263,15 @@
   function renderDashGoals() {
     const list = document.getElementById('dashGoalList');
     if (dashGoals.length === 0) {
-      list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🎯</div><div class="empty-state-text">Tiada goal lagi. Tambah goal pertama kau!</div></div>`;
+      list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🎯</div><div class="empty-state-text">Tiada matlamat lagi. Tambah matlamat pertama kau!</div></div>`;
       return;
     }
-
     const plan = window._currentPlan;
-    const now = new Date();
-    const planYear = plan ? new Date().getFullYear() : null;
-
     list.innerHTML = dashGoals.map(g => {
       const pct = g.target > 0 ? Math.min(100, Math.round((g.saved || 0) / g.target * 100)) : 0;
       const prioColor = g.priority === 'high' ? '#ff6060' : g.priority === 'medium' ? '#f5b731' : '#82b4e8';
       const prioLabel = g.priority === 'high' ? 'Tinggi' : g.priority === 'medium' ? 'Sederhana' : 'Rendah';
-
       let etaStr = '';
-      if (plan && plan.plan) {
-        const pData = plan.plan;
-      }
       if (plan) {
         const pct2 = plan.formula === 'free' ? plan.freePct : FORMULAS[plan.formula];
         const savingsAmt = round(plan.income * ((pct2?.savings || 0)) / 100);
@@ -1264,7 +1282,6 @@
           etaStr = `Anggaran selesai: ${months} bulan lagi (${eta.toLocaleDateString('ms-MY', { month: 'short', year: 'numeric' })})`;
         }
       }
-
       return `
         <div class="goal-dash-card">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
@@ -1282,7 +1299,7 @@
             </div>
             <button class="btn-add-savings" onclick="openUpdateGoal('${g.id}')">+</button>
             <button class="btn-complete" onclick="markGoalComplete('${g.id}')">✓ Selesai</button>
-            <button class="btn-remove" onclick="deleteActiveGoal('${g.id}')" title="Padam goal" style="height:36px;padding:0 10px;font-size:16px;flex-shrink:0">🗑</button>
+            <button class="btn-remove" onclick="deleteActiveGoal('${g.id}')" title="Padam matlamat" style="height:36px;padding:0 10px;font-size:16px;flex-shrink:0">🗑</button>
           </div>
         </div>`;
     }).join('');
@@ -1293,7 +1310,7 @@
     const list = document.getElementById('achieveList');
     if (dashAchievements.length === 0) { area.style.display = 'none'; return; }
     area.style.display = 'block';
-    document.getElementById('achieveCount').textContent = `(${dashAchievements.length} goal selesai)`;
+    document.getElementById('achieveCount').textContent = `(${dashAchievements.length} matlamat selesai)`;
     list.innerHTML = dashAchievements.map(g => `
       <div class="achievement-item">
         <span class="achievement-check">✓</span>
@@ -1306,20 +1323,20 @@
 
   async function deleteAchievement(goalId) {
     if (!window._fb) return;
-    if (!confirm('Padam pencapaian ini? Goal akan dipulihkan ke senarai aktif.')) return;
+    if (!confirm('Padam pencapaian ini? Matlamat akan dipulihkan ke senarai aktif.')) return;
     const { db, doc, updateDoc } = window._fb;
     await updateDoc(doc(db, 'users', window.currentUser.uid, 'goals', goalId), { completed: false, completedAt: null });
     await loadDashboard();
-    showToast('Pencapaian dipadam, goal dipulihkan.');
+    showToast('Pencapaian dipadam, matlamat dipulihkan.');
   }
 
   async function deleteActiveGoal(goalId) {
     if (!window._fb) return;
-    if (!confirm('Padam goal ini secara kekal?')) return;
+    if (!confirm('Padam matlamat ini secara kekal?')) return;
     const { db, doc, deleteDoc } = window._fb;
     await deleteDoc(doc(db, 'users', window.currentUser.uid, 'goals', goalId));
     await loadDashboard();
-    showToast('Goal dipadam.');
+    showToast('Matlamat dipadam.');
   }
 
   // ===== SETTINGS =====
@@ -1362,13 +1379,13 @@
     const username = u.username || u.email.split('@')[0];
     const initial = username[0].toUpperCase();
     const avatar = document.getElementById('headerAvatar');
-    const sheetAv = document.getElementById('sheetAvatar');
+    const sidePanelAv = document.getElementById('sidePanelAvatar');
     if (url) {
       avatar.innerHTML = `<img src="${url}" onerror="this.parentElement.textContent='${initial}'" />`;
-      sheetAv.innerHTML = `<img src="${url}" onerror="this.parentElement.textContent='${initial}'" />`;
+      sidePanelAv.innerHTML = `<img src="${url}" onerror="this.parentElement.textContent='${initial}'" />`;
     } else {
       avatar.textContent = initial;
-      sheetAv.textContent = initial;
+      sidePanelAv.textContent = initial;
     }
     showToast('Gambar profil dikemas kini!');
   }
@@ -1378,7 +1395,7 @@
     const newPw = document.getElementById('settingsNewPw').value;
     const confirmPw = document.getElementById('settingsConfirmPw').value;
     if (!oldPw || !newPw || !confirmPw) { showToast('Sila isi semua ruangan kata laluan.', true); return; }
-    if (newPw !== confirmPw) { showToast('Kata laluan baru tidak sepadan!', true); return; }
+    if (newPw !== confirmPw) { showToast('Kata laluan baharu tidak sepadan!', true); return; }
     if (newPw.length < 6) { showToast('Kata laluan mesti sekurang-kurangnya 6 aksara.', true); return; }
     try {
       const { auth, reauthenticateWithCredential, EmailAuthProvider, updatePassword } = window._fb;
@@ -1404,6 +1421,9 @@
   // ===== DELETE ACCOUNT =====
   function openDeleteAccountPopup() {
     document.getElementById('deleteAccountPw').value = '';
+    const btn = document.getElementById('btnConfirmDelete');
+    btn.disabled = false;
+    btn.textContent = 'Padam Akaun';
     document.getElementById('popupDeleteAccount').classList.add('visible');
   }
 
@@ -1411,7 +1431,8 @@
     const pw = document.getElementById('deleteAccountPw').value;
     if (!pw) { showToast('Sila masukkan kata laluan untuk sahkan.', true); return; }
     const btn = document.getElementById('btnConfirmDelete');
-    btn.disabled = true; btn.textContent = 'Memproses...';
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span>Memproses...';
     try {
       const { auth, db, reauthenticateWithCredential, EmailAuthProvider, doc, deleteDoc, collection, getDocs } = window._fb;
       const user = auth.currentUser;
@@ -1419,16 +1440,18 @@
       await reauthenticateWithCredential(user, cred);
 
       const uid = user.uid;
-      // Delete all goals subcollection
       const goalsSnap = await getDocs(collection(db, 'users', uid, 'goals'));
       for (const d of goalsSnap.docs) { await deleteDoc(doc(db, 'users', uid, 'goals', d.id)); }
-      // Delete user doc
       await deleteDoc(doc(db, 'users', uid));
-      // Delete auth account
       await user.delete();
-      // Firebase onAuthStateChanged will call enterGuestMode automatically
+
+      // Close popup and show success before onAuthStateChanged fires
+      closePopup('popupDeleteAccount');
+      showToast('Akaun berjaya dipadam. Jumpa lagi! 👋');
+      // onAuthStateChanged will automatically call enterGuestMode()
     } catch (e) {
-      btn.disabled = false; btn.textContent = 'Padam Akaun';
+      btn.disabled = false;
+      btn.textContent = 'Padam Akaun';
       const msg = (e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential')
         ? 'Kata laluan tidak betul.' : 'Ralat: ' + e.message;
       showToast(msg, true);
@@ -1475,7 +1498,7 @@
       'auth/user-not-found': 'E-mel tidak dijumpai.',
       'auth/wrong-password': 'Kata laluan salah.',
       'auth/email-already-in-use': 'E-mel sudah didaftarkan.',
-      'auth/weak-password': 'Kata laluan terlalu lemah (min 6 aksara).',
+      'auth/weak-password': 'Kata laluan terlalu lemah (minimum 6 aksara).',
       'auth/invalid-email': 'Format e-mel tidak sah.',
       'auth/too-many-requests': 'Terlalu banyak percubaan. Cuba lagi kemudian.',
       'auth/invalid-credential': 'E-mel atau kata laluan tidak betul.',
@@ -1490,7 +1513,6 @@
     setAuthLoading('btnLogin', true, 'Log Masuk');
     clearAuthMessages();
     try {
-      // First check if email exists in Firestore
       const { auth, db, signInWithEmailAndPassword, collection, getDocs, query, where } = window._fb;
       const emailQ = query(collection(db, 'users'), where('email', '==', email));
       const emailSnap = await getDocs(emailQ);
@@ -1522,9 +1544,7 @@
     setAuthLoading('btnRegister', true, 'Daftar Sekarang');
     clearAuthMessages();
     try {
-      const { auth, db, createUserWithEmailAndPassword, doc, setDoc, getDoc, collection, getDocs, query, where } = window._fb;
-
-      // Check username uniqueness
+      const { auth, db, createUserWithEmailAndPassword, doc, setDoc, collection, getDocs, query, where } = window._fb;
       const usnQ = query(collection(db, 'users'), where('username', '==', username));
       const usnSnap = await getDocs(usnQ);
       if (!usnSnap.empty) {
@@ -1532,8 +1552,6 @@
         setAuthLoading('btnRegister', false, 'Daftar Sekarang');
         return;
       }
-
-      // Check if email already taken by active user
       const emailQ = query(collection(db, 'users'), where('email', '==', email));
       const emailSnap = await getDocs(emailQ);
       if (!emailSnap.empty) {
@@ -1541,23 +1559,15 @@
         setAuthLoading('btnRegister', false, 'Daftar Sekarang');
         return;
       }
-
-      // Create auth account — may already exist in Auth if user deleted account (Firestore doc gone but Auth still there briefly)
       let cred;
       try {
         cred = await createUserWithEmailAndPassword(auth, email, password);
       } catch (e) {
         if (e.code === 'auth/email-already-in-use') {
-          // Firestore doc doesn't exist but Auth account does — likely a recently deleted account
-          // Sign them in and re-create Firestore doc
           const { signInWithEmailAndPassword } = window._fb;
           cred = await signInWithEmailAndPassword(auth, email, password);
-        } else {
-          throw e;
-        }
+        } else { throw e; }
       }
-
-      // Write (or overwrite) Firestore user doc
       await setDoc(doc(db, 'users', cred.user.uid), { username, email, createdAt: Date.now() });
     } catch (e) {
       showAuthError(translateAuthError(e.code));
@@ -1576,7 +1586,6 @@
     const g = dashGoals.find(x => x.id === goalId);
     if (!g) return;
     activeUpdateGoalId = goalId;
-    // Try get amount from inline input first
     const inlineInput = document.getElementById('addSav-' + goalId);
     if (inlineInput && inlineInput.value) {
       document.getElementById('updateAmount').value = inlineInput.value;
@@ -1629,7 +1638,6 @@
     const months = g.createdAt ? Math.max(1, Math.round((completedAt - g.createdAt) / (1000*60*60*24*30))) : 1;
     const monthlyAvg = round((g.saved || g.target) / months);
     await updateDoc(doc(db, 'users', window.currentUser.uid, 'goals', g.id), { completed: true, completedAt });
-    // Show celebration
     document.getElementById('celebGoalName').textContent = g.name;
     document.getElementById('celebTarget').textContent = 'RM ' + fmt(g.target);
     document.getElementById('celebTime').textContent = months + ' bulan';
@@ -1661,7 +1669,7 @@
   async function saveDashGoal() {
     const name = document.getElementById('newGoalNamePopup').value.trim();
     const target = parseFloat(document.getElementById('newGoalTargetPopup').value);
-    if (!name || !target || target <= 0) { showToast('Sila isi nama dan sasaran goal!', true); return; }
+    if (!name || !target || target <= 0) { showToast('Sila isi nama dan sasaran matlamat!', true); return; }
     if (!window._fb) return;
     const { db, collection, addDoc } = window._fb;
     await addDoc(collection(db, 'users', window.currentUser.uid, 'goals'), {
@@ -1670,7 +1678,7 @@
     });
     closePopup('popupNewGoal');
     await loadDashboard();
-    showToast('Goal baru ditambah!');
+    showToast('Matlamat baharu ditambah!');
   }
 
   // ===== POPUP: EDIT PLAN =====
@@ -1712,7 +1720,6 @@
     const oldSavings = plan ? round(plan.income * (plan.formula === 'free' ? plan.freePct.savings : FORMULAS[plan.formula].savings) / 100) : 0;
     const pct = getEditPct();
     const newSavings = inc > 0 ? round(inc * (pct?.savings || 0) / 100) : 0;
-    const arrow = newSavings >= oldSavings ? '↑' : '↓';
     document.getElementById('epSavingsChange').textContent = oldSavings > 0 ? `RM ${fmt(oldSavings)} → RM ${fmt(newSavings)}` : `RM ${fmt(newSavings)}`;
     document.getElementById('epSavingsChange').style.color = newSavings >= oldSavings ? '#3ecf6e' : '#f5b731';
   }
@@ -1732,7 +1739,7 @@
     window._currentPlan = planData;
     closePopup('popupEditPlan');
     await loadDashboard();
-    showToast('Plan berjaya dikemas kini!');
+    showToast('Pelan berjaya dikemas kini!');
   }
 
   function closePopup(id) { document.getElementById(id).classList.remove('visible'); }
@@ -1747,7 +1754,6 @@
       freePct: selectedFormula === 'free' ? pct : null
     };
     await setDoc(doc(db, 'users', window.currentUser.uid), { plan: planData }, { merge: true });
-    // Save goals
     const { collection, addDoc } = window._fb;
     for (const g of goals) {
       await addDoc(collection(db, 'users', window.currentUser.uid, 'goals'), {
@@ -1756,18 +1762,19 @@
       });
     }
     window._currentPlan = planData;
-    showToast('Plan berjaya disimpan!');
+    showToast('Pelan berjaya disimpan!');
     setTimeout(() => showDashboard(), 1000);
   }
 
-  // ===== PLANNER LOGIC (ORIGINAL) =====
+  // ===== PLANNER LOGIC =====
   function getIncome() { return parseFloat(document.getElementById('incomeInput').value) || 0; }
   function getPct() {
     if (selectedFormula === 'free') {
-      let needs = parseFloat(document.getElementById('freeNeeds').value) || 0;
-      let wants = parseFloat(document.getElementById('freeWants').value) || 0;
-      let savings = parseFloat(document.getElementById('freeSavings').value) || 0;
-      return { needs, wants, savings };
+      return {
+        needs: parseFloat(document.getElementById('freeNeeds').value) || 0,
+        wants: parseFloat(document.getElementById('freeWants').value) || 0,
+        savings: parseFloat(document.getElementById('freeSavings').value) || 0
+      };
     }
     return FORMULAS[selectedFormula];
   }
@@ -1781,7 +1788,7 @@
     const container = document.getElementById('stepsContainer');
     const labelsContainer = document.getElementById('stepsLabels');
     container.innerHTML = ''; labelsContainer.innerHTML = '';
-    const stepNames = ['Pendapatan', 'Formula', 'Komitmen', 'Goal', 'Result'];
+    const stepNames = ['Pendapatan', 'Formula', 'Komitmen', 'Matlamat', 'Keputusan'];
     for (let s = 1; s <= 5; s++) {
       const dot = document.createElement('div');
       dot.className = 'step-dot' + (s === currentStep ? ' active' : s < currentStep ? ' done' : '');
@@ -1798,7 +1805,7 @@
   }
 
   function goToStep(n) {
-    if (n === 2 && getIncome() <= 0) { alert('Sila masukkan income dulu!'); return; }
+    if (n === 2 && getIncome() <= 0) { alert('Sila masukkan pendapatan dahulu!'); return; }
     if (n === 5) { calcResults(); return; }
     document.getElementById('step' + currentStep).classList.add('hidden');
     currentStep = n;
@@ -1843,7 +1850,7 @@
     let savings = parseFloat(document.getElementById('freeSavings').value) || 0;
     let total = needs + wants + savings;
     const warn = document.getElementById('freeTotalWarning');
-    if (total !== 100) { warn.classList.remove('hidden'); warn.textContent = `⚠️ Total peratusan mesti 100%. Sekarang: ${total}%. Sila adjust.`; }
+    if (total !== 100) { warn.classList.remove('hidden'); warn.textContent = `⚠️ Jumlah peratusan mesti 100%. Sekarang: ${total}%. Sila laraskan.`; }
     else { warn.classList.add('hidden'); }
     const inc = getIncome();
     if (inc > 0) {
@@ -1868,7 +1875,7 @@
     const pct = getPct();
     const savingsAmt = round(getIncome() * (pct.savings || 0) / 100);
     const warn = document.getElementById('commitWarning');
-    if (total > savingsAmt && savingsAmt > 0) { warn.classList.remove('hidden'); warn.textContent = `⚠️ Komitmen (RM ${fmt(total)}) melebihi savings allocation (RM ${fmt(savingsAmt)}). Consider adjust formula atau reduce komitmen.`; }
+    if (total > savingsAmt && savingsAmt > 0) { warn.classList.remove('hidden'); warn.textContent = `⚠️ Komitmen (RM ${fmt(total)}) melebihi peruntukan simpanan (RM ${fmt(savingsAmt)}). Pertimbangkan untuk laraskan formula atau kurangkan komitmen.`; }
     else { warn.classList.add('hidden'); }
   }
 
@@ -1917,7 +1924,7 @@
     const list = document.getElementById('goalList'); list.innerHTML = '';
     goals.forEach(g => {
       const div = document.createElement('div'); div.className = 'goal-item';
-      div.innerHTML = `<div class="goal-header"><div class="goal-name-display">${g.name}</div><span class="priority-badge priority-${g.priority}">${g.priority}</span><button class="btn-remove" onclick="removeGoal(${g.id})">✕</button></div><div class="goal-meta"><span>🎯 Target: <b>RM ${fmt(g.target)}</b></span><span>⏱ ${g.mode === 'manual' && g.months ? g.months + ' bulan' : 'Auto'}</span></div>`;
+      div.innerHTML = `<div class="goal-header"><div class="goal-name-display">${g.name}</div><span class="priority-badge priority-${g.priority}">${g.priority}</span><button class="btn-remove" onclick="removeGoal(${g.id})">✕</button></div><div class="goal-meta"><span>🎯 Sasaran: <b>RM ${fmt(g.target)}</b></span><span>⏱ ${g.mode === 'manual' && g.months ? g.months + ' bulan' : 'Auto'}</span></div>`;
       list.appendChild(div);
     });
   }
@@ -1941,31 +1948,40 @@
 
     const isLoggedIn = !!window.currentUser;
 
-    let html = `
-      ${!isLoggedIn ? `<div class="save-plan-banner"><div class="save-plan-text">💡 <b>Log masuk</b> untuk simpan plan & track progress!</div><button class="btn-save-plan" onclick="openAuthModal()">Log Masuk / Daftar</button></div>` : `<div class="save-plan-banner" style="cursor:pointer" onclick="savePlanToFirebase()"><div class="save-plan-text">💾 <b>Simpan plan ini</b> ke akaun kau!</div><button class="btn-save-plan">Simpan Plan</button></div>`}
+    // Build budget breakdown section
+    let budgetHtml = `
       <div class="results-summary">
-        <div class="results-label">Monthly Savings Available</div>
+        <div class="results-label">Simpanan Bulanan Tersedia</div>
         <div class="results-amount">RM ${fmt(savingsAmt)}</div>
-        <div class="results-sub">${pct.savings}% daripada RM ${fmt(inc)} income kau</div>
+        <div class="results-sub">${pct.savings}% daripada RM ${fmt(inc)} pendapatan kau</div>
       </div>
       <div class="card-title" style="margin-bottom:12px">💼 Budget Breakdown</div>
-      <div style="background:#0a1410;border-radius:12px;padding:16px 20px">
-        <div class="budget-row"><span class="budget-row-label">💼 Income</span><span class="budget-row-amount">RM ${fmt(inc)}</span></div>
+      <div style="background:#0a1410;border-radius:12px;padding:16px 20px;margin-bottom:20px">
+        <div class="budget-row"><span class="budget-row-label">💼 Pendapatan</span><span class="budget-row-amount">RM ${fmt(inc)}</span></div>
         <div class="budget-row"><span class="budget-row-label">🏠 Keperluan (${pct.needs}%)</span><span class="budget-row-amount">RM ${fmt(needsAmt)}</span></div>
         <div class="budget-row"><span class="budget-row-label">🎮 Kehendak (${pct.wants}%)</span><span class="budget-row-amount">RM ${fmt(wantsAmt)}</span></div>
         <div class="budget-row"><span class="budget-row-label">💰 Simpanan (${pct.savings}%)</span><span class="budget-row-amount" style="color:#3ecf6e">RM ${fmt(savingsAmt)}</span></div>`;
-
-    if (totalCommit > 0) html += `<div class="budget-row"><span class="budget-row-label">📋 Total Komitmen</span><span class="budget-row-amount" style="color:#f5b731">RM ${fmt(totalCommit)}</span></div>`;
+    if (totalCommit > 0) budgetHtml += `<div class="budget-row"><span class="budget-row-label">📋 Jumlah Komitmen</span><span class="budget-row-amount" style="color:#f5b731">RM ${fmt(totalCommit)}</span></div>`;
     if (goalResults.length > 0) {
       const totalMonths = Math.max(...goalResults.map(g => g.endMonth), 0);
       const totYrs = Math.floor(totalMonths / 12); const totMths = totalMonths % 12;
       const totStr = totYrs > 0 ? `${totYrs} thn${totMths > 0 ? ' ' + totMths + ' bln' : ''}` : `${totalMonths} bln`;
-      html += `<div class="budget-row" style="padding-top:14px;border-top:1px dashed #2a3d2e;border-bottom:none;margin-top:4px"><span class="budget-row-label">🏁 Semua goals capai dalam</span><span class="budget-row-amount" style="color:#3ecf6e;font-size:15px">${totStr}</span></div>`;
+      budgetHtml += `<div class="budget-row" style="padding-top:14px;border-top:1px dashed #2a3d2e;border-bottom:none;margin-top:4px"><span class="budget-row-label">🏁 Semua matlamat capai dalam</span><span class="budget-row-amount" style="color:#3ecf6e;font-size:15px">${totStr}</span></div>`;
     }
-    html += `</div>`;
+    budgetHtml += `</div>`;
 
+    // Save plan banner — placed BELOW budget breakdown
+    let bannerHtml = '';
+    if (!isLoggedIn) {
+      bannerHtml = `<div class="save-plan-banner"><div class="save-plan-text">💡 <b>Log masuk</b> untuk simpan pelan &amp; jejak kemajuan matlamat kau!</div><button class="btn-save-plan" onclick="openAuthModal()">Log Masuk / Daftar</button></div>`;
+    } else {
+      bannerHtml = `<div class="save-plan-banner" style="cursor:pointer" onclick="savePlanToFirebase()"><div class="save-plan-text">💾 <b>Simpan pelan ini</b> ke akaun kau!</div><button class="btn-save-plan">Simpan Pelan</button></div>`;
+    }
+
+    // Goals section
+    let goalsHtml = '';
     if (goalResults.length > 0) {
-      html += `<div class="section-title">🎯 Goals Breakdown</div>`;
+      goalsHtml += `<div class="section-title">🎯 Pecahan Matlamat</div>`;
       goalResults.forEach(g => {
         const durYrs = Math.floor(g.months / 12); const durMths = g.months % 12;
         const durStr = durYrs > 0 ? `${durYrs} thn${durMths > 0 ? ' ' + durMths + ' bln' : ''}` : `${g.months} bln`;
@@ -1975,10 +1991,10 @@
         const startYrs = Math.floor(g.startMonth / 12); const startMths = g.startMonth % 12;
         const startStr = startYrs > 0 ? `${startYrs} thn${startMths > 0 ? ' ' + startMths + ' bln' : ''}` : `${g.startMonth} bln`;
         const barPct = g.months > 0 ? Math.min(100, Math.round((1 / g.months) * 100)) : 0;
-        html += `
+        goalsHtml += `
           <div class="goal-result-card ${g.priority}">
-            <div class="goal-result-header"><div><div class="goal-result-name">${g.name}</div><div class="goal-result-target">Target: RM ${fmt(g.target)}</div></div><span class="priority-badge priority-${g.priority}">${g.priority}</span></div>
-            ${isDelayed ? `<div style="font-size:11px;color:#5a7a60;margin-bottom:6px">⏳ Mula lepas ${startStr}</div>` : ''}
+            <div class="goal-result-header"><div><div class="goal-result-name">${g.name}</div><div class="goal-result-target">Sasaran: RM ${fmt(g.target)}</div></div><span class="priority-badge priority-${g.priority}">${g.priority}</span></div>
+            ${isDelayed ? `<div style="font-size:11px;color:#5a7a60;margin-bottom:6px">⏳ Bermula selepas ${startStr}</div>` : ''}
             <div class="progress-bar-result"><div class="progress-fill-result" style="width:${barPct}%"></div></div>
             <div class="goal-result-stats">
               <div class="stat-box"><div class="stat-label">Simpan/Bulan</div><div class="stat-value">RM ${fmt(g.monthlyAlloc)}</div></div>
@@ -1989,9 +2005,10 @@
       });
     }
 
-    if (totalCommit > 0) html += `<div class="warning-box" style="margin-top:16px">💡 Komitmen bulanan RM ${fmt(totalCommit)} telah dikira sebagai sebahagian daripada perbelanjaan keperluan kau.</div>`;
+    let warningHtml = '';
+    if (totalCommit > 0) warningHtml = `<div class="warning-box" style="margin-top:16px">💡 Komitmen bulanan RM ${fmt(totalCommit)} telah dikira sebagai sebahagian daripada perbelanjaan keperluan kau.</div>`;
 
-    document.getElementById('resultsContent').innerHTML = html;
+    document.getElementById('resultsContent').innerHTML = budgetHtml + bannerHtml + goalsHtml + warningHtml;
     document.getElementById('step' + currentStep).classList.add('hidden');
     currentStep = 5;
     document.getElementById('step5').classList.remove('hidden');
@@ -2023,7 +2040,7 @@
     t.className = 'toast' + (isError ? ' error' : '');
     t.textContent = msg;
     document.body.appendChild(t);
-    toastTimer = setTimeout(() => t.remove(), 3000);
+    toastTimer = setTimeout(() => t.remove(), 3500);
   }
 
   // ===== INIT =====
@@ -2031,4 +2048,4 @@
   updateAllPreviews();
 </script>
 </body>
-</html>
+ </html>
