@@ -2,7 +2,7 @@
 <html lang="ms">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>TabungKu — Plan Smart, Simpan Lebih</title>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
 <style>
@@ -16,7 +16,249 @@
 
   .container { max-width: 680px; margin: 0 auto; padding: 40px 20px 80px; position: relative; z-index: 1; }
 
-  .header { text-align: center; margin-bottom: 32px; }
+  /* ===== HEADER USER MODE ===== */
+  .user-header {
+    display: none; align-items: center; justify-content: space-between;
+    background: rgba(20,35,22,0.9); border: 1px solid rgba(62,207,110,0.15);
+    border-radius: 16px; padding: 12px 20px; margin-bottom: 28px;
+    backdrop-filter: blur(12px); position: relative; z-index: 100;
+  }
+  .user-header.visible { display: flex; }
+  .user-header-left { display: flex; align-items: center; gap: 10px; }
+  .logo-text { font-size: 16px; font-weight: 800; color: #3ecf6e; letter-spacing: -0.02em; }
+  .header-divider { width: 1px; height: 20px; background: #2a3d2e; margin: 0 4px; }
+  .user-header-right { display: flex; align-items: center; gap: 10px; }
+  .user-avatar {
+    width: 32px; height: 32px; border-radius: 50%; border: 2px solid #3ecf6e;
+    object-fit: cover; cursor: pointer; background: #1a2e1e;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; color: #3ecf6e; overflow: hidden;
+  }
+  .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
+  .user-name-btn { font-size: 13px; font-weight: 600; color: #c5d9c8; cursor: pointer; }
+  .menu-btn { background: none; border: none; cursor: pointer; color: #5a7a60; font-size: 20px; padding: 4px; transition: color 0.2s; position: relative; z-index: 102; }
+  .menu-btn:hover { color: #3ecf6e; }
+
+  /* Dropdown menu - FIXED clickability */
+  .dropdown-menu-wrap { position: relative; display: inline-block; }
+  .dropdown-menu {
+    position: absolute; top: 100%; right: 0; margin-top: 8px;
+    background: #0e1a14; border: 1px solid rgba(62,207,110,0.2);
+    border-radius: 14px; padding: 6px; min-width: 200px;
+    z-index: 10001; box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+    display: none; flex-direction: column; gap: 2px;
+    animation: fadeUp 0.2s ease;
+  }
+  .dropdown-menu.open { display: flex; }
+  .dropdown-user-info { padding: 10px 12px 8px; border-bottom: 1px solid #1e3322; margin-bottom: 4px; }
+  .dropdown-user-name { font-size: 13px; font-weight: 700; color: #f0ebe1; }
+  .dropdown-user-email { font-size: 11px; color: #3a5040; margin-top: 2px; word-break: break-all; }
+  .menu-item {
+    display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+    border-radius: 8px; cursor: pointer; transition: background 0.15s;
+    font-size: 13px; color: #8a9e90; font-weight: 500; border: none; background: none;
+    width: 100%; text-align: left; font-family: 'Sora', sans-serif;
+  }
+  .menu-item:hover { background: rgba(62,207,110,0.08); color: #f0ebe1; }
+  .menu-item.danger { color: #8a9e90; }
+  .menu-item.danger:hover { background: rgba(220,60,60,0.1); color: #e05555; }
+  .menu-divider { height: 1px; background: #1e3322; margin: 4px 0; }
+  
+  /* FIXED overlay - transparent but captures clicks */
+  .dropdown-overlay { 
+    position: fixed; inset: 0; z-index: 10000; display: none; background: rgba(0,0,0,0.3);
+  }
+  .dropdown-overlay.visible { display: block; }
+
+  /* ===== AUTH MODAL - FIXED ===== */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 20000;
+    display: none; align-items: center; justify-content: center; padding: 20px;
+    backdrop-filter: blur(4px);
+  }
+  .modal-overlay.visible { display: flex; }
+  .modal {
+    background: #0e1a14; border: 1px solid rgba(62,207,110,0.2);
+    border-radius: 20px; padding: 32px; width: 100%; max-width: 400px;
+    animation: fadeUp 0.3s ease;
+  }
+  .modal-logo { text-align: center; font-size: 18px; font-weight: 800; color: #3ecf6e; margin-bottom: 24px; letter-spacing: -0.02em; }
+  .auth-tabs { display: flex; gap: 4px; background: #0a1410; border-radius: 10px; padding: 4px; margin-bottom: 24px; }
+  .auth-tab {
+    flex: 1; padding: 8px; border: none; border-radius: 8px; cursor: pointer;
+    font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 600;
+    transition: all 0.2s; background: transparent; color: #5a7a60;
+  }
+  .auth-tab.active { background: #3ecf6e; color: #0a1410; }
+  .auth-field { margin-bottom: 16px; }
+  .auth-field label { display: block; font-size: 11px; font-weight: 600; color: #5a7a60; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
+  .auth-input-wrap { display: flex; align-items: center; background: #0a1410; border: 1.5px solid #2a3d2e; border-radius: 10px; overflow: hidden; transition: border-color 0.2s; }
+  .auth-input-wrap:focus-within { border-color: #3ecf6e; }
+  .auth-input-wrap input {
+    flex: 1; background: transparent; border: none; outline: none;
+    padding: 0 14px; height: 44px; font-family: 'Sora', sans-serif;
+    font-size: 14px; color: #f0ebe1;
+  }
+  .auth-input-wrap input::placeholder { color: #2e4a34; }
+  .pw-toggle { background: none; border: none; padding: 0 12px; cursor: pointer; color: #3a5040; font-size: 14px; transition: color 0.2s; height: 44px; }
+  .pw-toggle:hover { color: #3ecf6e; }
+  .auth-btn {
+    width: 100%; padding: 13px; background: #3ecf6e; color: #0a1410;
+    border: none; border-radius: 10px; font-family: 'Sora', sans-serif;
+    font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s;
+    margin-top: 4px;
+  }
+  .auth-btn:hover { background: #52e07e; box-shadow: 0 0 20px rgba(62,207,110,0.3); }
+  .auth-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .auth-cancel { display: block; text-align: center; margin-top: 12px; font-size: 13px; color: #5a7a60; cursor: pointer; transition: color 0.2s; }
+  .auth-cancel:hover { color: #f0ebe1; }
+  .auth-error { background: rgba(220,60,60,0.1); border: 1px solid rgba(220,60,60,0.3); border-radius: 8px; padding: 10px 14px; font-size: 12px; color: #e05555; margin-bottom: 14px; display: none; }
+  .auth-success { background: rgba(62,207,110,0.1); border: 1px solid rgba(62,207,110,0.3); border-radius: 8px; padding: 10px 14px; font-size: 12px; color: #3ecf6e; margin-bottom: 14px; display: none; }
+
+  /* ===== DASHBOARD ===== */
+  #dashboardView { display: none; }
+  #dashboardView.visible { display: block; }
+  .dash-greeting { font-size: 22px; font-weight: 700; color: #f0ebe1; margin-bottom: 20px; }
+  .dash-greeting span { color: #3ecf6e; }
+  .plan-card {
+    background: rgba(20,35,22,0.85); border: 1px solid rgba(62,207,110,0.15);
+    border-radius: 16px; padding: 20px; margin-bottom: 20px;
+    backdrop-filter: blur(12px);
+  }
+  .plan-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+  .plan-card-title { font-size: 13px; font-weight: 700; color: #3ecf6e; letter-spacing: 0.08em; text-transform: uppercase; }
+  .btn-edit { background: rgba(62,207,110,0.1); border: 1px solid rgba(62,207,110,0.3); color: #3ecf6e; border-radius: 8px; padding: 5px 12px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'Sora', sans-serif; transition: all 0.2s; }
+  .btn-edit:hover { background: rgba(62,207,110,0.2); }
+  .plan-row { font-size: 13px; color: #8a9e90; margin-bottom: 6px; line-height: 1.6; }
+  .plan-row b { color: #c5d9c8; }
+  .plan-row.savings-row b { color: #3ecf6e; }
+  .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+  .section-title-dash { font-size: 14px; font-weight: 700; color: #f0ebe1; }
+  .btn-add-goal { background: rgba(62,207,110,0.1); border: 1px solid rgba(62,207,110,0.3); color: #3ecf6e; border-radius: 8px; padding: 6px 14px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: 'Sora', sans-serif; transition: all 0.2s; }
+  .btn-add-goal:hover { background: rgba(62,207,110,0.2); }
+  .goal-dash-card { background: rgba(20,35,22,0.85); border: 1px solid #1e3322; border-radius: 14px; padding: 18px; margin-bottom: 12px; }
+  .goal-dash-name { font-size: 15px; font-weight: 700; color: #f0ebe1; margin-bottom: 4px; }
+  .goal-dash-priority { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 8px; border-radius: 100px; margin-left: 8px; }
+  .goal-dash-meta { font-size: 12px; color: #5a7a60; margin-bottom: 10px; }
+  .goal-dash-meta b { color: #c5d9c8; font-family: 'Space Mono', monospace; }
+  .progress-bar { height: 8px; background: #1a2e1e; border-radius: 100px; margin: 8px 0 12px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 100px; transition: width 0.6s ease; }
+  .progress-label { display: flex; justify-content: space-between; font-size: 11px; color: #5a7a60; margin-bottom: 12px; }
+  .progress-label b { color: #c5d9c8; font-family: 'Space Mono', monospace; }
+  .goal-dash-actions { display: flex; gap: 8px; align-items: center; }
+  .add-savings-wrap { display: flex; align-items: center; background: #0a1410; border: 1.5px solid #2a3d2e; border-radius: 8px; overflow: hidden; flex: 1; }
+  .add-savings-wrap:focus-within { border-color: #3ecf6e; }
+  .add-savings-prefix { padding: 0 10px; font-family: 'Space Mono', monospace; font-size: 11px; color: #3ecf6e; font-weight: 700; background: rgba(62,207,110,0.08); height: 36px; display: flex; align-items: center; border-right: 1.5px solid #2a3d2e; }
+  .add-savings-input { flex: 1; background: transparent; border: none; outline: none; padding: 0 10px; height: 36px; font-family: 'Space Mono', monospace; font-size: 13px; color: #f0ebe1; width: 80px; }
+  .btn-add-savings { background: #3ecf6e; color: #0a1410; border: none; border-radius: 8px; padding: 0 14px; height: 36px; font-weight: 700; cursor: pointer; font-size: 14px; transition: background 0.2s; }
+  .btn-add-savings:hover { background: #52e07e; }
+  .btn-complete { background: rgba(62,207,110,0.08); border: 1px solid rgba(62,207,110,0.3); color: #3ecf6e; border-radius: 8px; padding: 0 12px; height: 36px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: 'Sora', sans-serif; transition: all 0.2s; white-space: nowrap; }
+  .btn-complete:hover { background: rgba(62,207,110,0.15); }
+  .achievement-item { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid #1a2e1e; font-size: 13px; }
+  .achievement-item:last-child { border-bottom: none; }
+  .achievement-check { color: #3ecf6e; font-size: 16px; flex-shrink: 0; }
+  .achievement-name { flex: 1; color: #c5d9c8; font-weight: 600; min-width: 0; word-break: break-word; }
+  .achievement-date { font-size: 11px; color: #5a7a60; white-space: nowrap; }
+  .achievement-amt { font-family: 'Space Mono', monospace; font-size: 12px; color: #f5b731; white-space: nowrap; }
+  .btn-achievement-del { background: none; border: none; cursor: pointer; color: #3a5040; font-size: 14px; transition: color 0.2s; padding: 2px 4px; flex-shrink: 0; }
+  .btn-achievement-del:hover { color: #e05555; }
+
+  /* ===== TETAPAN ===== */
+  #settingsView { display: none; }
+  #settingsView.visible { display: block; }
+  .settings-card { background: rgba(20,35,22,0.85); border: 1px solid rgba(62,207,110,0.15); border-radius: 16px; padding: 24px; margin-bottom: 16px; }
+  .settings-section-title { font-size: 11px; font-weight: 700; color: #3ecf6e; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 16px; }
+  .settings-row { padding: 14px 0; border-bottom: 1px solid #1a2e1e; }
+  .settings-row:last-child { border-bottom: none; }
+  .settings-row-label { font-size: 11px; font-weight: 600; color: #5a7a60; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
+  .settings-row-value { font-size: 14px; color: #c5d9c8; font-weight: 500; }
+  .settings-row-note { font-size: 11px; color: #3a5040; margin-top: 3px; }
+  .avatar-section { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
+  .avatar-preview { width: 64px; height: 64px; border-radius: 50%; border: 2px solid #3ecf6e; overflow: hidden; background: #1a2e1e; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 700; color: #3ecf6e; flex-shrink: 0; }
+  .avatar-preview img { width: 100%; height: 100%; object-fit: cover; }
+  .settings-input { width: 100%; background: #0a1410; border: 1.5px solid #2a3d2e; border-radius: 10px; padding: 10px 14px; font-family: 'Sora', sans-serif; font-size: 14px; color: #f0ebe1; outline: none; transition: border-color 0.2s; margin-top: 6px; }
+  .settings-input:focus { border-color: #3ecf6e; }
+  .settings-input::placeholder { color: #2e4a34; }
+  .settings-pw-wrap { display: flex; align-items: center; background: #0a1410; border: 1.5px solid #2a3d2e; border-radius: 10px; overflow: hidden; margin-top: 6px; transition: border-color 0.2s; }
+  .settings-pw-wrap:focus-within { border-color: #3ecf6e; }
+  .settings-pw-wrap input { flex: 1; background: transparent; border: none; outline: none; padding: 10px 14px; font-family: 'Sora', sans-serif; font-size: 14px; color: #f0ebe1; }
+  .settings-pw-wrap input::placeholder { color: #2e4a34; }
+  .settings-pw-wrap .pw-toggle { height: auto; padding: 10px 12px; }
+  .btn-settings-save { background: #3ecf6e; color: #0a1410; border: none; border-radius: 10px; padding: 10px 20px; font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; margin-top: 12px; }
+  .btn-settings-save:hover { background: #52e07e; }
+  .btn-back { display: flex; align-items: center; gap: 6px; background: none; border: none; color: #5a7a60; cursor: pointer; font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 600; margin-bottom: 20px; transition: color 0.2s; padding: 0; }
+  .btn-back:hover { color: #3ecf6e; }
+
+  /* ===== POPUP OVERLAYS ===== */
+  .popup-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 20000;
+    display: none; align-items: center; justify-content: center; padding: 20px;
+    backdrop-filter: blur(4px);
+  }
+  .popup-overlay.visible { display: flex; }
+  .popup {
+    background: #0e1a14; border: 1px solid rgba(62,207,110,0.2);
+    border-radius: 20px; padding: 28px; width: 100%; max-width: 380px;
+    animation: fadeUp 0.3s ease;
+  }
+  .popup-title { font-size: 16px; font-weight: 700; color: #f0ebe1; margin-bottom: 20px; }
+  .popup-field { margin-bottom: 14px; }
+  .popup-field label { display: block; font-size: 11px; font-weight: 600; color: #5a7a60; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
+  .popup-input-wrap { display: flex; align-items: center; background: #0a1410; border: 1.5px solid #2a3d2e; border-radius: 10px; overflow: hidden; transition: border-color 0.2s; }
+  .popup-input-wrap:focus-within { border-color: #3ecf6e; }
+  .popup-prefix { padding: 0 12px; font-family: 'Space Mono', monospace; font-size: 12px; color: #3ecf6e; font-weight: 700; background: rgba(62,207,110,0.08); height: 42px; display: flex; align-items: center; border-right: 1.5px solid #2a3d2e; }
+  .popup-input { flex: 1; background: transparent; border: none; outline: none; padding: 0 12px; height: 42px; font-family: 'Space Mono', monospace; font-size: 14px; color: #f0ebe1; width: 100%; }
+  .popup-input-full { width: 100%; background: #0a1410; border: 1.5px solid #2a3d2e; border-radius: 10px; padding: 10px 14px; font-family: 'Sora', sans-serif; font-size: 14px; color: #f0ebe1; outline: none; transition: border-color 0.2s; }
+  .popup-input-full:focus { border-color: #3ecf6e; }
+  .popup-input-full::placeholder { color: #2e4a34; }
+  .popup-preview { background: #0a1410; border-radius: 10px; padding: 12px 14px; font-size: 12px; color: #5a7a60; margin-bottom: 14px; }
+  .popup-preview b { color: #3ecf6e; font-family: 'Space Mono', monospace; }
+  .popup-actions { display: flex; gap: 10px; margin-top: 4px; }
+  .popup-btn-cancel { flex: 1; padding: 11px; background: none; border: 1.5px solid #2a3d2e; border-radius: 10px; color: #5a7a60; font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+  .popup-btn-cancel:hover { border-color: #3ecf6e; color: #3ecf6e; }
+  .popup-btn-save { flex: 2; padding: 11px; background: #3ecf6e; color: #0a1410; border: none; border-radius: 10px; font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+  .popup-btn-save:hover { background: #52e07e; box-shadow: 0 0 16px rgba(62,207,110,0.3); }
+  .priority-select { display: flex; gap: 6px; margin-top: 2px; }
+  .p-btn { flex: 1; padding: 7px 0; border-radius: 8px; border: 1.5px solid #2a3d2e; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.15s; font-family: 'Sora', sans-serif; background: #0e1a14; color: #4a6650; }
+  .p-btn.high.sel { background: rgba(255,80,80,0.15); color: #ff6060; border-color: #ff6060; }
+  .p-btn.medium.sel { background: rgba(245,183,49,0.15); color: #f5b731; border-color: #f5b731; }
+  .p-btn.low.sel { background: rgba(100,150,200,0.15); color: #82b4e8; border-color: #82b4e8; }
+
+  /* Celebration popup */
+  .celebration-popup { text-align: center; }
+  .celebration-emoji { font-size: 48px; margin-bottom: 16px; }
+  .celebration-title { font-size: 22px; font-weight: 800; color: #3ecf6e; margin-bottom: 8px; }
+  .celebration-name { font-size: 18px; font-weight: 700; color: #f0ebe1; margin-bottom: 16px; }
+  .celebration-stats { background: #0a1410; border-radius: 12px; padding: 16px; margin-bottom: 20px; text-align: left; }
+  .c-stat-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; border-bottom: 1px solid #1a2e1e; }
+  .c-stat-row:last-child { border-bottom: none; }
+  .c-stat-label { color: #5a7a60; }
+  .c-stat-value { font-family: 'Space Mono', monospace; color: #c5d9c8; font-weight: 700; }
+  .celebration-tagline { font-size: 14px; color: #5a7a60; margin-bottom: 20px; }
+  .btn-close-celebration { width: 100%; padding: 13px; background: #3ecf6e; color: #0a1410; border: none; border-radius: 10px; font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+  .btn-close-celebration:hover { background: #52e07e; }
+
+  /* Edit Plan Popup formula */
+  .formula-mini-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+  .formula-mini-card { border: 1.5px solid #2a3d2e; border-radius: 10px; padding: 10px 8px; cursor: pointer; transition: all 0.2s; text-align: center; background: #0a1410; }
+  .formula-mini-card:hover { border-color: rgba(62,207,110,0.4); }
+  .formula-mini-card.selected { border-color: #3ecf6e; background: rgba(62,207,110,0.08); }
+  .formula-mini-name { font-family: 'Space Mono', monospace; font-size: 12px; font-weight: 700; color: #3ecf6e; margin-bottom: 3px; }
+  .formula-mini-desc { font-size: 9px; color: #5a7a60; line-height: 1.4; }
+  .edit-plan-preview { background: #0a1410; border-radius: 10px; padding: 12px 14px; margin-bottom: 14px; font-size: 12px; color: #5a7a60; }
+  .edit-plan-preview .preview-row { display: flex; justify-content: space-between; margin-bottom: 4px; }
+  .edit-plan-preview .preview-row:last-child { margin-bottom: 0; }
+  .preview-arrow { color: #3ecf6e; font-family: 'Space Mono', monospace; font-size: 11px; }
+  .free-edit-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+  .free-edit-box { background: #0a1410; border: 1.5px solid #2a3d2e; border-radius: 8px; padding: 8px; text-align: center; }
+  .free-edit-box label { font-size: 9px; color: #5a7a60; display: block; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .free-edit-box input { background: transparent; border: none; outline: none; font-family: 'Space Mono', monospace; font-size: 16px; font-weight: 700; width: 50px; text-align: center; height: auto; padding: 0; }
+  .free-edit-box.needs input { color: #60a8ff; }
+  .free-edit-box.wants input { color: #f5b731; }
+  .free-edit-box.savings input { color: #3ecf6e; }
+
+  /* ===== ORIGINAL PLANNER STYLES - FIXED SPACING ===== */
+  .header { text-align: center; margin-bottom: 20px; } /* REDUCED from 32px */
   .logo-badge {
     display: inline-flex; align-items: center; gap: 8px;
     background: rgba(62,207,110,0.12); border: 1px solid rgba(62,207,110,0.3);
@@ -26,48 +268,19 @@
   h1 { font-size: clamp(28px, 5vw, 42px); font-weight: 800; line-height: 1.1; color: #f0ebe1; }
   h1 span { color: #3ecf6e; }
   .subtitle { margin-top: 12px; color: #8a9e90; font-size: 15px; font-weight: 300; }
-
-  /* Steps Bar - Fixed alignment */
-  .steps-wrapper { margin-bottom: 40px; }
+  .steps-wrapper { margin-bottom: 20px; } /* REDUCED from 40px */
   .steps-container { display: flex; align-items: center; justify-content: center; margin-bottom: 8px; }
-  .step-dot {
-    width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center;
-    justify-content: center; font-size: 14px; font-weight: 700; font-family: 'Space Mono', monospace;
-    transition: all 0.3s; border: 2px solid #2a3d2e; background: #1a2e1e; color: #4a6650; flex-shrink: 0;
-  }
+  .step-dot { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; font-family: 'Space Mono', monospace; transition: all 0.3s; border: 2px solid #2a3d2e; background: #1a2e1e; color: #4a6650; flex-shrink: 0; }
   .step-dot.active { background: #3ecf6e; border-color: #3ecf6e; color: #0e1a14; box-shadow: 0 0 16px rgba(62,207,110,0.4); }
   .step-dot.done { background: #1e3a22; border-color: #3ecf6e; color: #3ecf6e; }
   .step-line { width: 60px; height: 2px; background: #2a3d2e; transition: background 0.3s; flex-shrink: 0; }
   .step-line.done { background: #3ecf6e; }
-  
-  .steps-labels {
-    display: flex;
-    justify-content: center;
-    margin-top: 8px;
-    padding: 0;
-  }
-  .step-label-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 40px;
-    flex-shrink: 0;
-  }
-  .step-label-spacer {
-    width: 60px;
-    flex-shrink: 0;
-  }
-  .step-label-text {
-    font-size: 10px;
-    color: #5a7a60;
-    text-align: center;
-    font-weight: 500;
-    transition: color 0.3s;
-    white-space: nowrap;
-  }
+  .steps-labels { display: flex; justify-content: center; margin-top: 8px; padding: 0; }
+  .step-label-wrapper { display: flex; flex-direction: column; align-items: center; width: 40px; flex-shrink: 0; }
+  .step-label-spacer { width: 60px; flex-shrink: 0; }
+  .step-label-text { font-size: 10px; color: #5a7a60; text-align: center; font-weight: 500; transition: color 0.3s; white-space: nowrap; }
   .step-label-text.active { color: #3ecf6e; font-weight: 600; }
   .step-label-text.done { color: #3ecf6e; }
-  
   @media (max-width: 550px) {
     .step-dot { width: 32px; height: 32px; font-size: 12px; }
     .step-line { width: 40px; }
@@ -75,163 +288,53 @@
     .step-label-spacer { width: 40px; }
     .step-label-text { font-size: 9px; white-space: normal; text-align: center; line-height: 1.2; }
   }
-
-  /* Card */
-  .card {
-    background: rgba(20, 35, 22, 0.85); border: 1px solid rgba(62,207,110,0.15);
-    border-radius: 20px; padding: 32px; backdrop-filter: blur(12px);
-    animation: fadeUp 0.4s ease;
-  }
+  .card { background: rgba(20, 35, 22, 0.85); border: 1px solid rgba(62,207,110,0.15); border-radius: 20px; padding: 32px; backdrop-filter: blur(12px); animation: fadeUp 0.4s ease; }
   @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
   .card-title { font-size: 20px; font-weight: 700; margin-bottom: 6px; color: #f0ebe1; }
   .card-subtitle { font-size: 13px; color: #5a7a60; margin-bottom: 28px; }
   .step-badge { display: inline-block; background: rgba(62,207,110,0.15); border-radius: 100px; padding: 4px 12px; font-size: 11px; font-weight: 600; color: #3ecf6e; margin-bottom: 16px; letter-spacing: 0.05em; }
-
-  /* Input */
   .input-group { margin-bottom: 20px; }
   .input-label { display: block; font-size: 12px; font-weight: 600; color: #5a7a60; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
   .input-wrap { display: flex; align-items: center; background: #0e1a14; border: 1.5px solid #2a3d2e; border-radius: 12px; overflow: hidden; transition: border-color 0.2s; }
   .input-wrap:focus-within { border-color: #3ecf6e; }
-  .input-prefix {
-    padding: 0 14px; font-family: 'Space Mono', monospace; font-size: 13px; color: #3ecf6e;
-    font-weight: 700; background: rgba(62,207,110,0.08); height: 48px; display: flex;
-    align-items: center; border-right: 1.5px solid #2a3d2e;
-  }
-  input[type="number"], input[type="text"] {
-    flex: 1; background: transparent; border: none; outline: none; padding: 0 16px;
-    height: 48px; font-family: 'Space Mono', monospace; font-size: 15px; color: #f0ebe1; width: 100%;
-  }
+  .input-prefix { padding: 0 14px; font-family: 'Space Mono', monospace; font-size: 13px; color: #3ecf6e; font-weight: 700; background: rgba(62,207,110,0.08); height: 48px; display: flex; align-items: center; border-right: 1.5px solid #2a3d2e; }
+  input[type="number"], input[type="text"] { flex: 1; background: transparent; border: none; outline: none; padding: 0 16px; height: 48px; font-family: 'Space Mono', monospace; font-size: 15px; color: #f0ebe1; width: 100%; }
   input::placeholder { color: #2e4a34; }
-
-  /* Formula */
   .formula-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
   @media (max-width: 500px) { .formula-grid { grid-template-columns: 1fr; } }
-  .formula-card {
-    border: 1.5px solid #2a3d2e; border-radius: 14px; padding: 16px 12px; cursor: pointer;
-    transition: all 0.2s; text-align: center; background: #0e1a14;
-  }
+  .formula-card { border: 1.5px solid #2a3d2e; border-radius: 14px; padding: 16px 12px; cursor: pointer; transition: all 0.2s; text-align: center; background: #0e1a14; }
   .formula-card:hover { border-color: rgba(62,207,110,0.4); }
   .formula-card.selected { border-color: #3ecf6e; background: rgba(62,207,110,0.08); box-shadow: 0 0 20px rgba(62,207,110,0.12); }
   .formula-name { font-family: 'Space Mono', monospace; font-size: 14px; font-weight: 700; color: #3ecf6e; margin-bottom: 6px; }
   .formula-desc { font-size: 10px; color: #5a7a60; line-height: 1.5; white-space: pre-line; }
-  
-  /* Unified breakdown design - same for all formulas */
-  .formula-breakdown, .free-breakdown {
-    background: #0a1410;
-    border-radius: 12px;
-    padding: 16px;
-    margin-top: 16px;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    text-align: center;
-    border: 1px solid #1e3322;
-  }
-  .breakdown-item label { 
-    font-size: 10px; 
-    color: #5a7a60; 
-    display: block; 
-    margin-bottom: 4px;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-  }
-  .breakdown-item span { 
-    font-family: 'Space Mono', monospace; 
-    font-size: 16px; 
-    font-weight: 700; 
-  }
+  .formula-breakdown, .free-breakdown { background: #0a1410; border-radius: 12px; padding: 16px; margin-top: 16px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; text-align: center; border: 1px solid #1e3322; }
+  .breakdown-item label { font-size: 10px; color: #5a7a60; display: block; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .breakdown-item span { font-family: 'Space Mono', monospace; font-size: 16px; font-weight: 700; }
   .breakdown-item.needs span { color: #60a8ff; }
   .breakdown-item.wants span { color: #f5b731; }
   .breakdown-item.savings span { color: #3ecf6e; }
-  
-  /* FREE MODE INPUT GRID - FIXED FOR MOBILE (single line, no wrap) */
-  .free-mode-grid { 
-    display: flex; 
-    flex-direction: row;
-    flex-wrap: nowrap;
-    gap: 10px; 
-    margin-bottom: 16px; 
-    justify-content: space-between;
-  }
-  .free-input-box { 
-    background: #0a1410; 
-    border: 1.5px solid #2a3d2e; 
-    border-radius: 12px; 
-    padding: 10px 8px; 
-    text-align: center; 
-    flex: 1;
-    min-width: 0; /* Allows shrinking */
-  }
-  .free-input-box label { 
-    font-size: 9px; 
-    color: #5a7a60; 
-    display: block; 
-    margin-bottom: 4px; 
-    text-transform: uppercase; 
-    letter-spacing: 0.05em;
-    white-space: nowrap;
-  }
-  .free-input-box input { 
-    background: transparent; 
-    border: none; 
-    outline: none; 
-    font-family: 'Space Mono', monospace; 
-    font-size: 16px; 
-    font-weight: 700; 
-    width: 100%;
-    min-width: 40px;
-    max-width: 70px;
-    text-align: center; 
-    height: auto; 
-    padding: 4px 0;
-    margin: 0 auto;
-    display: block;
-  }
-  .free-input-box input::-webkit-outer-spin-button,
-  .free-input-box input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-  .free-input-box input[type=number] {
-    -moz-appearance: textfield;
-    appearance: textfield;
-  }
+  .free-mode-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+  .free-input-box { background: #0a1410; border: 1.5px solid #2a3d2e; border-radius: 12px; padding: 12px; text-align: center; }
+  .free-input-box label { font-size: 10px; color: #5a7a60; display: block; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .free-input-box input { background: transparent; border: none; outline: none; font-family: 'Space Mono', monospace; font-size: 20px; font-weight: 700; width: 60px; text-align: center; height: auto; padding: 0; }
   .free-input-box.needs input { color: #60a8ff; }
   .free-input-box.wants input { color: #f5b731; }
   .free-input-box.savings input { color: #3ecf6e; }
-  
-  /* For very small screens, reduce font and padding */
-  @media (max-width: 480px) {
-    .free-mode-grid { gap: 6px; }
-    .free-input-box { padding: 8px 4px; }
-    .free-input-box label { font-size: 8px; }
-    .free-input-box input { font-size: 14px; max-width: 55px; }
-  }
-
-  /* Commitment */
   .commitment-list { margin-bottom: 16px; }
-  .commitment-item {
-    display: flex; align-items: center; gap: 10px; background: #0a1410;
-    border: 1px solid #1e3322; border-radius: 10px; padding: 10px 14px; margin-bottom: 8px;
-  }
+  .commitment-item { display: flex; align-items: center; gap: 10px; background: #0a1410; border: 1px solid #1e3322; border-radius: 10px; padding: 10px 14px; margin-bottom: 8px; }
   .commitment-name { flex: 1; font-size: 13px; color: #c5d9c8; }
   .commitment-amount { font-family: 'Space Mono', monospace; font-size: 13px; color: #f5b731; font-weight: 700; }
   .btn-remove { background: none; border: none; cursor: pointer; color: #3a5040; font-size: 16px; transition: color 0.2s; padding: 2px; }
   .btn-remove:hover { color: #e05555; }
   .add-row { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center; }
-  .add-row input[type="text"], .add-row input[type="number"] {
-    height: 42px; background: #0e1a14; border: 1.5px solid #2a3d2e; border-radius: 10px;
-    padding: 0 12px; font-size: 13px; font-family: 'Space Mono', monospace; color: #f0ebe1;
-  }
+  .add-row input[type="text"], .add-row input[type="number"] { height: 42px; background: #0e1a14; border: 1.5px solid #2a3d2e; border-radius: 10px; padding: 0 12px; font-size: 13px; font-family: 'Space Mono', monospace; color: #f0ebe1; }
   .add-row input:focus { border-color: #3ecf6e; outline: none; }
   .commit-amt-wrap { display: flex; align-items: center; background: #0e1a14; border: 1.5px solid #2a3d2e; border-radius: 10px; overflow: hidden; }
   .commit-amt-wrap:focus-within { border-color: #3ecf6e; }
   .commit-prefix { padding: 0 10px; font-family: 'Space Mono', monospace; font-size: 12px; color: #3ecf6e; font-weight: 700; background: rgba(62,207,110,0.08); height: 42px; display: flex; align-items: center; border-right: 1.5px solid #2a3d2e; }
   .commit-amt-wrap input { width: 80px; border: none; border-radius: 0; height: 42px; }
-
-  /* Goals */
   .goal-item { background: #0a1410; border: 1px solid #1e3322; border-radius: 14px; padding: 16px; margin-bottom: 10px; position: relative; }
-  .goal-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+  .goal-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
   .goal-name-display { font-size: 14px; font-weight: 600; color: #f0ebe1; flex: 1; }
   .priority-badge { padding: 3px 10px; border-radius: 100px; font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
   .priority-high { background: rgba(255,80,80,0.15); color: #ff6060; border: 1px solid rgba(255,80,80,0.3); }
@@ -239,16 +342,10 @@
   .priority-low { background: rgba(100,150,200,0.15); color: #82b4e8; border: 1px solid rgba(100,150,200,0.3); }
   .goal-meta { display: flex; gap: 12px; font-size: 12px; color: #4a6650; flex-wrap: wrap; }
   .goal-meta b { color: #c5d9c8; font-family: 'Space Mono', monospace; }
-
-  .priority-select { display: flex; gap: 6px; margin-top: 10px; }
-  .p-btn { flex: 1; padding: 5px 0; border-radius: 8px; border: 1.5px solid #2a3d2e; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.15s; font-family: 'Sora', sans-serif; background: #0e1a14; color: #4a6650; }
-  .p-btn.high.sel { background: rgba(255,80,80,0.15); color: #ff6060; border-color: #ff6060; }
-  .p-btn.medium.sel { background: rgba(245,183,49,0.15); color: #f5b731; border-color: #f5b731; }
-  .p-btn.low.sel { background: rgba(100,150,200,0.15); color: #82b4e8; border-color: #82b4e8; }
+  .priority-select-planner { display: flex; gap: 6px; margin-top: 10px; }
   .timeline-toggle { display: flex; gap: 6px; margin-top: 8px; }
   .t-btn { flex: 1; padding: 6px; border-radius: 8px; border: 1.5px solid #2a3d2e; background: #0e1a14; color: #4a6650; font-size: 11px; font-weight: 600; cursor: pointer; font-family: 'Sora', sans-serif; transition: all 0.15s; }
   .t-btn.sel { background: rgba(62,207,110,0.1); color: #3ecf6e; border-color: #3ecf6e; }
-
   .add-goal-form { background: #0a1410; border: 1.5px dashed #2a3d2e; border-radius: 14px; padding: 20px; margin-top: 12px; }
   .add-goal-form .form-label { font-size: 11px; font-weight: 600; color: #5a7a60; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; display: block; }
   .add-goal-form input { height: 40px; background: #0e1a14; border: 1.5px solid #2a3d2e; border-radius: 10px; padding: 0 12px; font-size: 13px; font-family: 'Space Mono', monospace; color: #f0ebe1; width: 100%; margin-bottom: 12px; }
@@ -261,8 +358,6 @@
   .month-input-row input { flex: 1; margin-bottom: 0; }
   .month-suffix { font-size: 12px; color: #5a7a60; white-space: nowrap; }
   .form-section-label { font-size: 11px; font-weight: 600; color: #5a7a60; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; display: block; }
-
-  /* Buttons */
   .btn-primary { width: 100%; padding: 14px; background: #3ecf6e; color: #0a1410; border: none; border-radius: 12px; font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s; margin-top: 24px; }
   .btn-primary:hover { background: #52e07e; box-shadow: 0 0 24px rgba(62,207,110,0.3); }
   .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
@@ -273,8 +368,6 @@
   .nav-row { display: flex; gap: 10px; margin-top: 24px; }
   .nav-row .btn-secondary { flex: 1; margin-top: 0; }
   .nav-row .btn-primary { flex: 2; margin-top: 0; }
-
-  /* Results */
   .results-summary { background: linear-gradient(135deg, rgba(62,207,110,0.15), rgba(62,207,110,0.05)); border: 1px solid rgba(62,207,110,0.3); border-radius: 16px; padding: 24px; margin-bottom: 24px; text-align: center; }
   .results-label { font-size: 12px; color: #5a7a60; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
   .results-amount { font-family: 'Space Mono', monospace; font-size: 36px; font-weight: 700; color: #3ecf6e; }
@@ -291,11 +384,11 @@
   .goal-result-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
   .goal-result-name { font-size: 14px; font-weight: 700; color: #f0ebe1; }
   .goal-result-target { font-family: 'Space Mono', monospace; font-size: 12px; color: #5a7a60; margin-top: 2px; }
-  .progress-bar { height: 6px; background: #1a2e1e; border-radius: 100px; margin: 10px 0; overflow: hidden; }
-  .progress-fill { height: 100%; border-radius: 100px; transition: width 1s ease; }
-  .high .progress-fill { background: linear-gradient(90deg, #ff6060, #ff9090); }
-  .medium .progress-fill { background: linear-gradient(90deg, #f5b731, #ffd87a); }
-  .low .progress-fill { background: linear-gradient(90deg, #60a8ff, #82b4e8); }
+  .progress-bar-result { height: 6px; background: #1a2e1e; border-radius: 100px; margin: 10px 0; overflow: hidden; }
+  .progress-fill-result { height: 100%; border-radius: 100px; transition: width 1s ease; }
+  .high .progress-fill-result { background: linear-gradient(90deg, #ff6060, #ff9090); }
+  .medium .progress-fill-result { background: linear-gradient(90deg, #f5b731, #ffd87a); }
+  .low .progress-fill-result { background: linear-gradient(90deg, #60a8ff, #82b4e8); }
   .goal-result-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 12px; }
   .stat-box { background: #0e1a14; border-radius: 8px; padding: 8px 10px; text-align: center; }
   .stat-label { font-size: 9px; color: #3a5040; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 3px; }
@@ -308,6 +401,122 @@
   .income-preview-sub { font-size: 11px; color: #5a7a60; margin-top: 2px; }
   .total-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: rgba(62,207,110,0.06); border: 1px solid rgba(62,207,110,0.15); border-radius: 10px; margin-top: 8px; font-size: 13px; color: #8a9e90; }
   .total-row b { font-family: 'Space Mono', monospace; color: #f5b731; }
+  .save-plan-banner { background: rgba(62,207,110,0.08); border: 1px solid rgba(62,207,110,0.2); border-radius: 12px; padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+  .save-plan-text { font-size: 13px; color: #8a9e90; }
+  .save-plan-text b { color: #3ecf6e; }
+  .btn-save-plan { background: #3ecf6e; color: #0a1410; border: none; border-radius: 8px; padding: 8px 16px; font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+  .btn-save-plan:hover { background: #52e07e; }
+  .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(62,207,110,0.3); border-top-color: #3ecf6e; border-radius: 50%; animation: spin 0.6s linear infinite; vertical-align: middle; margin-right: 6px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ===== GUEST FOOTER - FIXED SPACING ===== */
+  .guest-footer {
+    text-align: center; padding: 20px 20px 20px;
+    border-top: 1px solid #1e3322; margin-top: 20px; /* REDUCED from 40px */
+  }
+  .btn-auth-footer {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(62,207,110,0.1); border: 1px solid rgba(62,207,110,0.3);
+    color: #3ecf6e; border-radius: 100px;
+    padding: 8px 22px; font-family: 'Sora', sans-serif; font-size: 13px;
+    font-weight: 600; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-auth-footer:hover { background: rgba(62,207,110,0.2); }
+
+  /* ===== DASHBOARD RESULT BREAKDOWN CARD ===== */
+  .dash-breakdown-card {
+    background: rgba(20,35,22,0.85); border: 1px solid rgba(62,207,110,0.15);
+    border-radius: 16px; padding: 20px; margin-bottom: 20px;
+    backdrop-filter: blur(12px);
+  }
+  .dash-breakdown-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px;
+  }
+  .dash-breakdown-item {
+    background: #0a1410; border-radius: 12px; padding: 12px 8px; text-align: center; border: 1px solid #1e3322;
+  }
+  .dash-breakdown-item label { font-size: 10px; color: #5a7a60; display: block; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .dash-breakdown-item .val { font-family: 'Space Mono', monospace; font-size: 14px; font-weight: 700; display: block; }
+  .dash-breakdown-item.needs .val { color: #60a8ff; }
+  .dash-breakdown-item.wants .val { color: #f5b731; }
+  .dash-breakdown-item.savings .val { color: #3ecf6e; }
+  .dash-breakdown-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #1a2e1e; font-size: 13px; }
+  .dash-breakdown-row:last-child { border-bottom: none; }
+  .dash-breakdown-row-label { color: #8a9e90; }
+  .dash-breakdown-row-val { font-family: 'Space Mono', monospace; font-weight: 700; color: #f0ebe1; }
+
+  /* ===== DANGER ZONE (Delete Account) ===== */
+  .danger-zone-card { background: rgba(30,10,10,0.8); border: 1px solid rgba(220,60,60,0.2); border-radius: 16px; padding: 20px; margin-bottom: 16px; }
+  .danger-zone-title { font-size: 11px; font-weight: 700; color: #e05555; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
+  .danger-zone-desc { font-size: 12px; color: #5a7a60; margin-bottom: 14px; line-height: 1.6; }
+  .btn-delete-account { background: rgba(220,60,60,0.12); border: 1px solid rgba(220,60,60,0.35); color: #e05555; border-radius: 10px; padding: 10px 20px; font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+  .btn-delete-account:hover { background: rgba(220,60,60,0.22); }
+
+  /* Confirm delete popup */
+  .confirm-delete-input { width: 100%; background: #0a1410; border: 1.5px solid rgba(220,60,60,0.3); border-radius: 10px; padding: 10px 14px; font-family: 'Sora', sans-serif; font-size: 14px; color: #f0ebe1; outline: none; margin-top: 6px; transition: border-color 0.2s; }
+  .confirm-delete-input:focus { border-color: #e05555; }
+  .btn-confirm-delete { flex: 2; padding: 11px; background: #e05555; color: #fff; border: none; border-radius: 10px; font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+  .btn-confirm-delete:hover { background: #c04040; }
+  .btn-confirm-delete:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .empty-state { text-align: center; padding: 32px 20px; color: #3a5040; }
+  .empty-state-icon { font-size: 36px; margin-bottom: 10px; }
+  .empty-state-text { font-size: 14px; }
+  .achievements-card { background: rgba(20,35,22,0.85); border: 1px solid #1e3322; border-radius: 14px; padding: 18px; margin-top: 0; }
+
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: #0e1a14; border: 1px solid rgba(62,207,110,0.3);
+    border-radius: 100px; padding: 10px 20px; font-size: 13px; color: #3ecf6e;
+    font-weight: 600; z-index: 30000; animation: toastIn 0.3s ease;
+  }
+  .toast.error { border-color: rgba(220,60,60,0.3); color: #e05555; }
+  @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(10px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+
+  /* ===== RESPONSIVE FIXES ===== */
+  @media (max-width: 480px) {
+    .container { padding: 20px 14px 60px; }
+    .user-header { padding: 10px 14px; border-radius: 12px; margin-bottom: 20px; }
+    .logo-text { font-size: 14px; }
+    .user-name-btn { display: none; }
+    .card { padding: 20px 16px; border-radius: 16px; }
+    .goal-dash-actions { flex-wrap: wrap; gap: 6px; }
+    .btn-complete { width: 100%; justify-content: center; }
+    .add-savings-wrap { min-width: 0; }
+    .goal-result-stats { grid-template-columns: 1fr 1fr; }
+    .stat-box:last-child { grid-column: span 2; }
+    .dash-breakdown-grid { grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+    .dash-breakdown-item .val { font-size: 12px; }
+    .results-amount { font-size: 28px; }
+    .add-row { grid-template-columns: 1fr auto auto; }
+    .commit-amt-wrap input { width: 60px; }
+    .avatar-section { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .popup { padding: 20px 16px; }
+    .modal { padding: 24px 16px; }
+    .goal-dash-card { padding: 14px; }
+    .plan-card { padding: 16px; }
+    .settings-card { padding: 16px; }
+    .section-header { flex-wrap: wrap; gap: 8px; }
+    .dropdown-menu { right: -10px; min-width: 180px; }
+    .save-plan-banner { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .free-mode-grid { gap: 8px; }
+    .free-input-box input { width: 48px; font-size: 18px; }
+  }
+  @media (max-width: 360px) {
+    .step-line { width: 24px; }
+    .step-label-spacer { width: 24px; }
+    .step-dot { width: 28px; height: 28px; font-size: 11px; }
+    .step-label-wrapper { width: 28px; }
+    .step-label-text { font-size: 8px; }
+    .formula-grid { gap: 8px; }
+    .formula-name { font-size: 12px; }
+    .formula-card { padding: 12px 8px; }
+  }
+  /* Prevent horizontal overflow globally */
+  html, body { overflow-x: hidden; max-width: 100vw; }
+  img, input, button, select, textarea { max-width: 100%; }
+  .goal-result-card { word-break: break-word; }
+  .toast { max-width: calc(100vw - 40px); white-space: normal; text-align: center; }
 </style>
 </head>
 <body>
@@ -316,190 +525,1170 @@
 <div class="bg-orb orb2"></div>
 <div class="bg-orb orb3"></div>
 
-<div class="container">
-  <div class="header">
-    <div class="logo-badge">💰 TabungKu</div>
-    <h1>Plan Smart, <span>Simpan Lebih.</span></h1>
-    <p class="subtitle">Kira savings kau, set goals, capai impian — step by step.</p>
-  </div>
+<!-- ===== AUTH MODAL ===== -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal">
+    <div class="modal-logo">💰 TabungKu</div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tabLogMasuk">Log Masuk</button>
+      <button class="auth-tab" id="tabDaftar">Daftar</button>
+    </div>
+    <div id="authError" class="auth-error"></div>
+    <div id="authSuccess" class="auth-success"></div>
 
-  <!-- Steps bar with aligned labels -->
-  <div class="steps-wrapper">
-    <div class="steps-container" id="stepsContainer"></div>
-    <div class="steps-labels" id="stepsLabels"></div>
-  </div>
-
-  <!-- Step 1: Income -->
-  <div class="card" id="step1">
-    <div class="step-badge">STEP 1 / 5</div>
-    <div class="card-title">Berapa income bulanan kau? 💸</div>
-    <div class="card-subtitle">Gaji bersih (after EPF/tax) ya, bukan gross.</div>
-    <div class="input-group">
-      <label class="input-label">Monthly Take-Home Pay</label>
-      <div class="input-wrap">
-        <div class="input-prefix">RM</div>
-        <input type="number" id="incomeInput" placeholder="cth: 3500" min="0" oninput="updateIncomePreview(); updateAllPreviews()" />
-      </div>
-    </div>
-    <div class="income-preview" id="incomePreview" style="display:none">
-      <div class="income-preview-amt" id="incomePreviewAmt"></div>
-      <div class="income-preview-sub">sebulan</div>
-    </div>
-    <button class="btn-primary" onclick="goToStep(2)">Seterusnya →</button>
-  </div>
-
-  <!-- Step 2: Formula -->
-  <div class="card hidden" id="step2">
-    <div class="step-badge">STEP 2 / 5</div>
-    <div class="card-title">Pilih formula simpanan kau 📊</div>
-    <div class="card-subtitle">Pilih yang paling sesuai dengan lifestyle kau.</div>
-    <div class="formula-grid">
-      <div class="formula-card" id="f-7020" onclick="selectFormula('70/20/10')">
-        <div class="formula-name">70/20/10</div>
-        <div class="formula-desc">70% Keperluan<br>20% Kehendak<br>10% Simpanan</div>
-      </div>
-      <div class="formula-card selected" id="f-5030" onclick="selectFormula('50/30/20')">
-        <div class="formula-name">50/30/20</div>
-        <div class="formula-desc">50% Keperluan<br>30% Kehendak<br>20% Simpanan</div>
-      </div>
-      <div class="formula-card" id="f-free" onclick="selectFormula('free')">
-        <div class="formula-name">FREE</div>
-        <div class="formula-desc">Tentukan % sendiri</div>
-      </div>
-    </div>
-    
-    <!-- Breakdown untuk fixed formula -->
-    <div id="formulaBreakdown" class="formula-breakdown">
-      <div class="breakdown-item needs"><label>Keperluan</label><span id="needsAmt">-</span></div>
-      <div class="breakdown-item wants"><label>Kehendak</label><span id="wantsAmt">-</span></div>
-      <div class="breakdown-item savings"><label>Simpanan</label><span id="savingsAmt">-</span></div>
-    </div>
-    
-    <!-- Free mode section - FIXED for mobile -->
-    <div id="freeMode" class="hidden" style="margin-top:16px">
-      <div class="free-mode-grid">
-        <div class="free-input-box needs">
-          <label>Keperluan %</label>
-          <input type="number" id="freeNeeds" value="50" min="0" max="100" step="1" oninput="updateFreeFormula()" />
-        </div>
-        <div class="free-input-box wants">
-          <label>Kehendak %</label>
-          <input type="number" id="freeWants" value="30" min="0" max="100" step="1" oninput="updateFreeFormula()" />
-        </div>
-        <div class="free-input-box savings">
-          <label>Simpanan %</label>
-          <input type="number" id="freeSavings" value="20" min="0" max="100" step="1" oninput="updateFreeFormula()" />
+    <!-- Login Form -->
+    <div id="loginForm">
+      <div class="auth-field">
+        <label>E-mel</label>
+        <div class="auth-input-wrap">
+          <input type="email" id="loginEmail" placeholder="example@gmail.com" />
         </div>
       </div>
-      <div id="freeTotalWarning" class="warning-box hidden" style="margin-top:0; margin-bottom:12px"></div>
-      <!-- Breakdown untuk FREE mode -->
-      <div id="freeBreakdown" class="free-breakdown">
-        <div class="breakdown-item needs"><label>Keperluan</label><span id="freeNeedsAmount">RM 0</span></div>
-        <div class="breakdown-item wants"><label>Kehendak</label><span id="freeWantsAmount">RM 0</span></div>
-        <div class="breakdown-item savings"><label>Simpanan</label><span id="freeSavingsAmount">RM 0</span></div>
+      <div class="auth-field">
+        <label>Kata Laluan</label>
+        <div class="auth-input-wrap">
+          <input type="password" id="loginPassword" placeholder="••••••••" />
+          <button class="pw-toggle" onclick="togglePw('loginPassword', this)">👁</button>
+        </div>
       </div>
+      <button class="auth-btn" id="btnLogin">Log Masuk</button>
     </div>
-    
-    <div class="nav-row">
-      <button class="btn-secondary" onclick="goToStep(1)">← Balik</button>
-      <button class="btn-primary" onclick="goToStep(3)">Seterusnya →</button>
-    </div>
-  </div>
 
-  <!-- Step 3: Commitments -->
-  <div class="card hidden" id="step3">
-    <div class="step-badge">STEP 3 / 5</div>
-    <div class="card-title">Komitmen bulanan kau 📋</div>
-    <div class="card-subtitle">Sewa, ansuran kereta, loan, subscription — masukkan semua. Boleh skip kalau takde.</div>
-    <div class="commitment-list" id="commitmentList"></div>
-    <div class="add-row">
-      <input type="text" id="commitName" placeholder="cth: Sewa rumah" onkeydown="if(event.key==='Enter')addCommitment()" />
-      <div class="commit-amt-wrap">
-        <div class="commit-prefix">RM</div>
-        <input type="number" id="commitAmt" placeholder="500" onkeydown="if(event.key==='Enter')addCommitment()" />
+    <!-- Register Form -->
+    <div id="registerForm" class="hidden">
+      <div class="auth-field">
+        <label>Nama Pengguna <span style="color:#5a7a60;font-size:10px">(*unik)</span></label>
+        <div class="auth-input-wrap">
+          <input type="text" id="regUsername" placeholder="JohnDoe" />
+        </div>
       </div>
-      <button class="btn-add" onclick="addCommitment()">+ Add</button>
+      <div class="auth-field">
+        <label>E-mel</label>
+        <div class="auth-input-wrap">
+          <input type="email" id="regEmail" placeholder="example@gmail.com" />
+        </div>
+      </div>
+      <div class="auth-field">
+        <label>Kata Laluan</label>
+        <div class="auth-input-wrap">
+          <input type="password" id="regPassword" placeholder="••••••••" />
+          <button class="pw-toggle" onclick="togglePw('regPassword', this)">👁</button>
+        </div>
+      </div>
+      <div class="auth-field">
+        <label>Sahkan Kata Laluan</label>
+        <div class="auth-input-wrap">
+          <input type="password" id="regConfirm" placeholder="••••••••" />
+          <button class="pw-toggle" onclick="togglePw('regConfirm', this)">👁</button>
+        </div>
+      </div>
+      <button class="auth-btn" id="btnRegister">Daftar Sekarang</button>
     </div>
-    <div id="commitTotal" class="hidden total-row">
-      Total komitmen: <b id="commitTotalAmt"></b>
-    </div>
-    <div id="commitWarning" class="warning-box hidden" style="margin-top:12px"></div>
-    <div class="nav-row">
-      <button class="btn-secondary" onclick="goToStep(2)">← Balik</button>
-      <button class="btn-primary" onclick="goToStep(4)">Seterusnya →</button>
-    </div>
-  </div>
 
-  <!-- Step 4: Goals -->
-  <div class="card hidden" id="step4">
-    <div class="step-badge">STEP 4 / 5</div>
-    <div class="card-title">Impian kau apa? 🎯</div>
-    <div class="card-subtitle">Masukkan goals kau — rumah, kereta, travel, emergency fund, apa je.</div>
-    <div id="goalList"></div>
-    <div class="add-goal-form">
-      <div style="font-size:11px;font-weight:700;color:#3ecf6e;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:14px;">+ TAMBAH GOAL</div>
-      <label class="form-label">Nama Goal</label>
-      <input type="text" id="goalName" placeholder="cth: Emergency Fund" />
-      <label class="form-label">Target Amount</label>
-      <div class="goal-target-wrap">
-        <div class="prefix">RM</div>
-        <input type="number" id="goalTarget" placeholder="10000" />
-      </div>
-      <span class="form-section-label" style="margin-top:4px">Priority</span>
-      <div class="priority-select" id="newGoalPriority">
-        <button class="p-btn high" onclick="setNewPriority('high')">🔴 High</button>
-        <button class="p-btn medium sel" onclick="setNewPriority('medium')">🟡 Medium</button>
-        <button class="p-btn low" onclick="setNewPriority('low')">🔵 Low</button>
-      </div>
-      <span class="form-section-label" style="margin-top:14px">Timeline</span>
-      <div class="timeline-toggle" id="newGoalTimeline">
-        <button class="t-btn sel" onclick="setNewTimeline('auto')">🤖 Auto-kira</button>
-        <button class="t-btn" onclick="setNewTimeline('manual')">📅 Saya tetapkan</button>
-      </div>
-      <div id="manualMonthsRow" class="hidden month-input-row" style="margin-top:10px">
-        <input type="number" id="goalMonths" placeholder="12" style="flex:1;height:40px;background:#0e1a14;border:1.5px solid #2a3d2e;border-radius:10px;padding:0 12px;font-size:13px;font-family:'Space Mono',monospace;color:#f0ebe1;" />
-        <span class="month-suffix">bulan untuk capai</span>
-      </div>
-      <button class="btn-add" style="width:100%;margin-top:14px;height:44px;" onclick="addGoal()">Tambah Goal</button>
-    </div>
-    <div class="nav-row" style="margin-top:20px">
-      <button class="btn-secondary" onclick="goToStep(3)">← Balik</button>
-      <button class="btn-primary" onclick="calcResults()">Kira Sekarang ✨</button>
-    </div>
+    <span class="auth-cancel" onclick="closeAuthModal()">Batal — Teruskan sebagai tetamu</span>
   </div>
+</div>
 
-  <!-- Step 5: Results -->
-  <div class="card hidden" id="step5">
-    <div class="step-badge">STEP 5 / 5 — RESULT</div>
-    <div class="card-title">Breakdown Savings Kau 🏆</div>
-    <div class="card-subtitle">Semua dah dikira & dah rounded — no sen drama.</div>
-    <div id="resultsContent"></div>
-    <div class="nav-row" style="margin-top:20px">
-      <button class="btn-secondary" onclick="restart()">🔄 Restart</button>
-      <button class="btn-primary" onclick="goToStep(4)" style="margin-top:0">✏️ Edit Goals</button>
+<!-- ===== DROPDOWN OVERLAY ===== -->
+<div class="dropdown-overlay" id="dropdownOverlay" onclick="closeMenu()"></div>
+
+<!-- ===== DELETE ACCOUNT CONFIRM POPUP ===== -->
+<div class="popup-overlay" id="popupDeleteAccount">
+  <div class="popup">
+    <div class="popup-title" style="color:#e05555">⚠️ Padam Akaun</div>
+    <div style="font-size:13px;color:#8a9e90;margin-bottom:16px;line-height:1.7">
+      Tindakan ini <b style="color:#f0ebe1">tidak boleh dibatalkan</b>. Semua data plan, goals, dan pencapaian kau akan dipadam secara kekal.
+    </div>
+    <div style="margin-bottom:14px">
+      <div style="font-size:11px;font-weight:600;color:#5a7a60;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px">Taip kata laluan untuk sahkan</div>
+      <div class="auth-input-wrap" style="border-color:rgba(220,60,60,0.3)">
+        <input type="password" id="deleteAccountPw" placeholder="Kata laluan semasa" class="confirm-delete-input" style="border:none;background:transparent;height:44px;padding:0 14px;font-family:'Sora',sans-serif;font-size:14px;color:#f0ebe1;outline:none;width:100%" />
+        <button class="pw-toggle" onclick="togglePw('deleteAccountPw',this)">👁</button>
+      </div>
+    </div>
+    <div class="popup-actions">
+      <button class="popup-btn-cancel" onclick="closePopup('popupDeleteAccount')">Batal</button>
+      <button class="btn-confirm-delete" id="btnConfirmDelete" onclick="doDeleteAccount()">Padam Akaun</button>
     </div>
   </div>
 </div>
 
+<!-- ===== POPUP: KEMAS KINI GOAL ===== -->
+<div class="popup-overlay" id="popupUpdateGoal">
+  <div class="popup">
+    <div class="popup-title" id="updateGoalName">Kemas Kini Simpanan</div>
+    <div style="background:#0a1410;border-radius:10px;padding:12px 14px;margin-bottom:14px">
+      <div style="font-size:12px;color:#5a7a60;margin-bottom:4px">Simpanan semasa</div>
+      <div style="font-family:'Space Mono',monospace;font-size:18px;font-weight:700;color:#3ecf6e" id="updateCurrentSaving">RM 0</div>
+      <div class="progress-bar" style="margin-top:8px;margin-bottom:4px"><div class="progress-fill" id="updateProgressFill" style="width:0%;background:#3ecf6e"></div></div>
+      <div style="font-size:11px;color:#5a7a60" id="updateProgressPct">0%</div>
+    </div>
+    <div class="popup-field">
+      <label>Berapa tambahan simpanan (RM)?</label>
+      <div class="popup-input-wrap">
+        <div class="popup-prefix">RM</div>
+        <input type="number" class="popup-input" id="updateAmount" placeholder="500" oninput="previewUpdate()" />
+      </div>
+    </div>
+    <div class="popup-preview" id="updatePreview" style="display:none">
+      Selepas kemas kini: <b id="updateAfterAmt">RM 0</b> (<b id="updateAfterPct">0%</b> lengkap)
+    </div>
+    <div class="popup-actions">
+      <button class="popup-btn-cancel" onclick="closePopup('popupUpdateGoal')">Batal</button>
+      <button class="popup-btn-save" onclick="saveGoalUpdate()">SIMPAN</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== POPUP: GOAL BARU (DASHBOARD) ===== -->
+<div class="popup-overlay" id="popupNewGoal">
+  <div class="popup">
+    <div class="popup-title">🎯 Goal Baru</div>
+    <div class="popup-field">
+      <label>Nama Goal</label>
+      <input type="text" class="popup-input-full" id="newGoalNamePopup" placeholder="cth: iPhone 16 Pro" />
+    </div>
+    <div class="popup-field">
+      <label>Sasaran (RM)</label>
+      <div class="popup-input-wrap">
+        <div class="popup-prefix">RM</div>
+        <input type="number" class="popup-input" id="newGoalTargetPopup" placeholder="6000" />
+      </div>
+    </div>
+    <div class="popup-field">
+      <label>Keutamaan</label>
+      <div class="priority-select" id="newGoalPriorityPopup">
+        <button class="p-btn high" onclick="setPopupPriority('high')">🔴 Tinggi</button>
+        <button class="p-btn medium sel" onclick="setPopupPriority('medium')">🟡 Sederhana</button>
+        <button class="p-btn low" onclick="setPopupPriority('low')">🔵 Rendah</button>
+      </div>
+    </div>
+    <div class="popup-actions">
+      <button class="popup-btn-cancel" onclick="closePopup('popupNewGoal')">Batal</button>
+      <button class="popup-btn-save" onclick="saveDashGoal()">SIMPAN</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== POPUP: EDIT PLAN ===== -->
+<div class="popup-overlay" id="popupEditPlan">
+  <div class="popup" style="max-width:440px">
+    <div class="popup-title">✏️ Edit Plan</div>
+    <div class="popup-field">
+      <label>Pendapatan Bulanan</label>
+      <div class="popup-input-wrap">
+        <div class="popup-prefix">RM</div>
+        <input type="number" class="popup-input" id="editIncomeInput" placeholder="3500" oninput="updateEditPlanPreview()" />
+      </div>
+      <div style="font-size:11px;color:#5a7a60;margin-top:4px">Sekarang: RM <span id="editCurrentIncome">-</span></div>
+    </div>
+    <div class="popup-field">
+      <label>Formula Simpanan</label>
+      <div class="formula-mini-grid">
+        <div class="formula-mini-card" id="ef-7020" onclick="selectEditFormula('70/20/10')">
+          <div class="formula-mini-name">70/20/10</div>
+          <div class="formula-mini-desc">70% Keperluan<br>20% Kemahuan<br>10% Simpan</div>
+        </div>
+        <div class="formula-mini-card selected" id="ef-5030" onclick="selectEditFormula('50/30/20')">
+          <div class="formula-mini-name">50/30/20</div>
+          <div class="formula-mini-desc">50% Keperluan<br>30% Kemahuan<br>20% Simpan</div>
+        </div>
+        <div class="formula-mini-card" id="ef-free" onclick="selectEditFormula('free')">
+          <div class="formula-mini-name">BEBAS</div>
+          <div class="formula-mini-desc">Set sendiri %</div>
+        </div>
+      </div>
+      <div id="editFreeGrid" class="free-edit-grid hidden">
+        <div class="free-edit-box needs"><label>Keperluan %</label><input type="number" id="ef-needs" value="50" min="0" max="100" oninput="updateEditPlanPreview()" /></div>
+        <div class="free-edit-box wants"><label>Kemahuan %</label><input type="number" id="ef-wants" value="30" min="0" max="100" oninput="updateEditPlanPreview()" /></div>
+        <div class="free-edit-box savings"><label>Simpanan %</label><input type="number" id="ef-savings" value="20" min="0" max="100" oninput="updateEditPlanPreview()" /></div>
+      </div>
+    </div>
+    <div class="edit-plan-preview" id="editPlanPreview">
+      <div style="font-size:10px;color:#3a5040;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px">Akan kira semula:</div>
+      <div class="preview-row"><span>💰 Simpanan bulanan</span><span class="preview-arrow" id="epSavingsChange">-</span></div>
+      <div class="preview-row" style="margin-top:4px"><span>🎯 Timeline goals</span><span class="preview-arrow" style="color:#5a7a60;font-size:10px">akan dikira semula</span></div>
+    </div>
+    <div class="popup-actions">
+      <button class="popup-btn-cancel" onclick="closePopup('popupEditPlan')">Batal</button>
+      <button class="popup-btn-save" onclick="saveEditPlan()">SIMPAN</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== POPUP: CELEBRATION ===== -->
+<div class="popup-overlay" id="popupCelebration">
+  <div class="popup celebration-popup">
+    <div class="celebration-emoji">🎉</div>
+    <div class="celebration-title">TAHNIAH!</div>
+    <div style="font-size:14px;color:#5a7a60;margin-bottom:8px">Anda telah mencapai:</div>
+    <div class="celebration-name" id="celebGoalName">-</div>
+    <div class="celebration-stats">
+      <div class="c-stat-row"><span class="c-stat-label">Sasaran</span><span class="c-stat-value" id="celebTarget">-</span></div>
+      <div class="c-stat-row"><span class="c-stat-label">Masa diambil</span><span class="c-stat-value" id="celebTime">-</span></div>
+      <div class="c-stat-row"><span class="c-stat-label">Simpanan bulanan purata</span><span class="c-stat-value" id="celebMonthly">-</span></div>
+    </div>
+    <div class="celebration-tagline">Hebat! Teruskan! 💪</div>
+    <button class="btn-close-celebration" onclick="closeCelebration()">TUTUP</button>
+  </div>
+</div>
+
+<!-- ===== MAIN APP ===== -->
+<div class="container">
+
+  <!-- USER MODE HEADER -->
+  <div class="user-header" id="userHeader">
+    <div class="user-header-left">
+      <div class="logo-text">💰 TabungKu</div>
+    </div>
+    <div class="user-header-right">
+      <div class="user-avatar" id="headerAvatar" onclick="showSettings()"></div>
+      <span class="user-name-btn" id="headerUsername" onclick="showSettings()"></span>
+      <div class="dropdown-menu-wrap">
+        <button class="menu-btn" id="menuToggleBtn" onclick="toggleMenu(event)">☰</button>
+        <div class="dropdown-menu" id="dropdownMenu">
+          <div class="dropdown-user-info">
+            <div class="dropdown-user-name" id="menuDisplayName"></div>
+            <div class="dropdown-user-email" id="menuUsername"></div>
+          </div>
+          <button class="menu-item" onclick="showDashboard(); closeMenu()">📊 Papan Pemuka</button>
+          <button class="menu-item" onclick="showSettings(); closeMenu()">⚙️ Tetapan Akaun</button>
+          <div class="menu-divider"></div>
+          <button class="menu-item danger" onclick="doLogout(); closeMenu()">🚪 Log Keluar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== DASHBOARD VIEW ===== -->
+  <div id="dashboardView">
+    <div class="dash-greeting">Hai, <span id="dashUsername">Pengguna</span>! 👋</div>
+
+    <!-- Budget Breakdown Summary -->
+    <div class="dash-breakdown-card" id="dashBreakdownCard" style="display:none">
+      <div class="plan-card-header" style="margin-bottom:0">
+        <span class="plan-card-title">💼 Budget Breakdown</span>
+      </div>
+      <div class="dash-breakdown-grid">
+        <div class="dash-breakdown-item needs"><label>Keperluan</label><span class="val" id="dbNeeds">-</span></div>
+        <div class="dash-breakdown-item wants"><label>Kehendak</label><span class="val" id="dbWants">-</span></div>
+        <div class="dash-breakdown-item savings"><label>Simpanan</label><span class="val" id="dbSavings">-</span></div>
+      </div>
+      <div style="margin-top:12px;background:#0a1410;border-radius:10px;padding:12px 14px">
+        <div class="dash-breakdown-row"><span class="dash-breakdown-row-label">💼 Income</span><span class="dash-breakdown-row-val" id="dbIncome">-</span></div>
+        <div class="dash-breakdown-row" id="dbCommitRow" style="display:none"><span class="dash-breakdown-row-label">📋 Komitmen</span><span class="dash-breakdown-row-val" style="color:#f5b731" id="dbCommit">-</span></div>
+        <div class="dash-breakdown-row"><span class="dash-breakdown-row-label">💰 Simpanan/bulan</span><span class="dash-breakdown-row-val" style="color:#3ecf6e" id="dbSavingsMonthly">-</span></div>
+      </div>
+    </div>
+    <div class="plan-card" id="planCardArea">
+      <div class="plan-card-header">
+        <span class="plan-card-title">📋 Plan Aktif</span>
+        <button class="btn-edit" onclick="openEditPlan()">Sunting Plan</button>
+      </div>
+      <div id="planCardContent">
+        <div class="empty-state">
+          <div class="empty-state-icon">📝</div>
+          <div class="empty-state-text">Tiada plan lagi. <a href="#" onclick="switchToPlanner()" style="color:#3ecf6e">Buat plan sekarang →</a></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Goals Aktif -->
+    <div class="section-header">
+      <span class="section-title-dash">🎯 Goal Aktif</span>
+      <button class="btn-add-goal" onclick="openNewGoalPopup()">+ Tambah Goal</button>
+    </div>
+    <div id="dashGoalList">
+      <div class="empty-state">
+        <div class="empty-state-icon">🎯</div>
+        <div class="empty-state-text">Tiada goal lagi. Tambah goal pertama kau!</div>
+      </div>
+    </div>
+
+    <!-- Pencapaian -->
+    <div id="achievementsArea" style="display:none">
+      <div class="section-header" style="margin-top:20px">
+        <span class="section-title-dash">🏆 Pencapaian</span>
+        <span style="font-size:12px;color:#3ecf6e" id="achieveCount"></span>
+      </div>
+      <div class="achievements-card" id="achieveList"></div>
+    </div>
+  </div>
+
+  <!-- ===== SETTINGS VIEW ===== -->
+  <div id="settingsView">
+    <button class="btn-back" onclick="showDashboard()">← Balik ke Dashboard</button>
+    <div class="card-title" style="margin-bottom:20px">⚙️ Tetapan Akaun</div>
+    <div class="settings-card">
+      <div class="settings-section-title">Profil</div>
+      <div class="avatar-section">
+        <div class="avatar-preview" id="settingsAvatarPreview"></div>
+        <div style="flex:1">
+          <div style="font-size:12px;color:#5a7a60;margin-bottom:6px">URL Gambar Profil</div>
+          <input type="text" class="settings-input" id="settingsAvatarUrl" placeholder="https://example.com/photo.jpg" oninput="previewSettingsAvatar()" />
+          <button class="btn-settings-save" onclick="saveAvatar()" style="margin-top:8px">Kemas Kini</button>
+        </div>
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-label">Nama Pengguna</div>
+        <div class="settings-row-value" id="settingsUsername">-</div>
+        <div class="settings-row-note">*Tidak boleh ditukar</div>
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-label">E-mel</div>
+        <div class="settings-row-value" id="settingsEmail">-</div>
+      </div>
+    </div>
+    <div class="settings-card">
+      <div class="settings-section-title">Keselamatan</div>
+      <div style="margin-bottom:12px">
+        <div class="settings-row-label" style="margin-bottom:6px">Kata Laluan Lama</div>
+        <div class="settings-pw-wrap"><input type="password" id="settingsOldPw" placeholder="••••••••" /><button class="pw-toggle" onclick="togglePw('settingsOldPw',this)">👁</button></div>
+      </div>
+      <div style="margin-bottom:12px">
+        <div class="settings-row-label" style="margin-bottom:6px">Kata Laluan Baru</div>
+        <div class="settings-pw-wrap"><input type="password" id="settingsNewPw" placeholder="••••••••" /><button class="pw-toggle" onclick="togglePw('settingsNewPw',this)">👁</button></div>
+      </div>
+      <div style="margin-bottom:12px">
+        <div class="settings-row-label" style="margin-bottom:6px">Sahkan Kata Laluan Baru</div>
+        <div class="settings-pw-wrap"><input type="password" id="settingsConfirmPw" placeholder="••••••••" /><button class="pw-toggle" onclick="togglePw('settingsConfirmPw',this)">👁</button></div>
+      </div>
+      <button class="btn-settings-save" onclick="changePassword()">Tukar Kata Laluan</button>
+    </div>
+    <div class="danger-zone-card">
+      <div class="danger-zone-title">⚠️ Zon Bahaya</div>
+      <div class="danger-zone-desc">Memadam akaun akan menghapuskan semua data kau secara kekal termasuk plan, goals, dan pencapaian. Tindakan ini tidak boleh dibatalkan.</div>
+      <button class="btn-delete-account" onclick="openDeleteAccountPopup()">🗑 Padam Akaun Saya</button>
+    </div>
+  </div>
+
+  <!-- ===== PLANNER (GUEST / WIZARD) ===== -->
+  <div id="plannerView">
+    <div class="header" id="plannerHeader">
+      <div class="logo-badge">💰 TabungKu</div>
+      <h1>Plan Smart, <span>Simpan Lebih.</span></h1>
+      <p class="subtitle">Kira savings kau, set goals, capai impian — step by step.</p>
+    </div>
+
+    <!-- Steps -->
+    <div class="steps-wrapper">
+      <div class="steps-container" id="stepsContainer"></div>
+      <div class="steps-labels" id="stepsLabels"></div>
+    </div>
+
+    <!-- Step 1: Income -->
+    <div class="card" id="step1">
+      <div class="step-badge">STEP 1 / 5</div>
+      <div class="card-title">Berapa income bulanan kau? 💸</div>
+      <div class="card-subtitle">Gaji bersih (after EPF/tax) ya, bukan gross.</div>
+      <div class="input-group">
+        <label class="input-label">Monthly Take-Home Pay</label>
+        <div class="input-wrap">
+          <div class="input-prefix">RM</div>
+          <input type="number" id="incomeInput" placeholder="cth: 3500" min="0" oninput="updateIncomePreview(); updateAllPreviews()" />
+        </div>
+      </div>
+      <div class="income-preview" id="incomePreview" style="display:none">
+        <div class="income-preview-amt" id="incomePreviewAmt"></div>
+        <div class="income-preview-sub">sebulan</div>
+      </div>
+      <button class="btn-primary" onclick="goToStep(2)">Seterusnya →</button>
+    </div>
+
+    <!-- Step 2: Formula -->
+    <div class="card hidden" id="step2">
+      <div class="step-badge">STEP 2 / 5</div>
+      <div class="card-title">Pilih formula simpanan kau 📊</div>
+      <div class="card-subtitle">Pilih yang paling sesuai dengan lifestyle kau.</div>
+      <div class="formula-grid">
+        <div class="formula-card" id="f-7020" onclick="selectFormula('70/20/10')">
+          <div class="formula-name">70/20/10</div>
+          <div class="formula-desc">70% Keperluan<br>20% Kehendak<br>10% Simpanan</div>
+        </div>
+        <div class="formula-card selected" id="f-5030" onclick="selectFormula('50/30/20')">
+          <div class="formula-name">50/30/20</div>
+          <div class="formula-desc">50% Keperluan<br>30% Kehendak<br>20% Simpanan</div>
+        </div>
+        <div class="formula-card" id="f-free" onclick="selectFormula('free')">
+          <div class="formula-name">FREE</div>
+          <div class="formula-desc">Tentukan % sendiri</div>
+        </div>
+      </div>
+      <div id="formulaBreakdown" class="formula-breakdown">
+        <div class="breakdown-item needs"><label>Keperluan</label><span id="needsAmt">-</span></div>
+        <div class="breakdown-item wants"><label>Kehendak</label><span id="wantsAmt">-</span></div>
+        <div class="breakdown-item savings"><label>Simpanan</label><span id="savingsAmt">-</span></div>
+      </div>
+      <div id="freeMode" class="hidden" style="margin-top:16px">
+        <div class="free-mode-grid">
+          <div class="free-input-box needs"><label>Keperluan %</label><input type="number" id="freeNeeds" value="50" min="0" max="100" step="1" oninput="updateFreeFormula()" /></div>
+          <div class="free-input-box wants"><label>Kehendak %</label><input type="number" id="freeWants" value="30" min="0" max="100" step="1" oninput="updateFreeFormula()" /></div>
+          <div class="free-input-box savings"><label>Simpanan %</label><input type="number" id="freeSavings" value="20" min="0" max="100" step="1" oninput="updateFreeFormula()" /></div>
+        </div>
+        <div id="freeTotalWarning" class="warning-box hidden" style="margin-top:0; margin-bottom:12px"></div>
+        <div id="freeBreakdown" class="free-breakdown">
+          <div class="breakdown-item needs"><label>Keperluan</label><span id="freeNeedsAmount">RM 0</span></div>
+          <div class="breakdown-item wants"><label>Kehendak</label><span id="freeWantsAmount">RM 0</span></div>
+          <div class="breakdown-item savings"><label>Simpanan</label><span id="freeSavingsAmount">RM 0</span></div>
+        </div>
+      </div>
+      <div class="nav-row">
+        <button class="btn-secondary" onclick="goToStep(1)">← Balik</button>
+        <button class="btn-primary" onclick="goToStep(3)">Seterusnya →</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Commitments -->
+    <div class="card hidden" id="step3">
+      <div class="step-badge">STEP 3 / 5</div>
+      <div class="card-title">Komitmen bulanan kau 📋</div>
+      <div class="card-subtitle">Sewa, ansuran kereta, loan, subscription — masukkan semua. Boleh skip kalau takde.</div>
+      <div class="commitment-list" id="commitmentList"></div>
+      <div class="add-row">
+        <input type="text" id="commitName" placeholder="cth: Sewa rumah" onkeydown="if(event.key==='Enter')addCommitment()" />
+        <div class="commit-amt-wrap">
+          <div class="commit-prefix">RM</div>
+          <input type="number" id="commitAmt" placeholder="500" onkeydown="if(event.key==='Enter')addCommitment()" />
+        </div>
+        <button class="btn-add" onclick="addCommitment()">+ Add</button>
+      </div>
+      <div id="commitTotal" class="hidden total-row">Total komitmen: <b id="commitTotalAmt"></b></div>
+      <div id="commitWarning" class="warning-box hidden" style="margin-top:12px"></div>
+      <div class="nav-row">
+        <button class="btn-secondary" onclick="goToStep(2)">← Balik</button>
+        <button class="btn-primary" onclick="goToStep(4)">Seterusnya →</button>
+      </div>
+    </div>
+
+    <!-- Step 4: Goals -->
+    <div class="card hidden" id="step4">
+      <div class="step-badge">STEP 4 / 5</div>
+      <div class="card-title">Impian kau apa? 🎯</div>
+      <div class="card-subtitle">Masukkan goals kau — rumah, kereta, travel, emergency fund, apa je.</div>
+      <div id="goalList"></div>
+      <div class="add-goal-form">
+        <div style="font-size:11px;font-weight:700;color:#3ecf6e;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:14px;">+ TAMBAH GOAL</div>
+        <label class="form-label">Nama Goal</label>
+        <input type="text" id="goalName" placeholder="cth: Emergency Fund" />
+        <label class="form-label">Target Amount</label>
+        <div class="goal-target-wrap">
+          <div class="prefix">RM</div>
+          <input type="number" id="goalTarget" placeholder="10000" />
+        </div>
+        <span class="form-section-label" style="margin-top:4px">Priority</span>
+        <div class="priority-select-planner" id="newGoalPriorityPlanner">
+          <button class="p-btn high" onclick="setNewPriority('high')">🔴 High</button>
+          <button class="p-btn medium sel" onclick="setNewPriority('medium')">🟡 Medium</button>
+          <button class="p-btn low" onclick="setNewPriority('low')">🔵 Low</button>
+        </div>
+        <span class="form-section-label" style="margin-top:14px">Timeline</span>
+        <div class="timeline-toggle" id="newGoalTimeline">
+          <button class="t-btn sel" onclick="setNewTimeline('auto')">🤖 Auto-kira</button>
+          <button class="t-btn" onclick="setNewTimeline('manual')">📅 Saya tetapkan</button>
+        </div>
+        <div id="manualMonthsRow" class="hidden month-input-row" style="margin-top:10px">
+          <input type="number" id="goalMonths" placeholder="12" style="flex:1;height:40px;background:#0e1a14;border:1.5px solid #2a3d2e;border-radius:10px;padding:0 12px;font-size:13px;font-family:'Space Mono',monospace;color:#f0ebe1;" />
+          <span class="month-suffix">bulan untuk capai</span>
+        </div>
+        <button class="btn-add" style="width:100%;margin-top:14px;height:44px;" onclick="addGoal()">Tambah Goal</button>
+      </div>
+      <div class="nav-row" style="margin-top:20px">
+        <button class="btn-secondary" onclick="goToStep(3)">← Balik</button>
+        <button class="btn-primary" onclick="calcResults()">Kira Sekarang ✨</button>
+      </div>
+    </div>
+
+    <!-- Step 5: Results -->
+    <div class="card hidden" id="step5">
+      <div class="step-badge">STEP 5 / 5 — RESULT</div>
+      <div class="card-title">Breakdown Savings Kau 🏆</div>
+      <div class="card-subtitle">Semua dah dikira & dah rounded — no sen drama.</div>
+      <div id="savePlanBanner" class="save-plan-banner hidden">
+        <div class="save-plan-text">💡 <b>Log masuk</b> untuk simpan plan & track progress goal kau!</div>
+        <button class="btn-save-plan" onclick="openAuthModal()">Log Masuk / Daftar</button>
+      </div>
+      <div id="resultsContent"></div>
+      <div class="nav-row" style="margin-top:20px">
+        <button class="btn-secondary" onclick="restart()">🔄 Restart</button>
+        <button class="btn-primary" onclick="goToStep(4)" style="margin-top:0">✏️ Edit Goals</button>
+      </div>
+    </div>
+  </div><!-- end plannerView -->
+
+  <!-- GUEST FOOTER -->
+  <div id="guestFooter" class="guest-footer">
+    <button class="btn-auth-footer" onclick="openAuthModal()">Log Masuk / Daftar</button>
+  </div>
+
+</div>
+
+<!-- Firebase -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { getFirestore, doc, setDoc, getDoc, updateDoc, collection, addDoc, getDocs, deleteDoc, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCwnb1D-qqyjUDNimf1tV6jREshvkGujgY",
+    authDomain: "achievaaa-a8b1d.firebaseapp.com",
+    projectId: "achievaaa-a8b1d",
+    storageBucket: "achievaaa-a8b1d.firebasestorage.app",
+    messagingSenderId: "1019216709115",
+    appId: "1:1019216709115:web:4782960e4363bd7f56f75e",
+    measurementId: "G-D95B646RQF"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  // Expose to global
+  window._fb = { auth, db, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updatePassword, reauthenticateWithCredential, EmailAuthProvider, doc, setDoc, getDoc, updateDoc, collection, addDoc, getDocs, deleteDoc, query, where, orderBy };
+
+  // Auth state listener
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      const uDoc = await getDoc(doc(db, 'users', user.uid));
+      const uData = uDoc.exists() ? uDoc.data() : {};
+      window.currentUser = { uid: user.uid, email: user.email, ...uData };
+      enterUserMode();
+    } else {
+      window.currentUser = null;
+      enterGuestMode();
+    }
+  });
+</script>
+
 <script>
-  // ---- State ----
+  // ===== STATE =====
   let currentStep = 1;
   let selectedFormula = '50/30/20';
   let newGoalPriority = 'medium';
   let newGoalTimeline = 'auto';
   let commitments = [];
   let goals = [];
+  let editFormula = '50/30/20';
+  let popupGoalPriority = 'medium';
+  let activeUpdateGoalId = null;
+  let dashGoals = [];
+  let dashAchievements = [];
 
   const FORMULAS = {
     '70/20/10': { needs: 70, wants: 20, savings: 10 },
     '50/30/20': { needs: 50, wants: 30, savings: 20 },
-    'free': { needs: null, wants: null, savings: null },
+    'free': null,
   };
 
-  function getIncome() { return parseFloat(document.getElementById('incomeInput').value) || 0; }
+  function fmt(n) { return Math.round(n).toLocaleString('ms-MY'); }
   function round(n) { return Math.round(n); }
-  function fmt(n) { return n.toLocaleString('ms-MY'); }
 
+  // ===== MODE SWITCHING =====
+  function enterUserMode() {
+    const u = window.currentUser;
+    document.getElementById('plannerView').style.display = 'none';
+    document.getElementById('guestFooter').style.display = 'none';
+    document.getElementById('dashboardView').classList.remove('visible');
+    document.getElementById('settingsView').classList.remove('visible');
+    document.getElementById('userHeader').classList.add('visible');
+
+    const username = u.username || u.email.split('@')[0];
+    document.getElementById('headerUsername').textContent = username;
+    document.getElementById('menuDisplayName').textContent = username;
+    document.getElementById('menuUsername').textContent = u.email;
+
+    const avatar = document.getElementById('headerAvatar');
+    if (u.avatarUrl) {
+      avatar.innerHTML = `<img src="${u.avatarUrl}" onerror="this.parentElement.textContent='${username[0].toUpperCase()}'" />`;
+    } else {
+      avatar.textContent = username[0].toUpperCase();
+    }
+
+    closeAuthModal();
+    showDashboard();
+  }
+
+  function enterGuestMode() {
+    document.getElementById('plannerView').style.display = 'block';
+    document.getElementById('guestFooter').style.display = 'block';
+    document.getElementById('dashboardView').classList.remove('visible');
+    document.getElementById('settingsView').classList.remove('visible');
+    document.getElementById('userHeader').classList.remove('visible');
+    renderSteps();
+    updateAllPreviews();
+  }
+
+  function switchToPlanner() {
+    document.getElementById('dashboardView').classList.remove('visible');
+    document.getElementById('settingsView').classList.remove('visible');
+    document.getElementById('plannerView').style.display = 'block';
+    document.getElementById('guestFooter').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    return false;
+  }
+
+  // ===== FIXED MENU FUNCTIONS =====
+  function toggleMenu(e) {
+    e.stopPropagation();
+    const menu = document.getElementById('dropdownMenu');
+    const overlay = document.getElementById('dropdownOverlay');
+    const isOpen = menu.classList.contains('open');
+    if (isOpen) { 
+      menu.classList.remove('open'); 
+      overlay.classList.remove('visible'); 
+    } else { 
+      menu.classList.add('open'); 
+      overlay.classList.add('visible'); 
+    }
+  }
+
+  function closeMenu() {
+    const menu = document.getElementById('dropdownMenu');
+    const overlay = document.getElementById('dropdownOverlay');
+    if (menu) menu.classList.remove('open');
+    if (overlay) overlay.classList.remove('visible');
+  }
+  
+  async function showDashboard() {
+    document.getElementById('settingsView').classList.remove('visible');
+    document.getElementById('dashboardView').classList.add('visible');
+    document.getElementById('plannerView').style.display = 'none';
+    document.getElementById('guestFooter').style.display = 'none';
+    const u = window.currentUser;
+    if (u) {
+      const username = u.username || u.email.split('@')[0];
+      document.getElementById('dashUsername').textContent = username;
+    }
+    await loadDashboard();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  async function loadDashboard() {
+    const u = window.currentUser;
+    if (!u || !window._fb) return;
+    const { db, doc, getDoc, collection, getDocs } = window._fb;
+
+    const planDoc = await getDoc(doc(db, 'users', u.uid));
+    const planData = planDoc.exists() ? planDoc.data() : {};
+
+    if (planData.plan) {
+      const p = planData.plan;
+      const pct = p.formula === 'free' ? p.freePct : FORMULAS[p.formula];
+      const savingsAmt = round(p.income * (pct?.savings || 0) / 100);
+      const needsAmt = round(p.income * (pct?.needs || 0) / 100);
+      const wantsAmt = round(p.income * (pct?.wants || 0) / 100);
+      const totalCommit = p.commitments?.reduce((s, c) => s + c.amount, 0) || 0;
+      const commitStr = p.commitments?.length > 0 ? p.commitments.map(c => `${c.name} RM${fmt(c.amount)}`).join(', ') : 'Tiada';
+
+      document.getElementById('planCardContent').innerHTML = `
+        <div class="plan-row">Pendapatan: <b>RM ${fmt(p.income)}/bulan</b></div>
+        <div class="plan-row">Formula: <b>${p.formula === 'free' ? `BEBAS (${pct.needs}% | ${pct.wants}% | ${pct.savings}%)` : `${p.formula} (Keperluan ${pct.needs}% | Kehendak ${pct.wants}% | Simpanan ${pct.savings}%)`}</b></div>
+        <div class="plan-row savings-row">Simpanan bulanan: <b>RM ${fmt(savingsAmt)}</b></div>
+        ${totalCommit > 0 ? `<div class="plan-row">Komitmen: <b>RM ${fmt(totalCommit)}</b> (${commitStr})</div>` : ''}
+      `;
+
+      document.getElementById('dashBreakdownCard').style.display = 'block';
+      document.getElementById('dbNeeds').textContent = 'RM ' + fmt(needsAmt);
+      document.getElementById('dbWants').textContent = 'RM ' + fmt(wantsAmt);
+      document.getElementById('dbSavings').textContent = 'RM ' + fmt(savingsAmt);
+      document.getElementById('dbIncome').textContent = 'RM ' + fmt(p.income);
+      document.getElementById('dbSavingsMonthly').textContent = 'RM ' + fmt(savingsAmt);
+      const commitRow = document.getElementById('dbCommitRow');
+      if (totalCommit > 0) { commitRow.style.display = 'flex'; document.getElementById('dbCommit').textContent = 'RM ' + fmt(totalCommit); }
+      else { commitRow.style.display = 'none'; }
+
+      window._currentPlan = planData.plan;
+    } else {
+      document.getElementById('planCardContent').innerHTML = `<div class="empty-state"><div class="empty-state-icon">📝</div><div class="empty-state-text">Tiada plan lagi. <a href="#" onclick="switchToPlanner(); return false;" style="color:#3ecf6e">Buat plan sekarang →</a></div></div>`;
+      document.getElementById('dashBreakdownCard').style.display = 'none';
+      window._currentPlan = null;
+    }
+
+    const goalsSnap = await getDocs(collection(db, 'users', u.uid, 'goals'));
+    dashGoals = [];
+    dashAchievements = [];
+    goalsSnap.forEach(d => {
+      const g = { id: d.id, ...d.data() };
+      if (g.completed) dashAchievements.push(g);
+      else dashGoals.push(g);
+    });
+    dashGoals.sort((a, b) => { const o = { high: 0, medium: 1, low: 2 }; return o[a.priority] - o[b.priority]; });
+    dashAchievements.sort((a, b) => (b.completedAt || 0) - (a.completedAt || 0));
+    renderDashGoals();
+    renderAchievements();
+  }
+
+  function renderDashGoals() {
+    const list = document.getElementById('dashGoalList');
+    if (dashGoals.length === 0) {
+      list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🎯</div><div class="empty-state-text">Tiada goal lagi. Tambah goal pertama kau!</div></div>`;
+      return;
+    }
+
+    const plan = window._currentPlan;
+
+    list.innerHTML = dashGoals.map(g => {
+      const pct = g.target > 0 ? Math.min(100, Math.round((g.saved || 0) / g.target * 100)) : 0;
+      const prioColor = g.priority === 'high' ? '#ff6060' : g.priority === 'medium' ? '#f5b731' : '#82b4e8';
+      const prioLabel = g.priority === 'high' ? 'Tinggi' : g.priority === 'medium' ? 'Sederhana' : 'Rendah';
+
+      let etaStr = '';
+      if (plan) {
+        const pct2 = plan.formula === 'free' ? plan.freePct : FORMULAS[plan.formula];
+        const savingsAmt = round(plan.income * ((pct2?.savings || 0)) / 100);
+        const remaining = (g.target || 0) - (g.saved || 0);
+        if (savingsAmt > 0 && remaining > 0) {
+          const months = Math.ceil(remaining / savingsAmt);
+          const eta = new Date(); eta.setMonth(eta.getMonth() + months);
+          etaStr = `Anggaran selesai: ${months} bulan lagi (${eta.toLocaleDateString('ms-MY', { month: 'short', year: 'numeric' })})`;
+        }
+      }
+
+      return `
+        <div class="goal-dash-card">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+            <div class="goal-dash-name">${g.name}</div>
+            <span class="goal-dash-priority" style="background:${prioColor}20;color:${prioColor};border:1px solid ${prioColor}40">${prioLabel}</span>
+          </div>
+          <div class="goal-dash-meta">Sasaran: <b>RM ${fmt(g.target)}</b></div>
+          <div class="progress-label"><span><b>RM ${fmt(g.saved || 0)}</b> / RM ${fmt(g.target)}</span><span>${pct}%</span></div>
+          <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:${prioColor}"></div></div>
+          ${etaStr ? `<div style="font-size:11px;color:#5a7a60;margin-bottom:10px">${etaStr}</div>` : ''}
+          <div class="goal-dash-actions">
+            <div class="add-savings-wrap">
+              <div class="add-savings-prefix">RM</div>
+              <input type="number" class="add-savings-input" id="addSav-${g.id}" placeholder="500" />
+            </div>
+            <button class="btn-add-savings" onclick="openUpdateGoal('${g.id}')">+</button>
+            <button class="btn-complete" onclick="markGoalComplete('${g.id}')">✓ Selesai</button>
+            <button class="btn-remove" onclick="deleteActiveGoal('${g.id}')" title="Padam goal" style="height:36px;padding:0 10px;font-size:16px;flex-shrink:0">🗑</button>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  function renderAchievements() {
+    const area = document.getElementById('achievementsArea');
+    const list = document.getElementById('achieveList');
+    if (dashAchievements.length === 0) { area.style.display = 'none'; return; }
+    area.style.display = 'block';
+    document.getElementById('achieveCount').textContent = `(${dashAchievements.length} goal selesai)`;
+    list.innerHTML = dashAchievements.map(g => `
+      <div class="achievement-item">
+        <span class="achievement-check">✓</span>
+        <span class="achievement-name">${g.name}</span>
+        <span class="achievement-date">${g.completedAt ? new Date(g.completedAt).toLocaleDateString('ms-MY', { month: 'short', year: 'numeric' }) : ''}</span>
+        <span class="achievement-amt">RM ${fmt(g.target)}</span>
+        <button class="btn-achievement-del" onclick="deleteAchievement('${g.id}')" title="Padam pencapaian">✕</button>
+      </div>`).join('');
+  }
+
+  async function deleteAchievement(goalId) {
+    if (!window._fb) return;
+    if (!confirm('Padam pencapaian ini? Goal akan dipulihkan ke senarai aktif.')) return;
+    const { db, doc, updateDoc } = window._fb;
+    await updateDoc(doc(db, 'users', window.currentUser.uid, 'goals', goalId), { completed: false, completedAt: null });
+    await loadDashboard();
+    showToast('Pencapaian dipadam, goal dipulihkan.');
+  }
+
+  async function deleteActiveGoal(goalId) {
+    if (!window._fb) return;
+    if (!confirm('Padam goal ini secara kekal?')) return;
+    const { db, doc, deleteDoc } = window._fb;
+    await deleteDoc(doc(db, 'users', window.currentUser.uid, 'goals', goalId));
+    await loadDashboard();
+    showToast('Goal dipadam.');
+  }
+
+  // ===== SETTINGS =====
+  function showSettings() {
+    document.getElementById('dashboardView').classList.remove('visible');
+    document.getElementById('plannerView').style.display = 'none';
+    document.getElementById('settingsView').classList.add('visible');
+    const u = window.currentUser;
+    if (u) {
+      const username = u.username || u.email.split('@')[0];
+      document.getElementById('settingsUsername').textContent = username;
+      document.getElementById('settingsEmail').textContent = u.email;
+      document.getElementById('settingsAvatarUrl').value = u.avatarUrl || '';
+      renderSettingsAvatar(u.avatarUrl, username);
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function renderSettingsAvatar(url, username) {
+    const el = document.getElementById('settingsAvatarPreview');
+    if (url) {
+      el.innerHTML = `<img src="${url}" onerror="this.parentElement.textContent='${(username||'U')[0].toUpperCase()}'" style="width:100%;height:100%;object-fit:cover;border-radius:50%" />`;
+    } else {
+      el.textContent = (username || 'U')[0].toUpperCase();
+    }
+  }
+
+  function previewSettingsAvatar() {
+    const url = document.getElementById('settingsAvatarUrl').value.trim();
+    const u = window.currentUser;
+    const username = u ? (u.username || u.email.split('@')[0]) : 'U';
+    renderSettingsAvatar(url, username);
+  }
+
+  async function saveAvatar() {
+    const url = document.getElementById('settingsAvatarUrl').value.trim();
+    if (!window.currentUser || !window._fb) return;
+    const { db, doc, updateDoc } = window._fb;
+    await updateDoc(doc(db, 'users', window.currentUser.uid), { avatarUrl: url });
+    window.currentUser.avatarUrl = url;
+    const u = window.currentUser;
+    const username = u.username || u.email.split('@')[0];
+    const avatar = document.getElementById('headerAvatar');
+    if (url) {
+      avatar.innerHTML = `<img src="${url}" onerror="this.parentElement.textContent='${username[0].toUpperCase()}'" />`;
+    } else {
+      avatar.textContent = username[0].toUpperCase();
+    }
+    showToast('Gambar profil dikemas kini!');
+  }
+
+  async function changePassword() {
+    const oldPw = document.getElementById('settingsOldPw').value;
+    const newPw = document.getElementById('settingsNewPw').value;
+    const confirmPw = document.getElementById('settingsConfirmPw').value;
+    if (!oldPw || !newPw || !confirmPw) { showToast('Sila isi semua ruangan kata laluan.', true); return; }
+    if (newPw !== confirmPw) { showToast('Kata laluan baru tidak sepadan!', true); return; }
+    if (newPw.length < 6) { showToast('Kata laluan mesti sekurang-kurangnya 6 aksara.', true); return; }
+    try {
+      const { auth, reauthenticateWithCredential, EmailAuthProvider, updatePassword } = window._fb;
+      const user = auth.currentUser;
+      const cred = EmailAuthProvider.credential(user.email, oldPw);
+      await reauthenticateWithCredential(user, cred);
+      await updatePassword(user, newPw);
+      document.getElementById('settingsOldPw').value = '';
+      document.getElementById('settingsNewPw').value = '';
+      document.getElementById('settingsConfirmPw').value = '';
+      showToast('Kata laluan berjaya ditukar!');
+    } catch (e) {
+      const msg = e.code === 'auth/wrong-password' ? 'Kata laluan lama tidak betul.' : 'Ralat: ' + e.message;
+      showToast(msg, true);
+    }
+  }
+
+  async function doLogout() {
+    closeMenu();
+    if (window._fb) await window._fb.signOut(window._fb.auth);
+  }
+
+  // ===== DELETE ACCOUNT =====
+  function openDeleteAccountPopup() {
+    document.getElementById('deleteAccountPw').value = '';
+    document.getElementById('popupDeleteAccount').classList.add('visible');
+  }
+
+  async function doDeleteAccount() {
+    const pw = document.getElementById('deleteAccountPw').value;
+    if (!pw) { showToast('Sila masukkan kata laluan untuk sahkan.', true); return; }
+    const btn = document.getElementById('btnConfirmDelete');
+    btn.disabled = true; btn.textContent = 'Memproses...';
+    try {
+      const { auth, db, reauthenticateWithCredential, EmailAuthProvider, doc, deleteDoc, collection, getDocs } = window._fb;
+      const user = auth.currentUser;
+      const cred = EmailAuthProvider.credential(user.email, pw);
+      await reauthenticateWithCredential(user, cred);
+
+      const uid = user.uid;
+      const goalsSnap = await getDocs(collection(db, 'users', uid, 'goals'));
+      for (const d of goalsSnap.docs) { await deleteDoc(doc(db, 'users', uid, 'goals', d.id)); }
+      await deleteDoc(doc(db, 'users', uid));
+      await user.delete();
+    } catch (e) {
+      btn.disabled = false; btn.textContent = 'Padam Akaun';
+      const msg = (e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential')
+        ? 'Kata laluan tidak betul.' : 'Ralat: ' + e.message;
+      showToast(msg, true);
+    }
+  }
+
+  // ===== AUTH MODAL =====
+  let currentAuthTab = 'login';
+
+  function openAuthModal() { document.getElementById('authModal').classList.add('visible'); }
+  function closeAuthModal() { document.getElementById('authModal').classList.remove('visible'); clearAuthMessages(); }
+
+  function switchAuthTab(tab) {
+    currentAuthTab = tab;
+    document.getElementById('loginForm').classList.toggle('hidden', tab !== 'login');
+    document.getElementById('registerForm').classList.toggle('hidden', tab !== 'register');
+    document.getElementById('tabLogMasuk').classList.toggle('active', tab === 'login');
+    document.getElementById('tabDaftar').classList.toggle('active', tab === 'register');
+    clearAuthMessages();
+  }
+
+  function clearAuthMessages() {
+    ['authError', 'authSuccess'].forEach(id => { const el = document.getElementById(id); el.style.display = 'none'; el.textContent = ''; });
+  }
+
+  function showAuthError(msg) {
+    const el = document.getElementById('authError'); el.textContent = msg; el.style.display = 'block';
+    document.getElementById('authSuccess').style.display = 'none';
+  }
+
+  function showAuthSuccess(msg) {
+    const el = document.getElementById('authSuccess'); el.textContent = msg; el.style.display = 'block';
+    document.getElementById('authError').style.display = 'none';
+  }
+
+  function setAuthLoading(btnId, loading, label) {
+    const btn = document.getElementById(btnId);
+    btn.disabled = loading;
+    btn.innerHTML = loading ? `<span class="spinner"></span>Sila tunggu...` : label;
+  }
+
+  function translateAuthError(code) {
+    const map = {
+      'auth/user-not-found': 'E-mel tidak dijumpai.',
+      'auth/wrong-password': 'Kata laluan salah.',
+      'auth/email-already-in-use': 'E-mel sudah didaftarkan.',
+      'auth/weak-password': 'Kata laluan terlalu lemah (min 6 aksara).',
+      'auth/invalid-email': 'Format e-mel tidak sah.',
+      'auth/too-many-requests': 'Terlalu banyak percubaan. Cuba lagi kemudian.',
+      'auth/invalid-credential': 'E-mel atau kata laluan tidak betul.',
+      'auth/network-request-failed': 'Rangkaian bermasalah. Periksa sambungan internet.'
+    };
+    return map[code] || 'Ralat berlaku. Cuba lagi.';
+  }
+
+  async function doLogin() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    if (!email || !password) { showAuthError('Sila isi semua ruangan.'); return; }
+    setAuthLoading('btnLogin', true, 'Log Masuk');
+    clearAuthMessages();
+    try {
+      await window._fb.signInWithEmailAndPassword(window._fb.auth, email, password);
+      closeAuthModal();
+    } catch (e) {
+      showAuthError(translateAuthError(e.code));
+      setAuthLoading('btnLogin', false, 'Log Masuk');
+    }
+  }
+
+  async function doRegister() {
+    const username = document.getElementById('regUsername').value.trim();
+    const email = document.getElementById('regEmail').value.trim();
+    const password = document.getElementById('regPassword').value;
+    const confirm = document.getElementById('regConfirm').value;
+    if (!username || !email || !password || !confirm) { showAuthError('Sila isi semua ruangan.'); return; }
+    if (password !== confirm) { showAuthError('Kata laluan tidak sepadan.'); return; }
+    if (password.length < 6) { showAuthError('Kata laluan mesti sekurang-kurangnya 6 aksara.'); return; }
+    if (!/^[a-zA-Z0-9_]+$/.test(username)) { showAuthError('Nama pengguna hanya boleh mengandungi huruf, nombor, dan _'); return; }
+    setAuthLoading('btnRegister', true, 'Daftar Sekarang');
+    clearAuthMessages();
+    try {
+      const { auth, db, createUserWithEmailAndPassword, doc, setDoc, collection, getDocs, query, where } = window._fb;
+      const q = query(collection(db, 'users'), where('username', '==', username));
+      const snap = await getDocs(q);
+      if (!snap.empty) { showAuthError('Nama pengguna sudah digunakan. Pilih nama lain.'); setAuthLoading('btnRegister', false, 'Daftar Sekarang'); return; }
+      const cred = await createUserWithEmailAndPassword(auth, email, password);
+      await setDoc(doc(db, 'users', cred.user.uid), { username, email, createdAt: Date.now() });
+      closeAuthModal();
+    } catch (e) {
+      showAuthError(translateAuthError(e.code));
+      setAuthLoading('btnRegister', false, 'Daftar Sekarang');
+    }
+  }
+
+  function togglePw(inputId, btn) {
+    const input = document.getElementById(inputId);
+    if (input.type === 'password') { input.type = 'text'; btn.textContent = '🙈'; }
+    else { input.type = 'password'; btn.textContent = '👁'; }
+  }
+
+  // ===== POPUP: UPDATE GOAL =====
+  function openUpdateGoal(goalId) {
+    const g = dashGoals.find(x => x.id === goalId);
+    if (!g) return;
+    activeUpdateGoalId = goalId;
+    const inlineInput = document.getElementById('addSav-' + goalId);
+    if (inlineInput && inlineInput.value) {
+      document.getElementById('updateAmount').value = inlineInput.value;
+    } else {
+      document.getElementById('updateAmount').value = '';
+    }
+    document.getElementById('updateGoalName').textContent = g.name;
+    document.getElementById('updateCurrentSaving').textContent = 'RM ' + fmt(g.saved || 0);
+    const pct = g.target > 0 ? Math.round((g.saved || 0) / g.target * 100) : 0;
+    document.getElementById('updateProgressFill').style.width = pct + '%';
+    document.getElementById('updateProgressPct').textContent = pct + '%';
+    document.getElementById('updatePreview').style.display = 'none';
+    document.getElementById('popupUpdateGoal').classList.add('visible');
+  }
+
+  function previewUpdate() {
+    const g = dashGoals.find(x => x.id === activeUpdateGoalId);
+    if (!g) return;
+    const add = parseFloat(document.getElementById('updateAmount').value) || 0;
+    if (add <= 0) { document.getElementById('updatePreview').style.display = 'none'; return; }
+    const newSaved = (g.saved || 0) + add;
+    const newPct = g.target > 0 ? Math.min(100, Math.round(newSaved / g.target * 100)) : 0;
+    document.getElementById('updateAfterAmt').textContent = 'RM ' + fmt(newSaved);
+    document.getElementById('updateAfterPct').textContent = newPct + '%';
+    document.getElementById('updatePreview').style.display = 'block';
+  }
+
+  async function saveGoalUpdate() {
+    const g = dashGoals.find(x => x.id === activeUpdateGoalId);
+    if (!g || !window._fb) return;
+    const add = parseFloat(document.getElementById('updateAmount').value) || 0;
+    if (add <= 0) { showToast('Masukkan jumlah simpanan!', true); return; }
+    const newSaved = (g.saved || 0) + add;
+    const { db, doc, updateDoc } = window._fb;
+    await updateDoc(doc(db, 'users', window.currentUser.uid, 'goals', g.id), { saved: newSaved });
+    g.saved = newSaved;
+    closePopup('popupUpdateGoal');
+    renderDashGoals();
+    showToast(`+RM ${fmt(add)} disimpan untuk ${g.name}!`);
+    if (newSaved >= g.target) {
+      setTimeout(() => markGoalComplete(g.id, true), 500);
+    }
+  }
+
+  async function markGoalComplete(goalId, auto = false) {
+    const g = dashGoals.find(x => x.id === goalId);
+    if (!g || !window._fb) return;
+    const { db, doc, updateDoc } = window._fb;
+    const completedAt = Date.now();
+    const months = g.createdAt ? Math.max(1, Math.round((completedAt - g.createdAt) / (1000*60*60*24*30))) : 1;
+    const monthlyAvg = round((g.saved || g.target) / months);
+    await updateDoc(doc(db, 'users', window.currentUser.uid, 'goals', g.id), { completed: true, completedAt });
+    document.getElementById('celebGoalName').textContent = g.name;
+    document.getElementById('celebTarget').textContent = 'RM ' + fmt(g.target);
+    document.getElementById('celebTime').textContent = months + ' bulan';
+    document.getElementById('celebMonthly').textContent = 'RM ' + fmt(monthlyAvg);
+    document.getElementById('popupCelebration').classList.add('visible');
+    await loadDashboard();
+  }
+
+  function closeCelebration() { document.getElementById('popupCelebration').classList.remove('visible'); }
+
+  // ===== POPUP: NEW GOAL (DASHBOARD) =====
+  function openNewGoalPopup() {
+    document.getElementById('newGoalNamePopup').value = '';
+    document.getElementById('newGoalTargetPopup').value = '';
+    popupGoalPriority = 'medium';
+    document.querySelectorAll('#newGoalPriorityPopup .p-btn').forEach(b => {
+      b.classList.toggle('sel', b.classList.contains('medium'));
+    });
+    document.getElementById('popupNewGoal').classList.add('visible');
+  }
+
+  function setPopupPriority(p) {
+    popupGoalPriority = p;
+    document.querySelectorAll('#newGoalPriorityPopup .p-btn').forEach(b => {
+      b.classList.toggle('sel', b.classList.contains(p));
+    });
+  }
+
+  async function saveDashGoal() {
+    const name = document.getElementById('newGoalNamePopup').value.trim();
+    const target = parseFloat(document.getElementById('newGoalTargetPopup').value);
+    if (!name || !target || target <= 0) { showToast('Sila isi nama dan sasaran goal!', true); return; }
+    if (!window._fb) return;
+    const { db, collection, addDoc } = window._fb;
+    await addDoc(collection(db, 'users', window.currentUser.uid, 'goals'), {
+      name, target: round(target), priority: popupGoalPriority,
+      saved: 0, completed: false, createdAt: Date.now()
+    });
+    closePopup('popupNewGoal');
+    await loadDashboard();
+    showToast('Goal baru ditambah!');
+  }
+
+  // ===== POPUP: EDIT PLAN =====
+  function openEditPlan() {
+    const plan = window._currentPlan;
+    editFormula = plan ? plan.formula : '50/30/20';
+    document.getElementById('editIncomeInput').value = plan ? plan.income : '';
+    document.getElementById('editCurrentIncome').textContent = plan ? fmt(plan.income) : '-';
+    selectEditFormula(editFormula);
+    if (plan && plan.freePct) {
+      document.getElementById('ef-needs').value = plan.freePct.needs;
+      document.getElementById('ef-wants').value = plan.freePct.wants;
+      document.getElementById('ef-savings').value = plan.freePct.savings;
+    }
+    updateEditPlanPreview();
+    document.getElementById('popupEditPlan').classList.add('visible');
+  }
+
+  function selectEditFormula(f) {
+    editFormula = f;
+    ['70/20/10', '50/30/20', 'free'].forEach(key => {
+      const id = key === '70/20/10' ? 'ef-7020' : key === '50/30/20' ? 'ef-5030' : 'ef-free';
+      document.getElementById(id).classList.toggle('selected', key === f);
+    });
+    document.getElementById('editFreeGrid').classList.toggle('hidden', f !== 'free');
+    updateEditPlanPreview();
+  }
+
+  function getEditPct() {
+    if (editFormula === 'free') {
+      return { needs: parseFloat(document.getElementById('ef-needs').value)||0, wants: parseFloat(document.getElementById('ef-wants').value)||0, savings: parseFloat(document.getElementById('ef-savings').value)||0 };
+    }
+    return FORMULAS[editFormula];
+  }
+
+  function updateEditPlanPreview() {
+    const inc = parseFloat(document.getElementById('editIncomeInput').value) || 0;
+    const plan = window._currentPlan;
+    const oldSavings = plan ? round(plan.income * (plan.formula === 'free' ? plan.freePct.savings : FORMULAS[plan.formula].savings) / 100) : 0;
+    const pct = getEditPct();
+    const newSavings = inc > 0 ? round(inc * (pct?.savings || 0) / 100) : 0;
+    document.getElementById('epSavingsChange').textContent = oldSavings > 0 ? `RM ${fmt(oldSavings)} → RM ${fmt(newSavings)}` : `RM ${fmt(newSavings)}`;
+    document.getElementById('epSavingsChange').style.color = newSavings >= oldSavings ? '#3ecf6e' : '#f5b731';
+  }
+
+  async function saveEditPlan() {
+    const inc = parseFloat(document.getElementById('editIncomeInput').value);
+    if (!inc || inc <= 0) { showToast('Sila masukkan pendapatan!', true); return; }
+    const pct = getEditPct();
+    if (editFormula === 'free' && (pct.needs + pct.wants + pct.savings) !== 100) { showToast('Jumlah peratusan mesti 100%!', true); return; }
+    if (!window._fb) return;
+    const { db, doc, updateDoc } = window._fb;
+    const planData = { income: round(inc), formula: editFormula };
+    if (editFormula === 'free') planData.freePct = pct;
+    const plan = window._currentPlan || {};
+    planData.commitments = plan.commitments || [];
+    await updateDoc(doc(db, 'users', window.currentUser.uid), { plan: planData });
+    window._currentPlan = planData;
+    closePopup('popupEditPlan');
+    await loadDashboard();
+    showToast('Plan berjaya dikemas kini!');
+  }
+
+  function closePopup(id) { document.getElementById(id).classList.remove('visible'); }
+
+  // ===== SAVE PLAN FROM PLANNER =====
+  async function savePlanToFirebase() {
+    if (!window.currentUser || !window._fb) return;
+    const { db, doc, setDoc } = window._fb;
+    const pct = getPct();
+    const planData = {
+      income: round(getIncome()), formula: selectedFormula, commitments,
+      freePct: selectedFormula === 'free' ? pct : null
+    };
+    await setDoc(doc(db, 'users', window.currentUser.uid), { plan: planData }, { merge: true });
+    const { collection, addDoc } = window._fb;
+    for (const g of goals) {
+      await addDoc(collection(db, 'users', window.currentUser.uid, 'goals'), {
+        name: g.name, target: g.target, priority: g.priority,
+        saved: 0, completed: false, createdAt: Date.now()
+      });
+    }
+    window._currentPlan = planData;
+    showToast('Plan berjaya disimpan!');
+    setTimeout(() => showDashboard(), 1000);
+  }
+
+  // ===== PLANNER LOGIC =====
+  function getIncome() { return parseFloat(document.getElementById('incomeInput').value) || 0; }
   function getPct() {
     if (selectedFormula === 'free') {
       let needs = parseFloat(document.getElementById('freeNeeds').value) || 0;
@@ -511,50 +1700,27 @@
   }
 
   function updateAllPreviews() {
-    if (selectedFormula === 'free') {
-      updateFreeFormula();
-    } else {
-      updateFormulaBreakdown();
-    }
+    if (selectedFormula === 'free') updateFreeFormula();
+    else updateFormulaBreakdown();
   }
 
-  // Steps UI
   function renderSteps() {
     const container = document.getElementById('stepsContainer');
     const labelsContainer = document.getElementById('stepsLabels');
-    container.innerHTML = '';
-    labelsContainer.innerHTML = '';
-    
+    container.innerHTML = ''; labelsContainer.innerHTML = '';
     const stepNames = ['Pendapatan', 'Formula', 'Komitmen', 'Goal', 'Result'];
-    
     for (let s = 1; s <= 5; s++) {
       const dot = document.createElement('div');
       dot.className = 'step-dot' + (s === currentStep ? ' active' : s < currentStep ? ' done' : '');
       dot.textContent = s < currentStep ? '✓' : s;
       container.appendChild(dot);
-      
-      if (s < 5) {
-        const line = document.createElement('div');
-        line.className = 'step-line' + (s < currentStep ? ' done' : '');
-        container.appendChild(line);
-      }
+      if (s < 5) { const line = document.createElement('div'); line.className = 'step-line' + (s < currentStep ? ' done' : ''); container.appendChild(line); }
     }
-    
     for (let s = 0; s < stepNames.length; s++) {
-      const labelWrapper = document.createElement('div');
-      labelWrapper.className = 'step-label-wrapper';
-      
-      const labelSpan = document.createElement('span');
-      labelSpan.className = 'step-label-text' + (s+1 === currentStep ? ' active' : s+1 < currentStep ? ' done' : '');
-      labelSpan.textContent = stepNames[s];
-      labelWrapper.appendChild(labelSpan);
-      labelsContainer.appendChild(labelWrapper);
-      
-      if (s < stepNames.length - 1) {
-        const spacer = document.createElement('div');
-        spacer.className = 'step-label-spacer';
-        labelsContainer.appendChild(spacer);
-      }
+      const lw = document.createElement('div'); lw.className = 'step-label-wrapper';
+      const ls = document.createElement('span'); ls.className = 'step-label-text' + (s+1 === currentStep ? ' active' : s+1 < currentStep ? ' done' : ''); ls.textContent = stepNames[s];
+      lw.appendChild(ls); labelsContainer.appendChild(lw);
+      if (s < stepNames.length - 1) { const sp = document.createElement('div'); sp.className = 'step-label-spacer'; labelsContainer.appendChild(sp); }
     }
   }
 
@@ -574,13 +1740,8 @@
     const inc = getIncome();
     const preview = document.getElementById('incomePreview');
     const amt = document.getElementById('incomePreviewAmt');
-    if (inc > 0) {
-      preview.style.display = '';
-      amt.textContent = 'RM ' + fmt(inc);
-    } else {
-      preview.style.display = 'none';
-    }
-    updateAllPreviews();
+    if (inc > 0) { preview.style.display = ''; amt.textContent = 'RM ' + fmt(inc); }
+    else { preview.style.display = 'none'; }
   }
 
   function selectFormula(f) {
@@ -591,20 +1752,12 @@
     });
     const freeModeDiv = document.getElementById('freeMode');
     const breakdownDiv = document.getElementById('formulaBreakdown');
-    if (f === 'free') {
-      freeModeDiv.classList.remove('hidden');
-      breakdownDiv.classList.add('hidden');
-      updateFreeFormula();
-    } else {
-      freeModeDiv.classList.add('hidden');
-      breakdownDiv.classList.remove('hidden');
-      updateFormulaBreakdown();
-    }
+    if (f === 'free') { freeModeDiv.classList.remove('hidden'); breakdownDiv.classList.add('hidden'); updateFreeFormula(); }
+    else { freeModeDiv.classList.add('hidden'); breakdownDiv.classList.remove('hidden'); updateFormulaBreakdown(); }
   }
 
   function updateFormulaBreakdown() {
-    const inc = getIncome();
-    if (inc === 0) return;
+    const inc = getIncome(); if (inc === 0) return;
     const pct = getPct();
     document.getElementById('needsAmt').textContent = 'RM ' + fmt(round(inc * pct.needs / 100));
     document.getElementById('wantsAmt').textContent = 'RM ' + fmt(round(inc * pct.wants / 100));
@@ -615,56 +1768,35 @@
     let needs = parseFloat(document.getElementById('freeNeeds').value) || 0;
     let wants = parseFloat(document.getElementById('freeWants').value) || 0;
     let savings = parseFloat(document.getElementById('freeSavings').value) || 0;
-    
     let total = needs + wants + savings;
     const warn = document.getElementById('freeTotalWarning');
-    
-    if (total !== 100) {
-      warn.classList.remove('hidden');
-      warn.textContent = `⚠️ Total peratusan mesti 100%. Sekarang: ${total}%. Sila adjust.`;
-    } else {
-      warn.classList.add('hidden');
-    }
-    
+    if (total !== 100) { warn.classList.remove('hidden'); warn.textContent = `⚠️ Total peratusan mesti 100%. Sekarang: ${total}%. Sila adjust.`; }
+    else { warn.classList.add('hidden'); }
     const inc = getIncome();
     if (inc > 0) {
       document.getElementById('freeNeedsAmount').textContent = 'RM ' + fmt(round(inc * needs / 100));
       document.getElementById('freeWantsAmount').textContent = 'RM ' + fmt(round(inc * wants / 100));
       document.getElementById('freeSavingsAmount').textContent = 'RM ' + fmt(round(inc * savings / 100));
-    } else {
-      document.getElementById('freeNeedsAmount').textContent = 'RM 0';
-      document.getElementById('freeWantsAmount').textContent = 'RM 0';
-      document.getElementById('freeSavingsAmount').textContent = 'RM 0';
     }
   }
 
   function updateCommitUI() {
-    const list = document.getElementById('commitmentList');
-    list.innerHTML = '';
+    const list = document.getElementById('commitmentList'); list.innerHTML = '';
     let total = 0;
     commitments.forEach(c => {
       total += c.amount;
-      const div = document.createElement('div');
-      div.className = 'commitment-item';
+      const div = document.createElement('div'); div.className = 'commitment-item';
       div.innerHTML = `<span class="commitment-name">${c.name}</span><span class="commitment-amount">RM ${fmt(c.amount)}</span><button class="btn-remove" onclick="removeCommitment(${c.id})">✕</button>`;
       list.appendChild(div);
     });
     const totalRow = document.getElementById('commitTotal');
-    if (commitments.length > 0) {
-      totalRow.classList.remove('hidden');
-      document.getElementById('commitTotalAmt').textContent = 'RM ' + fmt(total);
-    } else {
-      totalRow.classList.add('hidden');
-    }
+    if (commitments.length > 0) { totalRow.classList.remove('hidden'); document.getElementById('commitTotalAmt').textContent = 'RM ' + fmt(total); }
+    else { totalRow.classList.add('hidden'); }
     const pct = getPct();
     const savingsAmt = round(getIncome() * (pct.savings || 0) / 100);
     const warn = document.getElementById('commitWarning');
-    if (total > savingsAmt && savingsAmt > 0) {
-      warn.classList.remove('hidden');
-      warn.textContent = `⚠️ Komitmen (RM ${fmt(total)}) melebihi savings allocation (RM ${fmt(savingsAmt)}). Consider adjust formula atau reduce komitmen.`;
-    } else {
-      warn.classList.add('hidden');
-    }
+    if (total > savingsAmt && savingsAmt > 0) { warn.classList.remove('hidden'); warn.textContent = `⚠️ Komitmen (RM ${fmt(total)}) melebihi savings allocation (RM ${fmt(savingsAmt)}). Consider adjust formula atau reduce komitmen.`; }
+    else { warn.classList.add('hidden'); }
   }
 
   function addCommitment() {
@@ -677,14 +1809,11 @@
     updateCommitUI();
   }
 
-  function removeCommitment(id) {
-    commitments = commitments.filter(c => c.id !== id);
-    updateCommitUI();
-  }
+  function removeCommitment(id) { commitments = commitments.filter(c => c.id !== id); updateCommitUI(); }
 
   function setNewPriority(p) {
     newGoalPriority = p;
-    document.querySelectorAll('#newGoalPriority .p-btn').forEach(btn => {
+    document.querySelectorAll('#newGoalPriorityPlanner .p-btn').forEach(btn => {
       btn.classList.toggle('sel', btn.classList.contains(p));
     });
   }
@@ -709,27 +1838,13 @@
     renderGoalList();
   }
 
-  function removeGoal(id) {
-    goals = goals.filter(g => g.id !== id);
-    renderGoalList();
-  }
+  function removeGoal(id) { goals = goals.filter(g => g.id !== id); renderGoalList(); }
 
   function renderGoalList() {
-    const list = document.getElementById('goalList');
-    list.innerHTML = '';
+    const list = document.getElementById('goalList'); list.innerHTML = '';
     goals.forEach(g => {
-      const div = document.createElement('div');
-      div.className = 'goal-item';
-      div.innerHTML = `
-        <div class="goal-header">
-          <div class="goal-name-display">${g.name}</div>
-          <span class="priority-badge priority-${g.priority}">${g.priority}</span>
-          <button class="btn-remove" onclick="removeGoal(${g.id})">✕</button>
-        </div>
-        <div class="goal-meta">
-          <span>🎯 Target: <b>RM ${fmt(g.target)}</b></span>
-          <span>⏱ ${g.mode === 'manual' && g.months ? g.months + ' bulan' : 'Auto'}</span>
-        </div>`;
+      const div = document.createElement('div'); div.className = 'goal-item';
+      div.innerHTML = `<div class="goal-header"><div class="goal-name-display">${g.name}</div><span class="priority-badge priority-${g.priority}">${g.priority}</span><button class="btn-remove" onclick="removeGoal(${g.id})">✕</button></div><div class="goal-meta"><span>🎯 Target: <b>RM ${fmt(g.target)}</b></span><span>⏱ ${g.mode === 'manual' && g.months ? g.months + ' bulan' : 'Auto'}</span></div>`;
       list.appendChild(div);
     });
   }
@@ -741,29 +1856,20 @@
     const totalCommit = commitments.reduce((s, c) => s + c.amount, 0);
     const needsAmt = round(inc * pct.needs / 100);
     const wantsAmt = round(inc * pct.wants / 100);
-
     const sortOrder = { high: 0, medium: 1, low: 2 };
     const sorted = [...goals].sort((a, b) => sortOrder[a.priority] - sortOrder[b.priority]);
-
     let cursor = 0;
     const goalResults = sorted.map(g => {
       let monthlyAlloc, months, startMonth, endMonth;
-      if (g.mode === 'manual' && g.months) {
-        months = g.months;
-        monthlyAlloc = round(g.target / months);
-        startMonth = 0;
-        endMonth = months;
-      } else {
-        monthlyAlloc = savingsAmt;
-        months = savingsAmt > 0 ? Math.ceil(g.target / savingsAmt) : 999;
-        startMonth = cursor;
-        endMonth = cursor + months;
-        cursor = endMonth;
-      }
+      if (g.mode === 'manual' && g.months) { months = g.months; monthlyAlloc = round(g.target / months); startMonth = 0; endMonth = months; }
+      else { monthlyAlloc = savingsAmt; months = savingsAmt > 0 ? Math.ceil(g.target / savingsAmt) : 999; startMonth = cursor; endMonth = cursor + months; cursor = endMonth; }
       return { ...g, monthlyAlloc, months, startMonth, endMonth };
     });
 
+    const isLoggedIn = !!window.currentUser;
+
     let html = `
+      ${!isLoggedIn ? `<div class="save-plan-banner"><div class="save-plan-text">💡 <b>Log masuk</b> untuk simpan plan & track progress!</div><button class="btn-save-plan" onclick="openAuthModal()">Log Masuk / Daftar</button></div>` : `<div class="save-plan-banner" style="cursor:pointer" onclick="savePlanToFirebase()"><div class="save-plan-text">💾 <b>Simpan plan ini</b> ke akaun kau!</div><button class="btn-save-plan">Simpan Plan</button></div>`}
       <div class="results-summary">
         <div class="results-label">Monthly Savings Available</div>
         <div class="results-amount">RM ${fmt(savingsAmt)}</div>
@@ -776,49 +1882,31 @@
         <div class="budget-row"><span class="budget-row-label">🎮 Kehendak (${pct.wants}%)</span><span class="budget-row-amount">RM ${fmt(wantsAmt)}</span></div>
         <div class="budget-row"><span class="budget-row-label">💰 Simpanan (${pct.savings}%)</span><span class="budget-row-amount" style="color:#3ecf6e">RM ${fmt(savingsAmt)}</span></div>`;
 
-    if (totalCommit > 0) {
-      html += `<div class="budget-row"><span class="budget-row-label">📋 Total Komitmen</span><span class="budget-row-amount" style="color:#f5b731">RM ${fmt(totalCommit)}</span></div>`;
-    }
-    
+    if (totalCommit > 0) html += `<div class="budget-row"><span class="budget-row-label">📋 Total Komitmen</span><span class="budget-row-amount" style="color:#f5b731">RM ${fmt(totalCommit)}</span></div>`;
     if (goalResults.length > 0) {
       const totalMonths = Math.max(...goalResults.map(g => g.endMonth), 0);
-      const totYrs = Math.floor(totalMonths / 12);
-      const totMths = totalMonths % 12;
+      const totYrs = Math.floor(totalMonths / 12); const totMths = totalMonths % 12;
       const totStr = totYrs > 0 ? `${totYrs} thn${totMths > 0 ? ' ' + totMths + ' bln' : ''}` : `${totalMonths} bln`;
-      html += `<div class="budget-row" style="padding-top:14px;border-top:1px dashed #2a3d2e;border-bottom:none;margin-top:4px">
-        <span class="budget-row-label">🏁 Semua goals capai dalam</span>
-        <span class="budget-row-amount" style="color:#3ecf6e;font-size:15px">${totStr}</span>
-      </div>`;
+      html += `<div class="budget-row" style="padding-top:14px;border-top:1px dashed #2a3d2e;border-bottom:none;margin-top:4px"><span class="budget-row-label">🏁 Semua goals capai dalam</span><span class="budget-row-amount" style="color:#3ecf6e;font-size:15px">${totStr}</span></div>`;
     }
     html += `</div>`;
 
     if (goalResults.length > 0) {
       html += `<div class="section-title">🎯 Goals Breakdown</div>`;
       goalResults.forEach(g => {
-        const durYrs = Math.floor(g.months / 12);
-        const durMths = g.months % 12;
+        const durYrs = Math.floor(g.months / 12); const durMths = g.months % 12;
         const durStr = durYrs > 0 ? `${durYrs} thn${durMths > 0 ? ' ' + durMths + ' bln' : ''}` : `${g.months} bln`;
-        const finishMonth = g.endMonth;
-        const finYrs = Math.floor(finishMonth / 12);
-        const finMths = finishMonth % 12;
+        const finishMonth = g.endMonth; const finYrs = Math.floor(finishMonth / 12); const finMths = finishMonth % 12;
         const finStr = finishMonth === 0 ? 'Bulan ini' : finYrs > 0 ? `${finYrs} thn${finMths > 0 ? ' ' + finMths + ' bln' : ''}` : `${finishMonth} bln`;
         const isDelayed = g.mode !== 'manual' && g.startMonth > 0;
-        const startYrs = Math.floor(g.startMonth / 12);
-        const startMths = g.startMonth % 12;
+        const startYrs = Math.floor(g.startMonth / 12); const startMths = g.startMonth % 12;
         const startStr = startYrs > 0 ? `${startYrs} thn${startMths > 0 ? ' ' + startMths + ' bln' : ''}` : `${g.startMonth} bln`;
         const barPct = g.months > 0 ? Math.min(100, Math.round((1 / g.months) * 100)) : 0;
-
         html += `
           <div class="goal-result-card ${g.priority}">
-            <div class="goal-result-header">
-              <div>
-                <div class="goal-result-name">${g.name}</div>
-                <div class="goal-result-target">Target: RM ${fmt(g.target)}</div>
-              </div>
-              <span class="priority-badge priority-${g.priority}">${g.priority}</span>
-            </div>
-            ${isDelayed ? `<div style="font-size:11px;color:#5a7a60;margin-bottom:6px">⏳ Mula lepas ${startStr} (tunggu goal sebelum settle dulu)</div>` : ''}
-            <div class="progress-bar"><div class="progress-fill" style="width:${barPct}%"></div></div>
+            <div class="goal-result-header"><div><div class="goal-result-name">${g.name}</div><div class="goal-result-target">Target: RM ${fmt(g.target)}</div></div><span class="priority-badge priority-${g.priority}">${g.priority}</span></div>
+            ${isDelayed ? `<div style="font-size:11px;color:#5a7a60;margin-bottom:6px">⏳ Mula lepas ${startStr}</div>` : ''}
+            <div class="progress-bar-result"><div class="progress-fill-result" style="width:${barPct}%"></div></div>
             <div class="goal-result-stats">
               <div class="stat-box"><div class="stat-label">Simpan/Bulan</div><div class="stat-value">RM ${fmt(g.monthlyAlloc)}</div></div>
               <div class="stat-box"><div class="stat-label">Tempoh Simpan</div><div class="stat-value">${durStr}</div></div>
@@ -828,9 +1916,7 @@
       });
     }
 
-    if (totalCommit > 0) {
-      html += `<div class="warning-box" style="margin-top:16px">💡 Komitmen bulanan RM ${fmt(totalCommit)} telah dikira sebagai sebahagian daripada perbelanjaan keperluan kau.</div>`;
-    }
+    if (totalCommit > 0) html += `<div class="warning-box" style="margin-top:16px">💡 Komitmen bulanan RM ${fmt(totalCommit)} telah dikira sebagai sebahagian daripada perbelanjaan keperluan kau.</div>`;
 
     document.getElementById('resultsContent').innerHTML = html;
     document.getElementById('step' + currentStep).classList.add('hidden');
@@ -841,21 +1927,12 @@
   }
 
   function restart() {
-    commitments = [];
-    goals = [];
-    document.getElementById('incomeInput').value = '';
-    document.getElementById('commitName').value = '';
-    document.getElementById('commitAmt').value = '';
-    document.getElementById('goalName').value = '';
-    document.getElementById('goalTarget').value = '';
-    document.getElementById('goalMonths').value = '';
+    commitments = []; goals = [];
+    ['incomeInput','commitName','commitAmt','goalName','goalTarget','goalMonths'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
     document.getElementById('freeNeeds').value = '50';
     document.getElementById('freeWants').value = '30';
     document.getElementById('freeSavings').value = '20';
-    updateIncomePreview();
-    renderGoalList();
-    updateCommitUI();
-    selectFormula('50/30/20');
+    updateIncomePreview(); renderGoalList(); updateCommitUI(); selectFormula('50/30/20');
     document.getElementById('step' + currentStep).classList.add('hidden');
     currentStep = 1;
     document.getElementById('step1').classList.remove('hidden');
@@ -863,7 +1940,31 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  // Initialize
+  // ===== TOAST =====
+  let toastTimer;
+  function showToast(msg, isError = false) {
+    const existing = document.querySelector('.toast');
+    if (existing) existing.remove();
+    clearTimeout(toastTimer);
+    const t = document.createElement('div');
+    t.className = 'toast' + (isError ? ' error' : '');
+    t.textContent = msg;
+    document.body.appendChild(t);
+    toastTimer = setTimeout(() => t.remove(), 3000);
+  }
+
+  // ===== INIT =====
+  // Set up auth tab buttons
+  document.getElementById('tabLogMasuk').onclick = function() { switchAuthTab('login'); };
+  document.getElementById('tabDaftar').onclick = function() { switchAuthTab('register'); };
+  
+  // Set up auth action buttons
+  document.getElementById('btnLogin').onclick = doLogin;
+  document.getElementById('btnRegister').onclick = doRegister;
+  
+  // Set up income input
+  document.getElementById('incomeInput').oninput = function() { updateIncomePreview(); updateAllPreviews(); };
+  
   renderSteps();
   updateAllPreviews();
 </script>
