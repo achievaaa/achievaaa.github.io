@@ -7,9 +7,8 @@
   <link rel="icon" href="logo.jpg" type="image/jpg">
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    /* CSS SAMA SEPERTI SEBELUMNYA (responsif, tidak diubah) */
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Sora', sans-serif; background: #0e1a14; color: #f0ebe1; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+    body { font-family: 'Sora', sans-serif; background: #0e1a14; color: #f0ebe1; min-height: 100vh; }
     .bg-orb { position: fixed; border-radius: 50%; filter: blur(80px); opacity: 0.18; pointer-events: none; z-index: 0; }
     .orb1 { width: 500px; height: 500px; background: #3ecf6e; top: -100px; right: -100px; }
     .orb2 { width: 400px; height: 400px; background: #f5b731; bottom: -50px; left: -100px; }
@@ -29,6 +28,13 @@
     .admin-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; background: rgba(20,35,22,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(62,207,110,0.2); border-radius: 20px; padding: 10px 14px; margin-bottom: 16px; }
     .admin-title { font-size: 16px; font-weight: 800; color: #3ecf6e; }
     .admin-logout { background: rgba(220,60,60,0.12); border: 1px solid rgba(220,60,60,0.3); color: #e05555; padding: 6px 14px; border-radius: 40px; font-weight: 600; font-size: 13px; cursor: pointer; }
+    .admin-hero { background: rgba(20,35,22,0.7); backdrop-filter: blur(8px); border: 1px solid rgba(62,207,110,0.15); border-radius: 20px; padding: 16px; margin-bottom: 20px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .admin-avatar { width: 56px; height: 56px; border-radius: 50%; border: 2px solid #3ecf6e; background: #1a2e1e; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 700; color: #3ecf6e; overflow: hidden; flex-shrink: 0; }
+    .admin-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .admin-info { flex: 1; }
+    .admin-info .name { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .admin-info .email { font-size: 13px; color: #8a9e90; margin-top: 4px; }
+    .admin-badge { background: #3ecf6e20; color: #3ecf6e; font-size: 11px; padding: 4px 10px; border-radius: 30px; font-weight: 600; }
     .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 16px; }
     .stat-card { background: rgba(20,35,22,0.7); backdrop-filter: blur(8px); border: 1px solid rgba(62,207,110,0.15); border-radius: 18px; padding: 12px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
     .stat-number { font-size: 24px; font-weight: 800; color: #3ecf6e; }
@@ -40,9 +46,12 @@
     .user-sidebar h3 { font-size: 13px; font-weight: 700; color: #3ecf6e; margin-bottom: 12px; }
     .user-search input { width: 100%; background: #0a1410; border: 1px solid #2a3d2e; border-radius: 40px; padding: 10px 14px; color: #f0ebe1; font-size: 13px; margin-bottom: 14px; }
     .user-list { max-height: 40vh; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
-    .user-item { background: #0a1410; border-radius: 14px; padding: 10px 12px; cursor: pointer; border: 1px solid transparent; transition: 0.2s; }
+    .user-item { background: #0a1410; border-radius: 14px; padding: 10px 12px; cursor: pointer; border: 1px solid transparent; transition: 0.2s; display: flex; align-items: center; gap: 12px; }
     .user-item:hover { border-color: rgba(62,207,110,0.4); background: #0e1e16; }
     .user-item.active { border-color: #3ecf6e; background: rgba(62,207,110,0.08); }
+    .user-avatar-small { width: 36px; height: 36px; border-radius: 50%; background: #1a2e1e; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: #3ecf6e; overflow: hidden; flex-shrink: 0; border: 1px solid rgba(62,207,110,0.3); }
+    .user-avatar-small img { width: 100%; height: 100%; object-fit: cover; }
+    .user-info { flex: 1; min-width: 0; }
     .user-name { font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
     .team-badge { background: #3ecf6e20; color: #3ecf6e; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 30px; display: inline-flex; align-items: center; gap: 4px; }
     .user-email { font-size: 11px; color: #5a7a60; word-break: break-all; margin-top: 2px; }
@@ -75,7 +84,7 @@
     @media (min-width: 768px) {
       .container { padding: 20px; }
       .admin-layout { flex-direction: row; align-items: flex-start; }
-      .user-sidebar { width: 280px; flex-shrink: 0; }
+      .user-sidebar { width: 320px; flex-shrink: 0; }
       .user-detail { flex: 1; }
       .stats-grid { grid-template-columns: repeat(4, 1fr); }
       .user-list { max-height: 60vh; }
@@ -105,7 +114,21 @@
       <div class="admin-title">Panel Pentadbir 💰 TabungKu</div>
       <button class="admin-logout" id="logoutBtn">🚪 Log Keluar</button>
     </div>
+
+    <!-- Hero Admin -->
+    <div class="admin-hero" id="adminHero">
+      <div class="admin-avatar" id="adminAvatar">👤</div>
+      <div class="admin-info">
+        <div class="name">
+          <span id="adminName">-</span>
+          <span class="admin-badge">⭐ Pentadbir</span>
+        </div>
+        <div class="email" id="adminEmailDisplay">-</div>
+      </div>
+    </div>
+
     <div class="stats-grid" id="statsGrid"></div>
+
     <div class="admin-layout">
       <div class="user-sidebar">
         <h3>📋 SENARAI PENGGUNA</h3>
@@ -169,23 +192,34 @@
     setTimeout(() => toast.remove(), 3500);
   }
 
-  // ================ Fungsi untuk papar dashboard & muat data ================
-  async function showAdminDashboard() {
+  async function showAdminDashboard(user) {
+    currentAdmin = user;
     document.getElementById('loginPanel').style.display = 'none';
     document.getElementById('adminDashboard').style.display = 'block';
+
+    const adminName = user.displayName || user.email.split('@')[0];
+    document.getElementById('adminName').textContent = adminName;
+    document.getElementById('adminEmailDisplay').textContent = user.email;
+    const avatarEl = document.getElementById('adminAvatar');
+    const userDoc = await getDoc(doc(db, 'users', user.uid));
+    const avatarUrl = userDoc.exists() ? userDoc.data().avatarUrl : null;
+    if (avatarUrl) {
+      avatarEl.innerHTML = `<img src="${avatarUrl}" onerror="this.parentElement.textContent='${adminName[0].toUpperCase()}'" style="width:100%;height:100%;object-fit:cover;">`;
+    } else {
+      avatarEl.textContent = adminName[0].toUpperCase();
+    }
     await loadAllUsers();
   }
 
   function hideAdminDashboard() {
     document.getElementById('loginPanel').style.display = 'flex';
     document.getElementById('adminDashboard').style.display = 'none';
-    // reset form login
     document.getElementById('adminEmail').value = '';
     document.getElementById('adminPassword').value = '';
     document.getElementById('loginError').style.display = 'none';
+    currentAdmin = null;
   }
 
-  // ================ Login manual (button) ================
   document.getElementById('adminLoginBtn').addEventListener('click', async () => {
     const email = document.getElementById('adminEmail').value.trim();
     const password = document.getElementById('adminPassword').value;
@@ -205,38 +239,31 @@
         await signOut(auth);
         throw new Error('Akses ditolak. Hanya pentadbir yang dibenarkan.');
       }
-      // onAuthStateChanged akan trigger dan panggil showAdminDashboard
     } catch (err) {
       errorDiv.textContent = err.message || 'Log masuk gagal. Periksa e-mel/kata laluan.';
       errorDiv.style.display = 'block';
     } finally {
       loginBtn.disabled = false;
-      loginBtn.textContent = 'Log Masuk Sebagai Admin';
+      loginBtn.textContent = 'Log Masuk Sebagai Pentadbir';
     }
   });
 
-  // Logout button
   document.getElementById('logoutBtn').addEventListener('click', async () => {
     await signOut(auth);
     showToast('Log keluar');
   });
 
-  // ================ Firebase Auth State Observer ================
   onAuthStateChanged(auth, async (user) => {
     if (user && user.email === ALLOWED_ADMIN_EMAIL) {
-      currentAdmin = user;
-      await showAdminDashboard();
+      await showAdminDashboard(user);
     } else {
-      // Jika user tidak sah atau bukan admin, pastikan logout dan tunjuk login panel
       if (user && user.email !== ALLOWED_ADMIN_EMAIL) {
         await signOut(auth);
       }
-      currentAdmin = null;
       hideAdminDashboard();
     }
   });
 
-  // ================ Fungsi muat data (sama seperti sebelumnya) ================
   async function loadAllUsers() {
     try {
       const q = query(collection(db, 'users'), orderBy('createdAt', 'desc'));
@@ -286,15 +313,24 @@
     const filtered = allUsers.filter(u => (u.username || '').toLowerCase().includes(searchTerm) || (u.email || '').toLowerCase().includes(searchTerm));
     const container = document.getElementById('userListContainer');
     if (filtered.length === 0) { container.innerHTML = '<div class="no-users">Tiada pengguna</div>'; return; }
-    container.innerHTML = filtered.map(user => `
-      <div class="user-item ${selectedUserId === user.id ? 'active' : ''}" data-id="${user.id}">
-        <div class="user-name">
-          ${escapeHtml(user.username || 'Tanpa nama')}
-          ${user.isTeamMember ? '<span class="team-badge">⭐ Ahli Pasukan</span>' : ''}
+    container.innerHTML = filtered.map(user => {
+      const initial = (user.username || user.email || 'U')[0].toUpperCase();
+      const avatarHtml = user.avatarUrl 
+        ? `<img src="${user.avatarUrl}" onerror="this.parentElement.textContent='${initial}'">` 
+        : initial;
+      return `
+        <div class="user-item ${selectedUserId === user.id ? 'active' : ''}" data-id="${user.id}">
+          <div class="user-avatar-small">${avatarHtml}</div>
+          <div class="user-info">
+            <div class="user-name">
+              ${escapeHtml(user.username || 'Tanpa nama')}
+              ${user.isTeamMember ? '<span class="team-badge">⭐ Ahli Pasukan</span>' : ''}
+            </div>
+            <div class="user-email">${escapeHtml(user.email)}</div>
+          </div>
         </div>
-        <div class="user-email">${escapeHtml(user.email)}</div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
     document.querySelectorAll('.user-item').forEach(el => {
       el.addEventListener('click', () => selectUser(el.dataset.id));
     });
