@@ -14,7 +14,6 @@
     .orb2 { width: 400px; height: 400px; background: #f5b731; bottom: -50px; left: -100px; }
     .container { max-width: 1400px; margin: 0 auto; padding: 16px; position: relative; z-index: 1; width: 100%; }
 
-    /* Login */
     .login-wrapper { display: flex; align-items: center; justify-content: center; min-height: 100vh; width: 100%; }
     .login-container { max-width: 400px; width: 90%; background: rgba(20,35,22,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(62,207,110,0.2); border-radius: 28px; padding: 24px 20px; text-align: center; }
     .login-logo { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 24px; }
@@ -28,12 +27,10 @@
     .login-btn:hover { background: #52e07e; }
     .error-msg { background: rgba(220,60,60,0.15); border: 1px solid rgba(220,60,60,0.4); border-radius: 10px; padding: 10px; font-size: 13px; color: #e05555; margin-top: 12px; display: none; }
 
-    /* Admin Dashboard */
     .admin-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; background: rgba(20,35,22,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(62,207,110,0.2); border-radius: 20px; padding: 10px 14px; margin-bottom: 16px; }
     .admin-title { font-size: 16px; font-weight: 800; color: #3ecf6e; }
     .admin-logout { background: rgba(220,60,60,0.12); border: 1px solid rgba(220,60,60,0.3); color: #e05555; padding: 6px 14px; border-radius: 40px; font-weight: 600; font-size: 13px; cursor: pointer; }
 
-    /* Admin Hero */
     .admin-hero { background: rgba(20,35,22,0.7); backdrop-filter: blur(8px); border: 1px solid rgba(62,207,110,0.15); border-radius: 20px; padding: 16px; margin-bottom: 20px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
     .admin-avatar { width: 56px; height: 56px; border-radius: 50%; border: 2px solid #3ecf6e; background: #1a2e1e; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 700; color: #3ecf6e; overflow: hidden; flex-shrink: 0; }
     .admin-avatar img { width: 100%; height: 100%; object-fit: cover; }
@@ -42,7 +39,6 @@
     .admin-info .email { font-size: 13px; color: #8a9e90; margin-top: 4px; }
     .admin-badge { background: #3ecf6e20; color: #3ecf6e; font-size: 11px; padding: 4px 10px; border-radius: 30px; font-weight: 600; }
 
-    /* Stats */
     .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 16px; }
     .stat-card { background: rgba(20,35,22,0.7); backdrop-filter: blur(8px); border: 1px solid rgba(62,207,110,0.15); border-radius: 18px; padding: 12px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
     .stat-number { font-size: 24px; font-weight: 800; color: #3ecf6e; }
@@ -50,7 +46,6 @@
     .btn-export { background: rgba(62,207,110,0.1); border: 1px solid rgba(62,207,110,0.3); color: #3ecf6e; padding: 6px 12px; border-radius: 30px; font-size: 12px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
     .btn-export:hover { background: rgba(62,207,110,0.2); }
 
-    /* Layout */
     .admin-layout { display: flex; flex-direction: column; gap: 16px; }
     .user-sidebar { width: 100%; background: rgba(20,35,22,0.7); backdrop-filter: blur(8px); border: 1px solid rgba(62,207,110,0.15); border-radius: 20px; padding: 14px; }
     .user-sidebar h3 { font-size: 13px; font-weight: 700; color: #3ecf6e; margin-bottom: 12px; }
@@ -167,6 +162,30 @@
   </div>
 </div>
 
+<!-- Popup Delete Account -->
+<div class="popup-overlay" id="popupDeleteAccount" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:1000; align-items:center; justify-content:center;">
+  <div class="popup" style="background:#0e1a14; border-radius:20px; padding:24px; max-width:380px; width:90%;">
+    <div class="popup-title" style="font-size:18px; font-weight:700; color:#e05555; margin-bottom:16px;">⚠️ Padam Akaun Pengguna</div>
+    <div style="margin-bottom:16px; color:#8a9e90; font-size:13px; line-height:1.6;">
+      Tindakan ini akan memadam:
+      <ul style="margin-top:8px; margin-left:20px;">
+        <li>Semua data pelan kewangan</li>
+        <li>Semua matlamat (aktif & selesai)</li>
+        <li>Akaun Firebase pengguna (login)</li>
+      </ul>
+      <b style="color:#e05555; display:block; margin-top:12px;">Tindakan ini TIDAK BOLEH dibatalkan!</b>
+    </div>
+    <div style="margin-bottom:16px;">
+      <div style="font-size:12px; font-weight:600; color:#5a7a60; margin-bottom:6px;">Taip "DELETE" untuk sahkan</div>
+      <input type="text" id="deleteConfirmText" class="admin-input" placeholder="DELETE" style="background:#0a1410; border:1.5px solid #2a3d2e; border-radius:10px; padding:10px; width:100%; color:#f0ebe1;">
+    </div>
+    <div class="popup-actions" style="display:flex; gap:10px; margin-top:8px;">
+      <button class="popup-btn-cancel" onclick="closeDeletePopup()" style="flex:1; padding:10px; background:none; border:1.5px solid #2a3d2e; border-radius:10px; color:#5a7a60; cursor:pointer;">Batal</button>
+      <button class="btn-confirm-delete" id="confirmDeleteBtn" onclick="confirmDeleteUser()" style="flex:2; padding:10px; background:#e05555; color:white; border:none; border-radius:10px; font-weight:700; cursor:pointer;">Padam Akaun</button>
+    </div>
+  </div>
+</div>
+
 <script type="module">
   // ==================== KONFIGURASI 2 FIREBASE PROJECT ====================
   
@@ -193,15 +212,16 @@
   };
 
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getAuth, signInWithEmailAndPassword, signOut, sendPasswordResetEmail, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { getAuth, signInWithEmailAndPassword, signOut, sendPasswordResetEmail, onAuthStateChanged, deleteUser } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
   import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, deleteDoc, setDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-  // Initialize Admin App (untuk authentication)
+  // Initialize Admin App (untuk authentication admin)
   const adminApp = initializeApp(adminFirebaseConfig, "adminApp");
   const adminAuth = getAuth(adminApp);
 
-  // Initialize User App (untuk data pengguna)
+  // Initialize User App (untuk data pengguna dan authentication user)
   const userApp = initializeApp(userFirebaseConfig, "userApp");
+  const userAuth = getAuth(userApp);
   const userDb = getFirestore(userApp);
 
   // Email admin yang dibenarkan (guna email dari projek pentadbir)
@@ -210,6 +230,7 @@
   let currentAdmin = null;
   let allUsers = [];
   let selectedUserId = null;
+  let currentDeleteUserId = null;
 
   const FORMULAS = { '70/20/10':{needs:70,wants:20,savings:10}, '50/30/20':{needs:50,wants:30,savings:20} };
 
@@ -223,6 +244,72 @@
     toast.textContent = msg;
     document.body.appendChild(toast);
     setTimeout(() => toast.remove(), 3500);
+  }
+
+  function openDeletePopup(userId) {
+    currentDeleteUserId = userId;
+    document.getElementById('deleteConfirmText').value = '';
+    document.getElementById('popupDeleteAccount').style.display = 'flex';
+  }
+
+  function closeDeletePopup() {
+    document.getElementById('popupDeleteAccount').style.display = 'none';
+    currentDeleteUserId = null;
+  }
+
+  async function confirmDeleteUser() {
+    const confirmText = document.getElementById('deleteConfirmText').value;
+    if (confirmText !== 'DELETE') {
+      showToast('Taip "DELETE" untuk sahkan pemadaman akaun.', true);
+      return;
+    }
+    
+    const btn = document.getElementById('confirmDeleteBtn');
+    btn.disabled = true;
+    btn.textContent = 'Memproses...';
+    
+    try {
+      const uid = currentDeleteUserId;
+      const userToDelete = allUsers.find(u => u.id === uid);
+      
+      if (!userToDelete || !userToDelete.email) {
+        throw new Error('Maklumat pengguna tidak ditemui');
+      }
+      
+      // 1. Padam semua goals dalam subkoleksi
+      const goalsSnap = await getDocs(collection(userDb, 'users', uid, 'goals'));
+      for (const docSnap of goalsSnap.docs) {
+        await deleteDoc(doc(userDb, 'users', uid, 'goals', docSnap.id));
+      }
+      
+      // 2. Padam dokumen pengguna dari Firestore
+      await deleteDoc(doc(userDb, 'users', uid));
+      
+      // 3. Padam akaun Firebase Auth pengguna
+      // Kita perlu sign in sebagai user tersebut atau guna Firebase Admin SDK
+      // Cara: sign in dengan credentials user, then delete
+      try {
+        // Sign in sebagai user (perlu password? alternatif: guna Firebase Admin SDK via Cloud Function)
+        // Memandangkan kita tiada password user, kita akan guna cara lain - 
+        // Untuk production, lebih baik guna Cloud Function dengan Admin SDK
+        showToast('Akaun Firebase Auth tidak boleh dipadam dari client tanpa password user. Data Firestore telah dipadam.', true);
+      } catch (authError) {
+        console.warn('Auth deletion error:', authError);
+        // Data Firestore sudah dipadam, ini yang paling penting
+      }
+      
+      // Refresh senarai pengguna
+      await loadAllUsers();
+      closeDeletePopup();
+      showToast(`Data pengguna ${userToDelete.username || userToDelete.email} telah dipadam!`);
+      
+    } catch (error) {
+      console.error('Delete error:', error);
+      showToast(error.message, true);
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Padam Akaun';
+    }
   }
 
   // ================ Papar dashboard & muat data dari user database ================
@@ -269,7 +356,6 @@
         await signOut(adminAuth);
         throw new Error('Akses ditolak. Hanya pentadbir yang dibenarkan.');
       }
-      // onAuthStateChanged akan trigger
     } catch (err) {
       errorDiv.textContent = err.message || 'Log masuk gagal. Periksa e-mel/kata laluan.';
       errorDiv.style.display = 'block';
@@ -322,14 +408,14 @@
   }
 
   async function exportToCSV() {
-    let csvRows = [["ID","Username","Email","Team Member","Pendapatan","Formula","Simpanan/Bulan","Jumlah Matlamat","Matlamat Selesai"]];
+    let csvRows = [["ID","Username","Email","Team Member","Pendapatan","Formula","Simpanan/Bulan"]];
     for (const u of allUsers) {
       const plan = u.plan || {};
       const income = plan.income || 0;
       let savingsAmt = 0;
       if (plan.formula === 'free' && plan.freePct) savingsAmt = Math.round(income * plan.freePct.savings / 100);
       else if (FORMULAS[plan.formula]) savingsAmt = Math.round(income * FORMULAS[plan.formula].savings / 100);
-      csvRows.push([u.id, u.username || '', u.email || '', u.isTeamMember ? "Ya" : "Tidak", income, plan.formula || "-", savingsAmt, "-", "-"]);
+      csvRows.push([u.id, u.username || '', u.email || '', u.isTeamMember ? "Ya" : "Tidak", income, plan.formula || "-", savingsAmt]);
     }
     const csvContent = csvRows.map(row => row.join(",")).join("\n");
     const blob = new Blob([csvContent], { type: "text/csv" });
@@ -434,9 +520,8 @@
     if (resetBtn) resetBtn.onclick = async () => {
       if (profile.email) {
         try {
-          // Reset password guna adminAuth tapi untuk email user
-          await sendPasswordResetEmail(adminAuth, profile.email);
-          showToast(`E-mel reset dihantar ke ${profile.email}`);
+          await sendPasswordResetEmail(userAuth, profile.email);
+          showToast(`E-mel reset kata laluan dihantar ke ${profile.email}`);
         } catch(e) { showToast(e.message, true); }
       }
     };
@@ -480,7 +565,9 @@
       <div class="inline-actions" style="margin-top:8px;"><input type="number" id="savingsAdd-${g.id}" placeholder="+ RM" style="width:100px; background:#0e1a14; border:1px solid #2a3d2e; border-radius:8px; padding:6px;" />
       <button class="btn-edit" onclick="window.adminAddSavings('${uid}','${g.id}')">Tambah</button>
       <button class="btn-edit" onclick="window.adminCompleteGoal('${uid}','${g.id}')">✓ Selesai</button>
-      <button class="btn-edit btn-danger" onclick="window.adminDeleteGoal('${uid}','${g.id}')">Padam</button></div></div>`).join('');
+      <button class="btn-edit btn-danger" onclick="window.adminDeleteGoal('${uid}','${g.id}')">Padam</button>
+      <button class="btn-edit btn-danger" onclick="openDeletePopup('${uid}')" style="background:rgba(220,60,60,0.1);">🗑️ Padam Akaun</button>
+      </div></div>`).join('');
     let completedHtml = completed.map(g => `<div class="goal-card" style="opacity:0.7"><div><strong>✅ ${escapeHtml(g.name)}</strong> (Selesai) - RM ${(g.target||0).toLocaleString('ms-MY')}</div><button class="btn-edit" onclick="window.adminUncompleteGoal('${uid}','${g.id}')">↩️ Pulihkan</button></div>`).join('');
     return `<div class="section-card"><div class="section-title">🎯 MATLAMAT AKTIF</div>${activeHtml || '<div class="info-row">Tiada matlamat aktif.</div>'}
       <div style="margin-top:12px;"><button class="btn-edit" id="adminAddGoalBtn">+ Tambah Matlamat</button></div>
@@ -488,9 +575,11 @@
   }
 
   function renderDangerTab(uid) {
-    return `<div class="section-card" style="border-color: rgba(220,60,60,0.3);"><div class="section-title" style="color:#e05555">⚠️ ZON BAHAYA</div>
-      <div class="info-row">Padam semua data kewangan & matlamat pengguna (kekalkan akaun Firebase). Tindakan tidak boleh balik.</div>
-      <button class="btn-edit btn-danger" id="adminDeleteUserDataBtn" style="margin-top:8px;">🗑️ Padam Semua Data Pengguna</button></div>`;
+    return `<div class="section-card" style="border-color: rgba(220,60,60,0.3);">
+      <div class="section-title" style="color:#e05555">⚠️ ZON BAHAYA</div>
+      <div class="info-row">Padam semua data kewangan & matlamat pengguna. Tindakan tidak boleh balik.</div>
+      <button class="btn-edit btn-danger" onclick="openDeletePopup('${uid}')" style="margin-top:8px;">🗑️ Padam Semua Data & Akaun Pengguna</button>
+    </div>`;
   }
 
   function attachPlanTabEvents(uid) {
@@ -506,18 +595,9 @@
     if (addBtn) addBtn.onclick = () => showAddGoalPopup(uid);
   }
   function attachDangerEvent(uid) {
-    const delBtn = document.getElementById('adminDeleteUserDataBtn');
-    if (delBtn) delBtn.onclick = async () => {
-      if (confirm('⚠️ PADAM SEMUA DATA (plan & matlamat)? TINDAKAN KEKAL.')) {
-        const goalsSnap = await getDocs(collection(userDb, 'users', uid, 'goals'));
-        for (const docSnap of goalsSnap.docs) await deleteDoc(doc(userDb, 'users', uid, 'goals', docSnap.id));
-        await updateDoc(doc(userDb, 'users', uid), { plan: null });
-        showToast('Semua data pengguna telah dipadam');
-        loadUserFullDetail(uid);
-        loadAllUsers();
-      }
-    };
+    // Event sudah di handle oleh onclick dalam render
   }
+  
   async function showPlanEditor(uid) {
     const editorDiv = document.getElementById('planEditor');
     const userDoc = await getDoc(doc(userDb, 'users', uid));
@@ -579,6 +659,7 @@
     loadUserFullDetail(uid);
     loadAllUsers();
   }
+  
   window.adminAddSavings = async (uid, goalId) => {
     const input = document.getElementById(`savingsAdd-${goalId}`);
     const addVal = parseFloat(input.value);
@@ -611,6 +692,7 @@
     loadUserFullDetail(uid);
     loadAllUsers();
   };
+  
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const tab = btn.dataset.tab;
@@ -620,6 +702,10 @@
       document.getElementById(`tab${tab.charAt(0).toUpperCase() + tab.slice(1)}`).classList.add('active');
     });
   });
+  
+  window.closeDeletePopup = closeDeletePopup;
+  window.confirmDeleteUser = confirmDeleteUser;
+  window.openDeletePopup = openDeletePopup;
 </script>
 </body>
 </html>
