@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>TabungKu — Plan Smart, Simpan Lebih</title>
-<link rel="icon" href="logo.png" type="image/png" />
+<link rel="icon" href="logo.jpg" type="image/jpg" />
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -17,6 +17,19 @@
   .orb3 { width: 300px; height: 300px; background: #3ecf6e; top: 50%; left: 40%; }
 
   .container { max-width: 680px; margin: 0 auto; padding: 40px 20px 80px; position: relative; z-index: 1; }
+
+  /* ===== GREEN VERIFIED BADGE ===== */
+  .verified-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 4px;  /* <-- jarak didekatkan */
+    vertical-align: middle;
+  }
+  .verified-badge svg {
+    width: 16px;
+    height: 16px;
+  }
 
   /* ===== HEADER USER MODE ===== */
   .user-header {
@@ -34,15 +47,44 @@
     object-fit: cover; cursor: pointer; background: #1a2e1e;
     display: flex; align-items: center; justify-content: center;
     font-size: 13px; font-weight: 700; color: #3ecf6e; overflow: hidden;
+    transition: all 0.2s;
   }
+  .user-avatar:hover { border-color: #52e07e; box-shadow: 0 0 12px rgba(62,207,110,0.3); }
   .user-avatar img { width: 100%; height: 100%; object-fit: cover; }
-  .user-name-btn { font-size: 13px; font-weight: 600; color: #c5d9c8; cursor: pointer; }
+  .user-name-btn { font-size: 13px; font-weight: 600; color: #c5d9c8; cursor: pointer; display: inline-flex; align-items: center; gap: 2px; }
   .menu-btn {
     background: rgba(62,207,110,0.08); border: 1px solid rgba(62,207,110,0.2);
     cursor: pointer; color: #3ecf6e; font-size: 16px; padding: 6px 10px;
     border-radius: 8px; transition: all 0.2s; line-height: 1;
   }
   .menu-btn:hover { background: rgba(62,207,110,0.16); }
+
+  /* ===== PROFILE PICTURE MODAL ===== */
+  .modal-profile-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 350;
+    display: none; align-items: center; justify-content: center; padding: 20px;
+    backdrop-filter: blur(5px);
+  }
+  .modal-profile-overlay.visible { display: flex; }
+  .modal-profile {
+    background: #0e1a14; border: 1px solid rgba(62,207,110,0.2);
+    border-radius: 20px; padding: 28px; width: 100%; max-width: 340px;
+    animation: fadeUp 0.3s ease; text-align: center;
+  }
+  .profile-pic-large {
+    width: 160px; height: 160px; border-radius: 50%; border: 3px solid #3ecf6e;
+    margin: 0 auto 20px; overflow: hidden; background: #1a2e1e;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 48px; font-weight: 700; color: #3ecf6e;
+  }
+  .profile-pic-large img { width: 100%; height: 100%; object-fit: cover; }
+  .profile-name-modal { font-size: 18px; font-weight: 700; color: #f0ebe1; margin-bottom: 4px; display: flex; align-items: center; justify-content: center; gap: 4px; }
+  .profile-email-modal { font-size: 12px; color: #5a7a60; margin-bottom: 20px; }
+  .profile-modal-actions { display: flex; gap: 10px; }
+  .btn-profile-edit { flex: 1; padding: 10px; background: #3ecf6e; color: #0a1410; border: none; border-radius: 10px; font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+  .btn-profile-edit:hover { background: #52e07e; }
+  .btn-profile-close { flex: 1; padding: 10px; background: none; border: 1.5px solid #2a3d2e; color: #5a7a60; border-radius: 10px; font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+  .btn-profile-close:hover { border-color: #3ecf6e; color: #3ecf6e; }
 
   /* ===== SIDE PANEL MENU ===== */
   .panel-overlay {
@@ -84,7 +126,7 @@
     flex-shrink: 0;
   }
   .side-panel-avatar img { width: 100%; height: 100%; object-fit: cover; }
-  .side-panel-user-name { font-size: 16px; font-weight: 700; color: #f0ebe1; margin-bottom: 4px; }
+  .side-panel-user-name { font-size: 16px; font-weight: 700; color: #f0ebe1; margin-bottom: 4px; display: inline-flex; align-items: center; gap: 4px; flex-wrap: wrap; }
   .side-panel-user-email { font-size: 11px; color: #3a5040; word-break: break-all; line-height: 1.4; }
 
   .side-panel-menu { padding: 12px; flex: 1; }
@@ -206,7 +248,7 @@
   .settings-row { padding: 14px 0; border-bottom: 1px solid #1a2e1e; }
   .settings-row:last-child { border-bottom: none; }
   .settings-row-label { font-size: 11px; font-weight: 600; color: #5a7a60; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 6px; }
-  .settings-row-value { font-size: 14px; color: #c5d9c8; font-weight: 500; }
+  .settings-row-value { font-size: 14px; color: #c5d9c8; font-weight: 500; display: inline-flex; align-items: center; gap: 4px; flex-wrap: wrap; }
   .settings-row-note { font-size: 11px; color: #3a5040; margin-top: 3px; }
   .avatar-section { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
   .avatar-preview { width: 64px; height: 64px; border-radius: 50%; border: 2px solid #3ecf6e; overflow: hidden; background: #1a2e1e; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 700; color: #3ecf6e; flex-shrink: 0; }
@@ -259,7 +301,6 @@
   .p-btn.medium.sel { background: rgba(245,183,49,0.15); color: #f5b731; border-color: #f5b731; }
   .p-btn.low.sel { background: rgba(100,150,200,0.15); color: #82b4e8; border-color: #82b4e8; }
 
-  /* Celebration popup */
   .celebration-popup { text-align: center; }
   .celebration-emoji { font-size: 48px; margin-bottom: 16px; }
   .celebration-title { font-size: 22px; font-weight: 800; color: #3ecf6e; margin-bottom: 8px; }
@@ -273,7 +314,6 @@
   .btn-close-celebration { width: 100%; padding: 13px; background: #3ecf6e; color: #0a1410; border: none; border-radius: 10px; font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
   .btn-close-celebration:hover { background: #52e07e; }
 
-  /* Edit Plan Popup */
   .formula-mini-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
   .formula-mini-card { border: 1.5px solid #2a3d2e; border-radius: 10px; padding: 10px 8px; cursor: pointer; transition: all 0.2s; text-align: center; background: #0a1410; }
   .formula-mini-card:hover { border-color: rgba(62,207,110,0.4); }
@@ -434,32 +474,13 @@
   .btn-save-plan:hover { background: #52e07e; }
   .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(62,207,110,0.3); border-top-color: #3ecf6e; border-radius: 50%; animation: spin 0.6s linear infinite; vertical-align: middle; margin-right: 6px; }
 
-  /* ===== GUEST FOOTER ===== */
-  .guest-footer {
-    text-align: center; padding: 16px 20px 20px;
-    border-top: 1px solid #1e3322; margin-top: 16px;
-  }
-  .btn-auth-footer {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: rgba(62,207,110,0.1); border: 1px solid rgba(62,207,110,0.3);
-    color: #3ecf6e; border-radius: 100px;
-    padding: 8px 22px; font-family: 'Sora', sans-serif; font-size: 13px;
-    font-weight: 600; cursor: pointer; transition: all 0.2s;
-  }
+  .guest-footer { text-align: center; padding: 16px 20px 20px; border-top: 1px solid #1e3322; margin-top: 16px; }
+  .btn-auth-footer { display: inline-flex; align-items: center; gap: 8px; background: rgba(62,207,110,0.1); border: 1px solid rgba(62,207,110,0.3); color: #3ecf6e; border-radius: 100px; padding: 8px 22px; font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
   .btn-auth-footer:hover { background: rgba(62,207,110,0.2); }
 
-  /* ===== DASHBOARD RESULT BREAKDOWN CARD ===== */
-  .dash-breakdown-card {
-    background: rgba(20,35,22,0.85); border: 1px solid rgba(62,207,110,0.15);
-    border-radius: 16px; padding: 20px; margin-bottom: 20px;
-    backdrop-filter: blur(12px);
-  }
-  .dash-breakdown-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px;
-  }
-  .dash-breakdown-item {
-    background: #0a1410; border-radius: 12px; padding: 12px 8px; text-align: center; border: 1px solid #1e3322;
-  }
+  .dash-breakdown-card { background: rgba(20,35,22,0.85); border: 1px solid rgba(62,207,110,0.15); border-radius: 16px; padding: 20px; margin-bottom: 20px; backdrop-filter: blur(12px); }
+  .dash-breakdown-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px; }
+  .dash-breakdown-item { background: #0a1410; border-radius: 12px; padding: 12px 8px; text-align: center; border: 1px solid #1e3322; }
   .dash-breakdown-item label { font-size: 10px; color: #5a7a60; display: block; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.06em; }
   .dash-breakdown-item .val { font-family: 'Space Mono', monospace; font-size: 14px; font-weight: 700; display: block; }
   .dash-breakdown-item.needs .val { color: #60a8ff; }
@@ -470,7 +491,6 @@
   .dash-breakdown-row-label { color: #8a9e90; }
   .dash-breakdown-row-val { font-family: 'Space Mono', monospace; font-weight: 700; color: #f0ebe1; }
 
-  /* ===== DANGER ZONE ===== */
   .danger-zone-card { background: rgba(30,10,10,0.8); border: 1px solid rgba(220,60,60,0.2); border-radius: 16px; padding: 20px; margin-bottom: 16px; }
   .danger-zone-title { font-size: 11px; font-weight: 700; color: #e05555; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
   .danger-zone-desc { font-size: 12px; color: #5a7a60; margin-bottom: 14px; line-height: 1.6; }
@@ -485,17 +505,10 @@
   .empty-state-text { font-size: 14px; }
   .achievements-card { background: rgba(20,35,22,0.85); border: 1px solid #1e3322; border-radius: 14px; padding: 18px; margin-top: 0; }
 
-  .toast {
-    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-    background: #0e1a14; border: 1px solid rgba(62,207,110,0.3);
-    border-radius: 100px; padding: 10px 20px; font-size: 13px; color: #3ecf6e;
-    font-weight: 600; z-index: 999; animation: toastIn 0.3s ease;
-    max-width: calc(100vw - 40px); white-space: normal; text-align: center;
-  }
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #0e1a14; border: 1px solid rgba(62,207,110,0.3); border-radius: 100px; padding: 10px 20px; font-size: 13px; color: #3ecf6e; font-weight: 600; z-index: 999; animation: toastIn 0.3s ease; max-width: calc(100vw - 40px); white-space: normal; text-align: center; }
   .toast.error { border-color: rgba(220,60,60,0.3); color: #e05555; }
   @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(10px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
 
-  /* ===== RESPONSIVE ===== */
   @media (max-width: 550px) {
     .step-dot { width: 32px; height: 32px; font-size: 12px; }
     .step-line { width: 40px; }
@@ -543,7 +556,6 @@
     .formula-name { font-size: 12px; }
     .formula-card { padding: 12px 8px; }
   }
-  /* Tablet */
   @media (min-width: 600px) and (max-width: 1024px) {
     .container { padding: 40px 32px 80px; max-width: 720px; }
     .card { padding: 36px; }
@@ -565,6 +577,19 @@
 <div class="bg-orb orb2"></div>
 <div class="bg-orb orb3"></div>
 
+<!-- ===== PROFILE PICTURE MODAL ===== -->
+<div class="modal-profile-overlay" id="profileModal">
+  <div class="modal-profile">
+    <div class="profile-pic-large" id="profilePicLarge"></div>
+    <div class="profile-name-modal" id="profileName"></div>
+    <div class="profile-email-modal" id="profileEmail">-</div>
+    <div class="profile-modal-actions">
+      <button class="btn-profile-edit" onclick="showSettings(); closeProfileModal()">⚙️ Tetapan</button>
+      <button class="btn-profile-close" onclick="closeProfileModal()">Tutup</button>
+    </div>
+  </div>
+</div>
+
 <!-- ===== AUTH MODAL ===== -->
 <div class="modal-overlay" id="authModal">
   <div class="modal">
@@ -577,9 +602,9 @@
     <div id="authSuccess" class="auth-success"></div>
     <div id="loginForm">
       <div class="auth-field">
-        <label>E-mel</label>
+        <label>Nama Pengguna atau E-mel</label>
         <div class="auth-input-wrap">
-          <input type="email" id="loginEmail" placeholder="example@gmail.com" autocomplete="off" />
+          <input type="text" id="loginEmailOrUsername" placeholder="ali atau ali@gmail.com" autocomplete="off" />
         </div>
       </div>
       <div class="auth-field">
@@ -595,13 +620,13 @@
       <div class="auth-field">
         <label>Nama Pengguna <span style="color:#5a7a60;font-size:10px">(*unik)</span></label>
         <div class="auth-input-wrap">
-          <input type="text" id="regUsername" placeholder="JohnDoe" autocomplete="username" />
+          <input type="text" id="regUsername" placeholder="ali" autocomplete="username" />
         </div>
       </div>
       <div class="auth-field">
         <label>E-mel</label>
         <div class="auth-input-wrap">
-          <input type="email" id="regEmail" placeholder="example@gmail.com" autocomplete="email" />
+          <input type="email" id="regEmail" placeholder="ali@gmail.com" autocomplete="email" />
         </div>
       </div>
       <div class="auth-field">
@@ -655,7 +680,7 @@
   <div class="popup">
     <div class="popup-title" style="color:#e05555">⚠️ Padam Akaun</div>
     <div style="font-size:13px;color:#8a9e90;margin-bottom:16px;line-height:1.7">
-      Tindakan ini <b style="color:#f0ebe1">tidak boleh dibatalkan</b>. Semua data pelan, matlamat, dan pencapaian kau akan dipadam secara kekal.
+      Tindakan ini <b style="color:#f0ebe1">tidak boleh dibatalkan</b>. Semua data pelan, matlamat, dan pencapaian akan dipadam secara kekal.
     </div>
     <div style="margin-bottom:14px">
       <div style="font-size:11px;font-weight:600;color:#5a7a60;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px">Taip kata laluan untuk sahkan</div>
@@ -682,7 +707,7 @@
       <div style="font-size:11px;color:#5a7a60" id="updateProgressPct">0%</div>
     </div>
     <div class="popup-field">
-      <label>Jumlah tambahan simpanan (RM)</label>
+      <label>Jumlah Tambahan Simpanan (RM)</label>
       <div class="popup-input-wrap">
         <div class="popup-prefix">RM</div>
         <input type="number" class="popup-input" id="updateAmount" placeholder="500" oninput="previewUpdate()" />
@@ -704,7 +729,7 @@
     <div class="popup-title">🎯 Matlamat Baru</div>
     <div class="popup-field">
       <label>Nama Matlamat</label>
-      <input type="text" class="popup-input-full" id="newGoalNamePopup" placeholder="cth: iPhone 16 Pro" />
+      <input type="text" class="popup-input-full" id="newGoalNamePopup" placeholder="contoh: iPhone 16 Pro" />
     </div>
     <div class="popup-field">
       <label>Sasaran (RM)</label>
@@ -783,8 +808,8 @@
     <div class="celebration-name" id="celebGoalName">-</div>
     <div class="celebration-stats">
       <div class="c-stat-row"><span class="c-stat-label">Sasaran</span><span class="c-stat-value" id="celebTarget">-</span></div>
-      <div class="c-stat-row"><span class="c-stat-label">Masa diambil</span><span class="c-stat-value" id="celebTime">-</span></div>
-      <div class="c-stat-row"><span class="c-stat-label">Simpanan purata sebulan</span><span class="c-stat-value" id="celebMonthly">-</span></div>
+      <div class="c-stat-row"><span class="c-stat-label">Masa Diambil</span><span class="c-stat-value" id="celebTime">-</span></div>
+      <div class="c-stat-row"><span class="c-stat-label">Simpanan Purata Sebulan</span><span class="c-stat-value" id="celebMonthly">-</span></div>
     </div>
     <div class="celebration-tagline">Hebat! Teruskan usaha! 💪</div>
     <button class="btn-close-celebration" onclick="closeCelebration()">TUTUP</button>
@@ -800,7 +825,7 @@
       <div class="logo-text">💰 TabungKu</div>
     </div>
     <div class="user-header-right">
-      <div class="user-avatar" id="headerAvatar" onclick="showSettings()"></div>
+      <div class="user-avatar" id="headerAvatar" onclick="openProfileModal()"></div>
       <span class="user-name-btn" id="headerUsername" onclick="showSettings()"></span>
       <button class="menu-btn" id="menuToggleBtn" onclick="toggleMenu(event)">☰</button>
     </div>
@@ -813,7 +838,7 @@
     <!-- Budget Breakdown -->
     <div class="dash-breakdown-card" id="dashBreakdownCard" style="display:none">
       <div class="plan-card-header" style="margin-bottom:0">
-        <span class="plan-card-title">💼 Budget Breakdown</span>
+        <span class="plan-card-title">💼 Pecahan Bajet</span>
       </div>
       <div class="dash-breakdown-grid">
         <div class="dash-breakdown-item needs"><label>Keperluan</label><span class="val" id="dbNeeds">-</span></div>
@@ -848,7 +873,7 @@
     <div id="dashGoalList">
       <div class="empty-state">
         <div class="empty-state-icon">🎯</div>
-        <div class="empty-state-text">Tiada matlamat lagi. Tambah matlamat pertama kau!</div>
+        <div class="empty-state-text">Tiada matlamat lagi. Tambah matlamat pertama anda!</div>
       </div>
     </div>
 
@@ -872,18 +897,18 @@
         <div class="avatar-preview" id="settingsAvatarPreview"></div>
         <div style="flex:1">
           <div style="font-size:12px;color:#5a7a60;margin-bottom:6px">URL Gambar Profil</div>
-          <input type="text" class="settings-input" id="settingsAvatarUrl" placeholder="https://example.com/photo.jpg" oninput="previewSettingsAvatar()" />
+          <input type="text" class="settings-input" id="settingsAvatarUrl" placeholder="https://contoh.com/foto.jpg" oninput="previewSettingsAvatar()" />
           <button class="btn-settings-save" onclick="saveAvatar()" style="margin-top:8px">Kemas Kini</button>
         </div>
       </div>
       <div class="settings-row">
         <div class="settings-row-label">Nama Pengguna</div>
-        <div class="settings-row-value" id="settingsUsername">-</div>
+        <div class="settings-row-value" id="settingsUsername"></div>
         <div class="settings-row-note">*Tidak boleh ditukar</div>
       </div>
       <div class="settings-row">
         <div class="settings-row-label">E-mel</div>
-        <div class="settings-row-value" id="settingsEmail">-</div>
+        <div class="settings-row-value" id="settingsEmail"></div>
       </div>
     </div>
     <div class="settings-card">
@@ -904,7 +929,7 @@
     </div>
     <div class="danger-zone-card">
       <div class="danger-zone-title">⚠️ Zon Bahaya</div>
-      <div class="danger-zone-desc">Memadam akaun akan menghapuskan semua data kau secara kekal termasuk pelan, matlamat, dan pencapaian. Tindakan ini tidak boleh dibatalkan.</div>
+      <div class="danger-zone-desc">Memadam akaun akan menghapuskan semua data pelan, matlamat, dan pencapaian anda secara kekal. Tindakan ini tidak boleh dibatalkan.</div>
       <button class="btn-delete-account" onclick="openDeleteAccountPopup()">🗑 Padam Akaun Saya</button>
     </div>
   </div>
@@ -914,7 +939,7 @@
     <div class="header" id="plannerHeader">
       <div class="logo-badge">💰 TabungKu</div>
       <h1>Plan Smart, <span>Simpan Lebih.</span></h1>
-      <p class="subtitle">Kira simpanan kau, tetapkan matlamat, capai impian — langkah demi langkah.</p>
+      <p class="subtitle">Kira simpanan anda, tetapkan matlamat, capai impian — langkah demi langkah.</p>
     </div>
 
     <div class="steps-wrapper">
@@ -925,13 +950,13 @@
     <!-- Step 1: Income -->
     <div class="card" id="step1">
       <div class="step-badge">LANGKAH 1 / 5</div>
-      <div class="card-title">Berapa pendapatan bulanan kau? 💸</div>
+      <div class="card-title">Berapa pendapatan bulanan anda? 💸</div>
       <div class="card-subtitle">Gaji bersih (selepas EPF/cukai) ya, bukan gaji kasar.</div>
       <div class="input-group">
         <label class="input-label">Gaji Bersih Bulanan</label>
         <div class="input-wrap">
           <div class="input-prefix">RM</div>
-          <input type="number" id="incomeInput" placeholder="cth: 3500" min="0" oninput="updateIncomePreview(); updateAllPreviews()" />
+          <input type="number" id="incomeInput" placeholder="contoh: 3500" min="0" oninput="updateIncomePreview(); updateAllPreviews()" />
         </div>
       </div>
       <div class="income-preview" id="incomePreview" style="display:none">
@@ -944,8 +969,8 @@
     <!-- Step 2: Formula -->
     <div class="card hidden" id="step2">
       <div class="step-badge">LANGKAH 2 / 5</div>
-      <div class="card-title">Pilih formula simpanan kau 📊</div>
-      <div class="card-subtitle">Pilih yang paling sesuai dengan gaya hidup kau.</div>
+      <div class="card-title">Pilih formula simpanan anda 📊</div>
+      <div class="card-subtitle">Pilih yang paling sesuai dengan gaya hidup anda.</div>
       <div class="formula-grid">
         <div class="formula-card" id="f-7020" onclick="selectFormula('70/20/10')">
           <div class="formula-name">70/20/10</div>
@@ -987,11 +1012,11 @@
     <!-- Step 3: Commitments -->
     <div class="card hidden" id="step3">
       <div class="step-badge">LANGKAH 3 / 5</div>
-      <div class="card-title">Komitmen bulanan kau 📋</div>
+      <div class="card-title">Komitmen bulanan anda 📋</div>
       <div class="card-subtitle">Sewa, ansuran kereta, pinjaman, langganan — masukkan semua. Boleh langkau jika tiada.</div>
       <div class="commitment-list" id="commitmentList"></div>
       <div class="add-row">
-        <input type="text" id="commitName" placeholder="cth: Sewa rumah" onkeydown="if(event.key==='Enter')addCommitment()" />
+        <input type="text" id="commitName" placeholder="contoh: Sewa rumah" onkeydown="if(event.key==='Enter')addCommitment()" />
         <div class="commit-amt-wrap">
           <div class="commit-prefix">RM</div>
           <input type="number" id="commitAmt" placeholder="500" onkeydown="if(event.key==='Enter')addCommitment()" />
@@ -1009,13 +1034,13 @@
     <!-- Step 4: Goals -->
     <div class="card hidden" id="step4">
       <div class="step-badge">LANGKAH 4 / 5</div>
-      <div class="card-title">Impian kau apa? 🎯</div>
-      <div class="card-subtitle">Masukkan matlamat kau — rumah, kereta, perjalanan, tabung kecemasan, apa sahaja.</div>
+      <div class="card-title">Impian anda apa? 🎯</div>
+      <div class="card-subtitle">Masukkan matlamat anda — rumah, kereta, perjalanan, tabung kecemasan, apa sahaja.</div>
       <div id="goalList"></div>
       <div class="add-goal-form">
         <div style="font-size:11px;font-weight:700;color:#3ecf6e;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:14px;">+ TAMBAH MATLAMAT</div>
         <label class="form-label">Nama Matlamat</label>
-        <input type="text" id="goalName" placeholder="cth: Tabung Kecemasan" />
+        <input type="text" id="goalName" placeholder="contoh: Tabung Kecemasan" />
         <label class="form-label">Jumlah Sasaran</label>
         <div class="goal-target-wrap">
           <div class="prefix">RM</div>
@@ -1047,7 +1072,7 @@
     <!-- Step 5: Results -->
     <div class="card hidden" id="step5">
       <div class="step-badge">LANGKAH 5 / 5 — KEPUTUSAN</div>
-      <div class="card-title">Pecahan Simpanan Kau 🏆</div>
+      <div class="card-title">Pecahan Simpanan Anda 🏆</div>
       <div class="card-subtitle">Semua telah dikira & dibundarkan — tiada drama sen.</div>
       <div id="resultsContent"></div>
       <div class="nav-row" style="margin-top:20px">
@@ -1086,7 +1111,17 @@
 
   window._fb = { auth, db, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updatePassword, reauthenticateWithCredential, EmailAuthProvider, doc, setDoc, getDoc, updateDoc, collection, addDoc, getDocs, deleteDoc, query, where, orderBy };
 
+  // ===== ADMIN SESSION PREVENTION =====
   onAuthStateChanged(auth, async (user) => {
+    // If user is admin, force logout immediately
+    if (user && user.email === 'admin@tabungku.com') {
+      await signOut(auth);
+      alert('⚠️ Sesi pentadbir dikesan. Anda tidak boleh menggunakan aplikasi pengguna sebagai pentadbir. Sila log keluar dari panel pentadbir terlebih dahulu.');
+      window.location.reload();
+      return;
+    }
+    
+    // Normal user flow
     if (user) {
       const uDoc = await getDoc(doc(db, 'users', user.uid));
       const uData = uDoc.exists() ? uDoc.data() : {};
@@ -1119,12 +1154,27 @@
     'free': null,
   };
 
+  // Helper: Green verified badge SVG (rapat)
+  function getVerifiedBadge() {
+    return `<span class="verified-badge"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#3ecf6e" width="14" height="14"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></span>`;
+  }
+
   function fmt(n) { return Math.round(n).toLocaleString('ms-MY'); }
   function round(n) { return Math.round(n); }
+
+  // Helper to render username with verified badge if team member (TANPA badge untuk dashboard greeting)
+  function renderUsernameWithBadge(username, isTeamMember) {
+    if (isTeamMember) {
+      return `${username} ${getVerifiedBadge()}`;
+    }
+    return username;
+  }
 
   // ===== MODE SWITCHING =====
   function enterUserMode() {
     const u = window.currentUser;
+    const isTeamMember = u.isTeamMember === true;
+    
     document.getElementById('plannerView').style.display = 'none';
     document.getElementById('guestFooter').style.display = 'none';
     document.getElementById('dashboardView').classList.remove('visible');
@@ -1132,9 +1182,25 @@
     document.getElementById('userHeader').classList.add('visible');
 
     const username = u.username || u.email.split('@')[0];
-    document.getElementById('headerUsername').textContent = username;
-    document.getElementById('sidePanelName').textContent = username;
+    const displayName = renderUsernameWithBadge(username, isTeamMember);
+    
+    // Header username (dengan badge)
+    document.getElementById('headerUsername').innerHTML = displayName;
+    // Side panel name (dengan badge)
+    document.getElementById('sidePanelName').innerHTML = displayName;
     document.getElementById('sidePanelEmail').textContent = u.email;
+    
+    // Dashboard greeting - TANPA badge, hanya nama kosong
+    const greetingSpan = document.getElementById('dashUsername');
+    greetingSpan.textContent = username;
+
+    // Settings username (dengan badge)
+    const settingsUsernameEl = document.getElementById('settingsUsername');
+    settingsUsernameEl.innerHTML = renderUsernameWithBadge(username, isTeamMember);
+
+    // Profile modal name (dengan badge)
+    const profileNameEl = document.getElementById('profileName');
+    profileNameEl.innerHTML = renderUsernameWithBadge(username, isTeamMember);
 
     const sidePanelAv = document.getElementById('sidePanelAvatar');
     if (u.avatarUrl) {
@@ -1170,7 +1236,6 @@
     document.getElementById('dashboardView').classList.remove('visible');
     document.getElementById('settingsView').classList.remove('visible');
     document.getElementById('plannerView').style.display = 'block';
-    // Hide logo header and guest footer for logged-in users
     document.getElementById('plannerHeader').style.display = isLoggedIn ? 'none' : 'block';
     document.getElementById('guestFooter').style.display = isLoggedIn ? 'none' : 'block';
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1193,6 +1258,26 @@
     if (overlay) overlay.classList.remove('visible');
   }
 
+  // ===== PROFILE MODAL =====
+  function openProfileModal() {
+    const u = window.currentUser;
+    const username = u.username || u.email.split('@')[0];
+    const isTeamMember = u.isTeamMember === true;
+    document.getElementById('profileName').innerHTML = renderUsernameWithBadge(username, isTeamMember);
+    document.getElementById('profileEmail').textContent = u.email;
+    const picEl = document.getElementById('profilePicLarge');
+    if (u.avatarUrl) {
+      picEl.innerHTML = `<img src="${u.avatarUrl}" onerror="this.parentElement.textContent='${username[0].toUpperCase()}'" />`;
+    } else {
+      picEl.textContent = username[0].toUpperCase();
+    }
+    document.getElementById('profileModal').classList.add('visible');
+  }
+
+  function closeProfileModal() {
+    document.getElementById('profileModal').classList.remove('visible');
+  }
+
   async function showDashboard() {
     document.getElementById('settingsView').classList.remove('visible');
     document.getElementById('dashboardView').classList.add('visible');
@@ -1200,6 +1285,7 @@
     document.getElementById('guestFooter').style.display = 'none';
     const u = window.currentUser;
     const username = u.username || u.email.split('@')[0];
+    // Dashboard greeting - TANPA badge
     document.getElementById('dashUsername').textContent = username;
     await loadDashboard();
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1263,7 +1349,7 @@
   function renderDashGoals() {
     const list = document.getElementById('dashGoalList');
     if (dashGoals.length === 0) {
-      list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🎯</div><div class="empty-state-text">Tiada matlamat lagi. Tambah matlamat pertama kau!</div></div>`;
+      list.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🎯</div><div class="empty-state-text">Tiada matlamat lagi. Tambah matlamat pertama anda!</div></div>`;
       return;
     }
     const plan = window._currentPlan;
@@ -1346,7 +1432,8 @@
     document.getElementById('settingsView').classList.add('visible');
     const u = window.currentUser;
     const username = u.username || u.email.split('@')[0];
-    document.getElementById('settingsUsername').textContent = username;
+    const isTeamMember = u.isTeamMember === true;
+    document.getElementById('settingsUsername').innerHTML = renderUsernameWithBadge(username, isTeamMember);
     document.getElementById('settingsEmail').textContent = u.email;
     document.getElementById('settingsAvatarUrl').value = u.avatarUrl || '';
     renderSettingsAvatar(u.avatarUrl, username);
@@ -1445,10 +1532,8 @@
       await deleteDoc(doc(db, 'users', uid));
       await user.delete();
 
-      // Close popup and show success before onAuthStateChanged fires
       closePopup('popupDeleteAccount');
       showToast('Akaun berjaya dipadam. Jumpa lagi! 👋');
-      // onAuthStateChanged will automatically call enterGuestMode()
     } catch (e) {
       btn.disabled = false;
       btn.textContent = 'Padam Akaun';
@@ -1495,36 +1580,44 @@
 
   function translateAuthError(code) {
     const map = {
-      'auth/user-not-found': 'E-mel tidak dijumpai.',
+      'auth/user-not-found': 'Nama pengguna atau e-mel tidak dijumpai.',
       'auth/wrong-password': 'Kata laluan salah.',
       'auth/email-already-in-use': 'E-mel sudah didaftarkan.',
       'auth/weak-password': 'Kata laluan terlalu lemah (minimum 6 aksara).',
       'auth/invalid-email': 'Format e-mel tidak sah.',
       'auth/too-many-requests': 'Terlalu banyak percubaan. Cuba lagi kemudian.',
-      'auth/invalid-credential': 'E-mel atau kata laluan tidak betul.',
+      'auth/invalid-credential': 'Nama pengguna/e-mel atau kata laluan tidak betul.',
     };
     return map[code] || 'Ralat berlaku. Cuba lagi.';
   }
 
   async function doLogin() {
-    const email = document.getElementById('loginEmail').value.trim();
+    const input = document.getElementById('loginEmailOrUsername').value.trim();
     const password = document.getElementById('loginPassword').value;
-    if (!email || !password) { showAuthError('Sila isi semua ruangan.'); return; }
+    if (!input || !password) { showAuthError('Sila isi semua ruangan.'); return; }
     setAuthLoading('btnLogin', true, 'Log Masuk');
     clearAuthMessages();
     try {
       const { auth, db, signInWithEmailAndPassword, collection, getDocs, query, where } = window._fb;
-      const emailQ = query(collection(db, 'users'), where('email', '==', email));
-      const emailSnap = await getDocs(emailQ);
-      if (emailSnap.empty) {
-        showAuthError('E-mel ini tidak berdaftar. Cuba daftar dahulu.');
-        setAuthLoading('btnLogin', false, 'Log Masuk');
-        return;
+      
+      // Try to find if input is username or email
+      let email = input;
+      if (!input.includes('@')) {
+        const usernameQ = query(collection(db, 'users'), where('username', '==', input));
+        const usernameSnap = await getDocs(usernameQ);
+        if (!usernameSnap.empty) {
+          email = usernameSnap.docs[0].data().email;
+        } else {
+          showAuthError('Nama pengguna atau e-mel tidak dijumpai.');
+          setAuthLoading('btnLogin', false, 'Log Masuk');
+          return;
+        }
       }
+      
       await signInWithEmailAndPassword(auth, email, password);
     } catch (e) {
       if (e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential') {
-        showAuthError('Kata laluan salah. Cuba lagi.');
+        showAuthError('Nama pengguna/e-mel atau kata laluan tidak betul.');
       } else {
         showAuthError(translateAuthError(e.code));
       }
@@ -1568,7 +1661,36 @@
           cred = await signInWithEmailAndPassword(auth, email, password);
         } else { throw e; }
       }
-      await setDoc(doc(db, 'users', cred.user.uid), { username, email, createdAt: Date.now() });
+      
+      // Save guest data to new account
+      const planData = {
+        income: round(getIncome()),
+        formula: selectedFormula,
+        commitments: commitments.map(c => ({ name: c.name, amount: c.amount }))
+      };
+      if (selectedFormula === 'free') planData.freePct = getPct();
+      
+      await setDoc(doc(db, 'users', cred.user.uid), { username, email, createdAt: Date.now(), plan: planData });
+      
+      // Save goals
+      for (const g of goals) {
+        await addDoc(collection(db, 'users', cred.user.uid, 'goals'), {
+          name: g.name,
+          target: g.target,
+          priority: g.priority,
+          saved: 0,
+          completed: false,
+          createdAt: Date.now()
+        });
+      }
+      
+      // Clear guest data
+      commitments = [];
+      goals = [];
+      currentStep = 1;
+      
+      showAuthSuccess('Daftar berjaya! Pelan anda telah disimpan.');
+      setTimeout(() => closeAuthModal(), 1500);
     } catch (e) {
       showAuthError(translateAuthError(e.code));
     }
@@ -1747,14 +1869,13 @@
   // ===== SAVE PLAN FROM PLANNER =====
   async function savePlanToFirebase() {
     if (!window.currentUser || !window._fb) return;
-    const { db, doc, setDoc } = window._fb;
+    const { db, doc, setDoc, collection, addDoc } = window._fb;
     const pct = getPct();
     const planData = {
       income: round(getIncome()), formula: selectedFormula, commitments,
       freePct: selectedFormula === 'free' ? pct : null
     };
     await setDoc(doc(db, 'users', window.currentUser.uid), { plan: planData }, { merge: true });
-    const { collection, addDoc } = window._fb;
     for (const g of goals) {
       await addDoc(collection(db, 'users', window.currentUser.uid, 'goals'), {
         name: g.name, target: g.target, priority: g.priority,
@@ -1762,6 +1883,9 @@
       });
     }
     window._currentPlan = planData;
+    goals = [];
+    commitments = [];
+    currentStep = 1;
     showToast('Pelan berjaya disimpan!');
     setTimeout(() => showDashboard(), 1000);
   }
@@ -1953,30 +2077,16 @@
       <div class="results-summary">
         <div class="results-label">Simpanan Bulanan Tersedia</div>
         <div class="results-amount">RM ${fmt(savingsAmt)}</div>
-        <div class="results-sub">${pct.savings}% daripada RM ${fmt(inc)} pendapatan kau</div>
+        <div class="results-sub">${pct.savings}% daripada RM ${fmt(inc)} pendapatan anda</div>
       </div>
-      <div class="card-title" style="margin-bottom:12px">💼 Budget Breakdown</div>
+      <div class="card-title" style="margin-bottom:12px">💼 Pecahan Bajet</div>
       <div style="background:#0a1410;border-radius:12px;padding:16px 20px;margin-bottom:20px">
         <div class="budget-row"><span class="budget-row-label">💼 Pendapatan</span><span class="budget-row-amount">RM ${fmt(inc)}</span></div>
         <div class="budget-row"><span class="budget-row-label">🏠 Keperluan (${pct.needs}%)</span><span class="budget-row-amount">RM ${fmt(needsAmt)}</span></div>
         <div class="budget-row"><span class="budget-row-label">🎮 Kehendak (${pct.wants}%)</span><span class="budget-row-amount">RM ${fmt(wantsAmt)}</span></div>
         <div class="budget-row"><span class="budget-row-label">💰 Simpanan (${pct.savings}%)</span><span class="budget-row-amount" style="color:#3ecf6e">RM ${fmt(savingsAmt)}</span></div>`;
     if (totalCommit > 0) budgetHtml += `<div class="budget-row"><span class="budget-row-label">📋 Jumlah Komitmen</span><span class="budget-row-amount" style="color:#f5b731">RM ${fmt(totalCommit)}</span></div>`;
-    if (goalResults.length > 0) {
-      const totalMonths = Math.max(...goalResults.map(g => g.endMonth), 0);
-      const totYrs = Math.floor(totalMonths / 12); const totMths = totalMonths % 12;
-      const totStr = totYrs > 0 ? `${totYrs} thn${totMths > 0 ? ' ' + totMths + ' bln' : ''}` : `${totalMonths} bln`;
-      budgetHtml += `<div class="budget-row" style="padding-top:14px;border-top:1px dashed #2a3d2e;border-bottom:none;margin-top:4px"><span class="budget-row-label">🏁 Semua matlamat capai dalam</span><span class="budget-row-amount" style="color:#3ecf6e;font-size:15px">${totStr}</span></div>`;
-    }
     budgetHtml += `</div>`;
-
-    // Save plan banner — placed BELOW budget breakdown
-    let bannerHtml = '';
-    if (!isLoggedIn) {
-      bannerHtml = `<div class="save-plan-banner"><div class="save-plan-text">💡 <b>Log masuk</b> untuk simpan pelan &amp; jejak kemajuan matlamat kau!</div><button class="btn-save-plan" onclick="openAuthModal()">Log Masuk / Daftar</button></div>`;
-    } else {
-      bannerHtml = `<div class="save-plan-banner" style="cursor:pointer" onclick="savePlanToFirebase()"><div class="save-plan-text">💾 <b>Simpan pelan ini</b> ke akaun kau!</div><button class="btn-save-plan">Simpan Pelan</button></div>`;
-    }
 
     // Goals section
     let goalsHtml = '';
@@ -2005,10 +2115,18 @@
       });
     }
 
-    let warningHtml = '';
-    if (totalCommit > 0) warningHtml = `<div class="warning-box" style="margin-top:16px">💡 Komitmen bulanan RM ${fmt(totalCommit)} telah dikira sebagai sebahagian daripada perbelanjaan keperluan kau.</div>`;
+    // Save plan banner BELOW goals section
+    let bannerHtml = '';
+    if (!isLoggedIn) {
+      bannerHtml = `<div class="save-plan-banner"><div class="save-plan-text">💡 <b>Log masuk untuk simpan pelan</b> &amp; jejak kemajuan matlamat anda!</div><button class="btn-save-plan" onclick="openAuthModal()">Log Masuk / Daftar</button></div>`;
+    } else {
+      bannerHtml = `<div class="save-plan-banner" style="cursor:pointer" onclick="savePlanToFirebase()"><div class="save-plan-text">💾 <b>Simpan pelan ini</b> ke akaun anda!</div><button class="btn-save-plan">Simpan Pelan</button></div>`;
+    }
 
-    document.getElementById('resultsContent').innerHTML = budgetHtml + bannerHtml + goalsHtml + warningHtml;
+    let warningHtml = '';
+    if (totalCommit > 0) warningHtml = `<div class="warning-box" style="margin-top:16px">💡 Komitmen bulanan RM ${fmt(totalCommit)} telah dikira sebagai sebahagian daripada perbelanjaan keperluan anda.</div>`;
+
+    document.getElementById('resultsContent').innerHTML = budgetHtml + goalsHtml + bannerHtml + warningHtml;
     document.getElementById('step' + currentStep).classList.add('hidden');
     currentStep = 5;
     document.getElementById('step5').classList.remove('hidden');
@@ -2048,4 +2166,4 @@
   updateAllPreviews();
 </script>
 </body>
- </html>
+</html>
