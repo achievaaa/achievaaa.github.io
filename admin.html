@@ -12,7 +12,9 @@
     .bg-orb { position: fixed; border-radius: 50%; filter: blur(80px); opacity: 0.18; pointer-events: none; z-index: 0; }
     .orb1 { width: 500px; height: 500px; background: #3ecf6e; top: -100px; right: -100px; }
     .orb2 { width: 400px; height: 400px; background: #f5b731; bottom: -50px; left: -100px; }
-    .container { max-width: 1400px; margin: 0 auto; padding: 12px; position: relative; z-index: 1; width: 100%; }
+    .container { max-width: 1400px; margin: 0 auto; padding: 16px; position: relative; z-index: 1; width: 100%; }
+
+    /* Login */
     .login-wrapper { display: flex; align-items: center; justify-content: center; min-height: 100vh; width: 100%; }
     .login-container { max-width: 400px; width: 90%; background: rgba(20,35,22,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(62,207,110,0.2); border-radius: 28px; padding: 24px 20px; text-align: center; }
     .login-logo { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 24px; }
@@ -25,9 +27,13 @@
     .login-btn { width: 100%; background: #3ecf6e; color: #0a1410; border: none; border-radius: 12px; padding: 12px; font-weight: 700; font-size: 15px; cursor: pointer; transition: 0.2s; }
     .login-btn:hover { background: #52e07e; }
     .error-msg { background: rgba(220,60,60,0.15); border: 1px solid rgba(220,60,60,0.4); border-radius: 10px; padding: 10px; font-size: 13px; color: #e05555; margin-top: 12px; display: none; }
+
+    /* Admin Dashboard */
     .admin-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; background: rgba(20,35,22,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(62,207,110,0.2); border-radius: 20px; padding: 10px 14px; margin-bottom: 16px; }
     .admin-title { font-size: 16px; font-weight: 800; color: #3ecf6e; }
     .admin-logout { background: rgba(220,60,60,0.12); border: 1px solid rgba(220,60,60,0.3); color: #e05555; padding: 6px 14px; border-radius: 40px; font-weight: 600; font-size: 13px; cursor: pointer; }
+
+    /* Admin Hero */
     .admin-hero { background: rgba(20,35,22,0.7); backdrop-filter: blur(8px); border: 1px solid rgba(62,207,110,0.15); border-radius: 20px; padding: 16px; margin-bottom: 20px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
     .admin-avatar { width: 56px; height: 56px; border-radius: 50%; border: 2px solid #3ecf6e; background: #1a2e1e; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 700; color: #3ecf6e; overflow: hidden; flex-shrink: 0; }
     .admin-avatar img { width: 100%; height: 100%; object-fit: cover; }
@@ -35,12 +41,16 @@
     .admin-info .name { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .admin-info .email { font-size: 13px; color: #8a9e90; margin-top: 4px; }
     .admin-badge { background: #3ecf6e20; color: #3ecf6e; font-size: 11px; padding: 4px 10px; border-radius: 30px; font-weight: 600; }
+
+    /* Stats */
     .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 16px; }
     .stat-card { background: rgba(20,35,22,0.7); backdrop-filter: blur(8px); border: 1px solid rgba(62,207,110,0.15); border-radius: 18px; padding: 12px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
     .stat-number { font-size: 24px; font-weight: 800; color: #3ecf6e; }
     .stat-label { font-size: 10px; color: #8a9e90; margin-top: 4px; }
     .btn-export { background: rgba(62,207,110,0.1); border: 1px solid rgba(62,207,110,0.3); color: #3ecf6e; padding: 6px 12px; border-radius: 30px; font-size: 12px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
     .btn-export:hover { background: rgba(62,207,110,0.2); }
+
+    /* Layout */
     .admin-layout { display: flex; flex-direction: column; gap: 16px; }
     .user-sidebar { width: 100%; background: rgba(20,35,22,0.7); backdrop-filter: blur(8px); border: 1px solid rgba(62,207,110,0.15); border-radius: 20px; padding: 14px; }
     .user-sidebar h3 { font-size: 13px; font-weight: 700; color: #3ecf6e; margin-bottom: 12px; }
@@ -55,6 +65,7 @@
     .user-name { font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
     .team-badge { background: #3ecf6e20; color: #3ecf6e; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 30px; display: inline-flex; align-items: center; gap: 4px; }
     .user-email { font-size: 11px; color: #5a7a60; word-break: break-all; margin-top: 2px; }
+
     .user-detail { width: 100%; background: rgba(20,35,22,0.7); backdrop-filter: blur(8px); border: 1px solid rgba(62,207,110,0.15); border-radius: 20px; padding: 14px; overflow-x: hidden; }
     .detail-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid #1e3322; }
     .detail-title { font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; word-break: break-word; }
@@ -63,6 +74,7 @@
     .tab-btn.active { background: #3ecf6e20; color: #3ecf6e; }
     .tab-content { display: none; }
     .tab-content.active { display: block; }
+
     .section-card { background: #0a1410; border-radius: 16px; padding: 14px; margin-bottom: 16px; border: 1px solid #1e3322; overflow-x: hidden; }
     .section-title { font-size: 12px; font-weight: 700; color: #3ecf6e; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; }
     .info-row { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; padding: 8px 0; border-bottom: 1px solid #1e3322; font-size: 13px; gap: 8px; }
@@ -81,6 +93,7 @@
     .admin-input, .admin-select { width: 100%; background: #0e1a14; border: 1.5px solid #2a3d2e; border-radius: 10px; padding: 10px 12px; color: #f0ebe1; font-family: 'Sora', sans-serif; font-size: 13px; }
     .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #0e1a14; border: 1px solid #3ecf6e; border-radius: 100px; padding: 8px 18px; color: #3ecf6e; font-weight: 600; z-index: 999; font-size: 12px; max-width: 90vw; white-space: normal; text-align: center; }
     .toast.error { border-color: #e05555; color: #e05555; }
+
     @media (min-width: 768px) {
       .container { padding: 20px; }
       .admin-layout { flex-direction: row; align-items: flex-start; }
@@ -115,7 +128,6 @@
       <button class="admin-logout" id="logoutBtn">🚪 Log Keluar</button>
     </div>
 
-    <!-- Hero Admin -->
     <div class="admin-hero" id="adminHero">
       <div class="admin-avatar" id="adminAvatar">👤</div>
       <div class="admin-info">
@@ -156,22 +168,43 @@
 </div>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getAuth, signInWithEmailAndPassword, signOut, sendPasswordResetEmail, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-  import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, deleteDoc, setDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-  const firebaseConfig = {
+  // ==================== KONFIGURASI 2 FIREBASE PROJECT ====================
+  
+  // Project 1: Untuk AUTHENTICATION ADMIN (projek baru pentadbir)
+  const adminFirebaseConfig = {
+    apiKey: "AIzaSyAp6p6y3eCQ952qJ-aMcwsrR9ZGqvAlACI",
+    authDomain: "achievaaa-pentadbir.firebaseapp.com",
+    projectId: "achievaaa-pentadbir",
+    storageBucket: "achievaaa-pentadbir.firebasestorage.app",
+    messagingSenderId: "1033212301304",
+    appId: "1:1033212301304:web:9717bc5e6b09ff997d500d",
+    measurementId: "G-7BNTWGG2HJ"
+  };
+  
+  // Project 2: Untuk DATA PENGGUNA (projek asal)
+  const userFirebaseConfig = {
     apiKey: "AIzaSyCwnb1D-qqyjUDNimf1tV6jREshvkGujgY",
     authDomain: "achievaaa-a8b1d.firebaseapp.com",
     projectId: "achievaaa-a8b1d",
     storageBucket: "achievaaa-a8b1d.firebasestorage.app",
     messagingSenderId: "1019216709115",
-    appId: "1:1019216709115:web:4782960e4363bd7f56f75e"
+    appId: "1:1019216709115:web:4782960e4363bd7f56f75e",
+    measurementId: "G-D95B646RQF"
   };
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword, signOut, sendPasswordResetEmail, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, deleteDoc, setDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  // Initialize Admin App (untuk authentication)
+  const adminApp = initializeApp(adminFirebaseConfig, "adminApp");
+  const adminAuth = getAuth(adminApp);
+
+  // Initialize User App (untuk data pengguna)
+  const userApp = initializeApp(userFirebaseConfig, "userApp");
+  const userDb = getFirestore(userApp);
+
+  // Email admin yang dibenarkan (guna email dari projek pentadbir)
   const ALLOWED_ADMIN_EMAIL = "admin@tabungku.com";
 
   let currentAdmin = null;
@@ -192,6 +225,7 @@
     setTimeout(() => toast.remove(), 3500);
   }
 
+  // ================ Papar dashboard & muat data dari user database ================
   async function showAdminDashboard(user) {
     currentAdmin = user;
     document.getElementById('loginPanel').style.display = 'none';
@@ -201,13 +235,8 @@
     document.getElementById('adminName').textContent = adminName;
     document.getElementById('adminEmailDisplay').textContent = user.email;
     const avatarEl = document.getElementById('adminAvatar');
-    const userDoc = await getDoc(doc(db, 'users', user.uid));
-    const avatarUrl = userDoc.exists() ? userDoc.data().avatarUrl : null;
-    if (avatarUrl) {
-      avatarEl.innerHTML = `<img src="${avatarUrl}" onerror="this.parentElement.textContent='${adminName[0].toUpperCase()}'" style="width:100%;height:100%;object-fit:cover;">`;
-    } else {
-      avatarEl.textContent = adminName[0].toUpperCase();
-    }
+    avatarEl.textContent = adminName[0].toUpperCase();
+
     await loadAllUsers();
   }
 
@@ -220,6 +249,7 @@
     currentAdmin = null;
   }
 
+  // ================ Login manual ================
   document.getElementById('adminLoginBtn').addEventListener('click', async () => {
     const email = document.getElementById('adminEmail').value.trim();
     const password = document.getElementById('adminPassword').value;
@@ -234,11 +264,12 @@
     loginBtn.disabled = true;
     loginBtn.textContent = 'Log masuk...';
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(adminAuth, email, password);
       if (userCredential.user.email !== ALLOWED_ADMIN_EMAIL) {
-        await signOut(auth);
+        await signOut(adminAuth);
         throw new Error('Akses ditolak. Hanya pentadbir yang dibenarkan.');
       }
+      // onAuthStateChanged akan trigger
     } catch (err) {
       errorDiv.textContent = err.message || 'Log masuk gagal. Periksa e-mel/kata laluan.';
       errorDiv.style.display = 'block';
@@ -248,25 +279,28 @@
     }
   });
 
+  // Logout
   document.getElementById('logoutBtn').addEventListener('click', async () => {
-    await signOut(auth);
+    await signOut(adminAuth);
     showToast('Log keluar');
   });
 
-  onAuthStateChanged(auth, async (user) => {
+  // ================ Firebase Auth Observer (untuk admin auth sahaja) ================
+  onAuthStateChanged(adminAuth, async (user) => {
     if (user && user.email === ALLOWED_ADMIN_EMAIL) {
       await showAdminDashboard(user);
     } else {
       if (user && user.email !== ALLOWED_ADMIN_EMAIL) {
-        await signOut(auth);
+        await signOut(adminAuth);
       }
       hideAdminDashboard();
     }
   });
 
+  // ================ Fungsi muat data dari USER FIRESTORE (projek asal) ================
   async function loadAllUsers() {
     try {
-      const q = query(collection(db, 'users'), orderBy('createdAt', 'desc'));
+      const q = query(collection(userDb, 'users'), orderBy('createdAt', 'desc'));
       const snap = await getDocs(q);
       allUsers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       renderUserList();
@@ -353,7 +387,7 @@
   async function toggleTeamMember(uid) {
     const user = allUsers.find(u => u.id === uid);
     const newStatus = !user.isTeamMember;
-    await updateDoc(doc(db, 'users', uid), { isTeamMember: newStatus });
+    await updateDoc(doc(userDb, 'users', uid), { isTeamMember: newStatus });
     user.isTeamMember = newStatus;
     renderUserList();
     selectUser(uid);
@@ -363,9 +397,9 @@
 
   async function loadUserFullDetail(uid) {
     try {
-      const userDoc = await getDoc(doc(db, 'users', uid));
+      const userDoc = await getDoc(doc(userDb, 'users', uid));
       const userProfile = userDoc.exists() ? userDoc.data() : {};
-      const goalsSnap = await getDocs(collection(db, 'users', uid, 'goals'));
+      const goalsSnap = await getDocs(collection(userDb, 'users', uid, 'goals'));
       const goals = goalsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
       document.getElementById('tabProfile').innerHTML = renderProfileTab(uid, userProfile);
       document.getElementById('tabPlan').innerHTML = renderPlanTab(uid, userProfile.plan);
@@ -384,14 +418,14 @@
     if (editBtn) editBtn.onclick = async () => {
       const newUsername = prompt('Nama pengguna baharu:', profile.username || '');
       if (newUsername && newUsername.trim()) {
-        await updateDoc(doc(db, 'users', uid), { username: newUsername.trim() });
+        await updateDoc(doc(userDb, 'users', uid), { username: newUsername.trim() });
         showToast('Nama pengguna dikemas kini');
         loadAllUsers();
         selectUser(uid);
       }
       const newAvatar = prompt('URL Avatar baharu (kosong untuk kosongkan):', profile.avatarUrl || '');
       if (newAvatar !== null) {
-        await updateDoc(doc(db, 'users', uid), { avatarUrl: newAvatar || '' });
+        await updateDoc(doc(userDb, 'users', uid), { avatarUrl: newAvatar || '' });
         showToast('Avatar dikemas kini');
         loadAllUsers();
         selectUser(uid);
@@ -400,7 +434,8 @@
     if (resetBtn) resetBtn.onclick = async () => {
       if (profile.email) {
         try {
-          await sendPasswordResetEmail(auth, profile.email);
+          // Reset password guna adminAuth tapi untuk email user
+          await sendPasswordResetEmail(adminAuth, profile.email);
           showToast(`E-mel reset dihantar ke ${profile.email}`);
         } catch(e) { showToast(e.message, true); }
       }
@@ -474,9 +509,9 @@
     const delBtn = document.getElementById('adminDeleteUserDataBtn');
     if (delBtn) delBtn.onclick = async () => {
       if (confirm('⚠️ PADAM SEMUA DATA (plan & matlamat)? TINDAKAN KEKAL.')) {
-        const goalsSnap = await getDocs(collection(db, 'users', uid, 'goals'));
-        for (const docSnap of goalsSnap.docs) await deleteDoc(doc(db, 'users', uid, 'goals', docSnap.id));
-        await updateDoc(doc(db, 'users', uid), { plan: null });
+        const goalsSnap = await getDocs(collection(userDb, 'users', uid, 'goals'));
+        for (const docSnap of goalsSnap.docs) await deleteDoc(doc(userDb, 'users', uid, 'goals', docSnap.id));
+        await updateDoc(doc(userDb, 'users', uid), { plan: null });
         showToast('Semua data pengguna telah dipadam');
         loadUserFullDetail(uid);
         loadAllUsers();
@@ -485,7 +520,7 @@
   }
   async function showPlanEditor(uid) {
     const editorDiv = document.getElementById('planEditor');
-    const userDoc = await getDoc(doc(db, 'users', uid));
+    const userDoc = await getDoc(doc(userDb, 'users', uid));
     const plan = userDoc.data()?.plan || {};
     const income = plan.income || '';
     const formula = plan.formula || '50/30/20';
@@ -511,7 +546,7 @@
       }
       const updatedPlan = { income: newIncome, formula: newFormula, commitments: plan.commitments || [] };
       if (newFormula === 'free') updatedPlan.freePct = newPct;
-      await updateDoc(doc(db, 'users', uid), { plan: updatedPlan });
+      await updateDoc(doc(userDb, 'users', uid), { plan: updatedPlan });
       showToast('Pelan dikemas kini');
       editorDiv.style.display = 'none';
       loadUserFullDetail(uid);
@@ -521,14 +556,14 @@
   }
   async function clearUserPlan(uid) {
     if (confirm('Padamkan keseluruhan pelan kewangan pengguna?')) {
-      await updateDoc(doc(db, 'users', uid), { plan: null });
+      await updateDoc(doc(userDb, 'users', uid), { plan: null });
       showToast('Pelan dipadam');
       loadUserFullDetail(uid);
       loadAllUsers();
     }
   }
   async function createEmptyPlan(uid) {
-    await updateDoc(doc(db, 'users', uid), { plan: { income: 0, formula: '50/30/20', commitments: [] } });
+    await updateDoc(doc(userDb, 'users', uid), { plan: { income: 0, formula: '50/30/20', commitments: [] } });
     showToast('Pelan kosong dicipta');
     loadUserFullDetail(uid);
     loadAllUsers();
@@ -539,7 +574,7 @@
     const target = parseFloat(prompt('Sasaran (RM):'));
     if (isNaN(target) || target <= 0) return;
     const priority = prompt('Keutamaan (high/medium/low):', 'medium');
-    await setDoc(doc(collection(db, 'users', uid, 'goals')), { name, target, priority, saved: 0, completed: false, createdAt: Date.now() });
+    await setDoc(doc(collection(userDb, 'users', uid, 'goals')), { name, target, priority, saved: 0, completed: false, createdAt: Date.now() });
     showToast('Matlamat ditambah');
     loadUserFullDetail(uid);
     loadAllUsers();
@@ -548,7 +583,7 @@
     const input = document.getElementById(`savingsAdd-${goalId}`);
     const addVal = parseFloat(input.value);
     if (isNaN(addVal) || addVal <= 0) { showToast('Jumlah sah diperlukan', true); return; }
-    const goalRef = doc(db, 'users', uid, 'goals', goalId);
+    const goalRef = doc(userDb, 'users', uid, 'goals', goalId);
     const goalSnap = await getDoc(goalRef);
     const current = goalSnap.data()?.saved || 0;
     await updateDoc(goalRef, { saved: current + addVal });
@@ -557,21 +592,21 @@
     loadAllUsers();
   };
   window.adminCompleteGoal = async (uid, goalId) => {
-    await updateDoc(doc(db, 'users', uid, 'goals', goalId), { completed: true, completedAt: Date.now() });
+    await updateDoc(doc(userDb, 'users', uid, 'goals', goalId), { completed: true, completedAt: Date.now() });
     showToast('Matlamat ditanda selesai');
     loadUserFullDetail(uid);
     loadAllUsers();
   };
   window.adminDeleteGoal = async (uid, goalId) => {
     if (confirm('Padam matlamat ini secara kekal?')) {
-      await deleteDoc(doc(db, 'users', uid, 'goals', goalId));
+      await deleteDoc(doc(userDb, 'users', uid, 'goals', goalId));
       showToast('Matlamat dipadam');
       loadUserFullDetail(uid);
       loadAllUsers();
     }
   };
   window.adminUncompleteGoal = async (uid, goalId) => {
-    await updateDoc(doc(db, 'users', uid, 'goals', goalId), { completed: false, completedAt: null });
+    await updateDoc(doc(userDb, 'users', uid, 'goals', goalId), { completed: false, completedAt: null });
     showToast('Matlamat dipulihkan ke aktif');
     loadUserFullDetail(uid);
     loadAllUsers();
