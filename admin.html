@@ -4,41 +4,21 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
   <title>TabungKu - Panel Pentadbir</title>
-  <!-- Favicon sama seperti halaman utama -->
   <link rel="icon" href="logo.jpg" type="image/jpg">
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <style>
-    /* (CSS sama seperti versi responsif terakhir - tidak diubah) */
+    /* CSS SAMA SEPERTI SEBELUMNYA (responsif, tidak diubah) */
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Sora', sans-serif;
-      background: #0e1a14;
-      color: #f0ebe1;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
+    body { font-family: 'Sora', sans-serif; background: #0e1a14; color: #f0ebe1; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
     .bg-orb { position: fixed; border-radius: 50%; filter: blur(80px); opacity: 0.18; pointer-events: none; z-index: 0; }
     .orb1 { width: 500px; height: 500px; background: #3ecf6e; top: -100px; right: -100px; }
     .orb2 { width: 400px; height: 400px; background: #f5b731; bottom: -50px; left: -100px; }
     .container { max-width: 1400px; margin: 0 auto; padding: 12px; position: relative; z-index: 1; width: 100%; }
-    /* Login wrapper - tengah skrin */
     .login-wrapper { display: flex; align-items: center; justify-content: center; min-height: 100vh; width: 100%; }
-    .login-container {
-      max-width: 400px; width: 90%; background: rgba(20,35,22,0.85); backdrop-filter: blur(12px);
-      border: 1px solid rgba(62,207,110,0.2); border-radius: 28px; padding: 24px 20px; text-align: center;
-    }
-    .login-logo {
-      display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 24px;
-    }
-    .login-logo img {
-      width: 44px; height: 44px; border-radius: 50%; object-fit: cover;
-    }
-    .login-logo span {
-      font-size: 22px; font-weight: 800; color: #3ecf6e;
-    }
-    /*其余 CSS sama seperti sebelum - saya ringkaskan untuk elak panjang, tapi fungsinya sama */
+    .login-container { max-width: 400px; width: 90%; background: rgba(20,35,22,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(62,207,110,0.2); border-radius: 28px; padding: 24px 20px; text-align: center; }
+    .login-logo { display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 24px; }
+    .login-logo img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; }
+    .login-logo span { font-size: 22px; font-weight: 800; color: #3ecf6e; }
     .login-field { margin-bottom: 18px; text-align: left; }
     .login-field label { font-size: 12px; font-weight: 600; color: #5a7a60; text-transform: uppercase; margin-bottom: 6px; display: block; }
     .login-input { width: 100%; background: #0a1410; border: 1.5px solid #2a3d2e; border-radius: 12px; padding: 12px 14px; font-family: 'Sora', sans-serif; font-size: 14px; color: #f0ebe1; outline: none; }
@@ -46,8 +26,6 @@
     .login-btn { width: 100%; background: #3ecf6e; color: #0a1410; border: none; border-radius: 12px; padding: 12px; font-weight: 700; font-size: 15px; cursor: pointer; transition: 0.2s; }
     .login-btn:hover { background: #52e07e; }
     .error-msg { background: rgba(220,60,60,0.15); border: 1px solid rgba(220,60,60,0.4); border-radius: 10px; padding: 10px; font-size: 13px; color: #e05555; margin-top: 12px; display: none; }
-    /* (CSS untuk admin dashboard dan lain-lain - sama seperti versi sebelumnya, tidak diubah) */
-    /* Saya akan sertakan semula semua style dari versi responsif yang berfungsi */
     .admin-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; background: rgba(20,35,22,0.85); backdrop-filter: blur(12px); border: 1px solid rgba(62,207,110,0.2); border-radius: 20px; padding: 10px 14px; margin-bottom: 16px; }
     .admin-title { font-size: 16px; font-weight: 800; color: #3ecf6e; }
     .admin-logout { background: rgba(220,60,60,0.12); border: 1px solid rgba(220,60,60,0.3); color: #e05555; padding: 6px 14px; border-radius: 40px; font-weight: 600; font-size: 13px; cursor: pointer; }
@@ -112,19 +90,17 @@
   <div id="loginPanel" class="login-wrapper">
     <div class="login-container">
       <div class="login-logo">
-        <!-- Gunakan logo.jpg yang sama dengan favicon -->
         <img src="logo.jpg" alt="TabungKu" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2244%22 height=%2244%22 viewBox=%220 0 100 100%22%3E%3Ccircle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%233ecf6e%22 /%3E%3Ctext x=%2250%22 y=%2270%22 font-size=%2240%22 text-anchor=%22middle%22 fill=%22%230a1410%22 font-family=%22Arial%22%3E💰%3C/text%3E%3C/svg%3E';">
-        <span>Admin</span>
+        <span>Pentadbir</span>
       </div>
       <div class="login-field"><label>E-mel Pentadbir</label><input type="email" id="adminEmail" class="login-input" placeholder="admin@tabungku.com"></div>
       <div class="login-field"><label>Kata Laluan</label><input type="password" id="adminPassword" class="login-input" placeholder="••••••••"></div>
-      <button class="login-btn" id="adminLoginBtn">Log Masuk Sebagai Admin</button>
+      <button class="login-btn" id="adminLoginBtn">Log Masuk Sebagai Pentadbir</button>
       <div id="loginError" class="error-msg"></div>
     </div>
   </div>
 
   <div id="adminDashboard" style="display:none;">
-    <!-- Admin dashboard content - sama seperti sebelumnya -->
     <div class="admin-header">
       <div class="admin-title">Panel Pentadbir 💰 TabungKu</div>
       <button class="admin-logout" id="logoutBtn">🚪 Log Keluar</button>
@@ -157,9 +133,8 @@
 </div>
 
 <script type="module">
-  // (JavaScript sama seperti versi sebelumnya - tidak diubah)
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getAuth, signInWithEmailAndPassword, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  import { getAuth, signInWithEmailAndPassword, signOut, sendPasswordResetEmail, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
   import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, deleteDoc, setDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -194,6 +169,23 @@
     setTimeout(() => toast.remove(), 3500);
   }
 
+  // ================ Fungsi untuk papar dashboard & muat data ================
+  async function showAdminDashboard() {
+    document.getElementById('loginPanel').style.display = 'none';
+    document.getElementById('adminDashboard').style.display = 'block';
+    await loadAllUsers();
+  }
+
+  function hideAdminDashboard() {
+    document.getElementById('loginPanel').style.display = 'flex';
+    document.getElementById('adminDashboard').style.display = 'none';
+    // reset form login
+    document.getElementById('adminEmail').value = '';
+    document.getElementById('adminPassword').value = '';
+    document.getElementById('loginError').style.display = 'none';
+  }
+
+  // ================ Login manual (button) ================
   document.getElementById('adminLoginBtn').addEventListener('click', async () => {
     const email = document.getElementById('adminEmail').value.trim();
     const password = document.getElementById('adminPassword').value;
@@ -213,11 +205,7 @@
         await signOut(auth);
         throw new Error('Akses ditolak. Hanya pentadbir yang dibenarkan.');
       }
-      currentAdmin = userCredential.user;
-      document.getElementById('loginPanel').style.display = 'none';
-      document.getElementById('adminDashboard').style.display = 'block';
-      await loadAllUsers();
-      showToast('Log masuk berjaya!');
+      // onAuthStateChanged akan trigger dan panggil showAdminDashboard
     } catch (err) {
       errorDiv.textContent = err.message || 'Log masuk gagal. Periksa e-mel/kata laluan.';
       errorDiv.style.display = 'block';
@@ -227,16 +215,28 @@
     }
   });
 
+  // Logout button
   document.getElementById('logoutBtn').addEventListener('click', async () => {
     await signOut(auth);
-    currentAdmin = null;
-    document.getElementById('loginPanel').style.display = 'flex';
-    document.getElementById('adminDashboard').style.display = 'none';
-    document.getElementById('adminEmail').value = '';
-    document.getElementById('adminPassword').value = '';
     showToast('Log keluar');
   });
 
+  // ================ Firebase Auth State Observer ================
+  onAuthStateChanged(auth, async (user) => {
+    if (user && user.email === ALLOWED_ADMIN_EMAIL) {
+      currentAdmin = user;
+      await showAdminDashboard();
+    } else {
+      // Jika user tidak sah atau bukan admin, pastikan logout dan tunjuk login panel
+      if (user && user.email !== ALLOWED_ADMIN_EMAIL) {
+        await signOut(auth);
+      }
+      currentAdmin = null;
+      hideAdminDashboard();
+    }
+  });
+
+  // ================ Fungsi muat data (sama seperti sebelumnya) ================
   async function loadAllUsers() {
     try {
       const q = query(collection(db, 'users'), orderBy('createdAt', 'desc'));
