@@ -288,7 +288,6 @@
   .p-btn.medium.sel { background: rgba(245,183,49,0.15); color: #f5b731; border-color: #f5b731; }
   .p-btn.low.sel { background: rgba(100,150,200,0.15); color: #82b4e8; border-color: #82b4e8; }
 
-  /* Celebration popup */
   .celebration-popup { text-align: center; }
   .celebration-emoji { font-size: 48px; margin-bottom: 16px; }
   .celebration-title { font-size: 22px; font-weight: 800; color: #3ecf6e; margin-bottom: 8px; }
@@ -302,7 +301,6 @@
   .btn-close-celebration { width: 100%; padding: 13px; background: #3ecf6e; color: #0a1410; border: none; border-radius: 10px; font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
   .btn-close-celebration:hover { background: #52e07e; }
 
-  /* Edit Plan Popup */
   .formula-mini-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
   .formula-mini-card { border: 1.5px solid #2a3d2e; border-radius: 10px; padding: 10px 8px; cursor: pointer; transition: all 0.2s; text-align: center; background: #0a1410; }
   .formula-mini-card:hover { border-color: rgba(62,207,110,0.4); }
@@ -463,32 +461,13 @@
   .btn-save-plan:hover { background: #52e07e; }
   .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(62,207,110,0.3); border-top-color: #3ecf6e; border-radius: 50%; animation: spin 0.6s linear infinite; vertical-align: middle; margin-right: 6px; }
 
-  /* ===== GUEST FOOTER ===== */
-  .guest-footer {
-    text-align: center; padding: 16px 20px 20px;
-    border-top: 1px solid #1e3322; margin-top: 16px;
-  }
-  .btn-auth-footer {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: rgba(62,207,110,0.1); border: 1px solid rgba(62,207,110,0.3);
-    color: #3ecf6e; border-radius: 100px;
-    padding: 8px 22px; font-family: 'Sora', sans-serif; font-size: 13px;
-    font-weight: 600; cursor: pointer; transition: all 0.2s;
-  }
+  .guest-footer { text-align: center; padding: 16px 20px 20px; border-top: 1px solid #1e3322; margin-top: 16px; }
+  .btn-auth-footer { display: inline-flex; align-items: center; gap: 8px; background: rgba(62,207,110,0.1); border: 1px solid rgba(62,207,110,0.3); color: #3ecf6e; border-radius: 100px; padding: 8px 22px; font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
   .btn-auth-footer:hover { background: rgba(62,207,110,0.2); }
 
-  /* ===== DASHBOARD RESULT BREAKDOWN CARD ===== */
-  .dash-breakdown-card {
-    background: rgba(20,35,22,0.85); border: 1px solid rgba(62,207,110,0.15);
-    border-radius: 16px; padding: 20px; margin-bottom: 20px;
-    backdrop-filter: blur(12px);
-  }
-  .dash-breakdown-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px;
-  }
-  .dash-breakdown-item {
-    background: #0a1410; border-radius: 12px; padding: 12px 8px; text-align: center; border: 1px solid #1e3322;
-  }
+  .dash-breakdown-card { background: rgba(20,35,22,0.85); border: 1px solid rgba(62,207,110,0.15); border-radius: 16px; padding: 20px; margin-bottom: 20px; backdrop-filter: blur(12px); }
+  .dash-breakdown-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px; }
+  .dash-breakdown-item { background: #0a1410; border-radius: 12px; padding: 12px 8px; text-align: center; border: 1px solid #1e3322; }
   .dash-breakdown-item label { font-size: 10px; color: #5a7a60; display: block; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.06em; }
   .dash-breakdown-item .val { font-family: 'Space Mono', monospace; font-size: 14px; font-weight: 700; display: block; }
   .dash-breakdown-item.needs .val { color: #60a8ff; }
@@ -499,7 +478,6 @@
   .dash-breakdown-row-label { color: #8a9e90; }
   .dash-breakdown-row-val { font-family: 'Space Mono', monospace; font-weight: 700; color: #f0ebe1; }
 
-  /* ===== DANGER ZONE ===== */
   .danger-zone-card { background: rgba(30,10,10,0.8); border: 1px solid rgba(220,60,60,0.2); border-radius: 16px; padding: 20px; margin-bottom: 16px; }
   .danger-zone-title { font-size: 11px; font-weight: 700; color: #e05555; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
   .danger-zone-desc { font-size: 12px; color: #5a7a60; margin-bottom: 14px; line-height: 1.6; }
@@ -514,17 +492,10 @@
   .empty-state-text { font-size: 14px; }
   .achievements-card { background: rgba(20,35,22,0.85); border: 1px solid #1e3322; border-radius: 14px; padding: 18px; margin-top: 0; }
 
-  .toast {
-    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-    background: #0e1a14; border: 1px solid rgba(62,207,110,0.3);
-    border-radius: 100px; padding: 10px 20px; font-size: 13px; color: #3ecf6e;
-    font-weight: 600; z-index: 999; animation: toastIn 0.3s ease;
-    max-width: calc(100vw - 40px); white-space: normal; text-align: center;
-  }
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #0e1a14; border: 1px solid rgba(62,207,110,0.3); border-radius: 100px; padding: 10px 20px; font-size: 13px; color: #3ecf6e; font-weight: 600; z-index: 999; animation: toastIn 0.3s ease; max-width: calc(100vw - 40px); white-space: normal; text-align: center; }
   .toast.error { border-color: rgba(220,60,60,0.3); color: #e05555; }
   @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(10px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
 
-  /* ===== RESPONSIVE ===== */
   @media (max-width: 550px) {
     .step-dot { width: 32px; height: 32px; font-size: 12px; }
     .step-line { width: 40px; }
@@ -1127,7 +1098,23 @@
 
   window._fb = { auth, db, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updatePassword, reauthenticateWithCredential, EmailAuthProvider, doc, setDoc, getDoc, updateDoc, collection, addDoc, getDocs, deleteDoc, query, where, orderBy };
 
+  // ===== ADMIN SESSION PREVENTION =====
   onAuthStateChanged(auth, async (user) => {
+    // Jika sessionStorage menunjukkan admin sedang aktif, logout
+    if (sessionStorage.getItem('tabungku_admin_session') === 'true') {
+      if (user) await signOut(auth);
+      alert('⚠️ Sesi pentadbir aktif di tab lain. Sila log keluar dari panel pentadbir untuk menggunakan aplikasi pengguna.');
+      return;
+    }
+    
+    // Jika pengguna adalah admin, logout
+    if (user && user.email === 'admin@tabungku.com') {
+      await signOut(auth);
+      alert('⚠️ Akaun pentadbir tidak boleh digunakan di sini. Sila guna panel pentadbir.');
+      return;
+    }
+    
+    // Normal user flow
     if (user) {
       const uDoc = await getDoc(doc(db, 'users', user.uid));
       const uData = uDoc.exists() ? uDoc.data() : {};
@@ -1163,9 +1150,19 @@
   function fmt(n) { return Math.round(n).toLocaleString('ms-MY'); }
   function round(n) { return Math.round(n); }
 
+  // Helper untuk papar badge ahli pasukan (bintang)
+  function renderTeamBadge(isTeamMember) {
+    if (isTeamMember) {
+      return '<span class="team-badge" style="background:#3ecf6e20;color:#3ecf6e;font-size:10px;font-weight:700;padding:2px 6px;border-radius:30px;display:inline-flex;align-items:center;gap:4px;">⭐ Ahli Pasukan</span>';
+    }
+    return '';
+  }
+
   // ===== MODE SWITCHING =====
   function enterUserMode() {
     const u = window.currentUser;
+    const isTeamMember = u.isTeamMember === true;
+    
     document.getElementById('plannerView').style.display = 'none';
     document.getElementById('guestFooter').style.display = 'none';
     document.getElementById('dashboardView').classList.remove('visible');
@@ -1173,9 +1170,21 @@
     document.getElementById('userHeader').classList.add('visible');
 
     const username = u.username || u.email.split('@')[0];
-    document.getElementById('headerUsername').textContent = username;
-    document.getElementById('sidePanelName').textContent = username;
+    
+    // Header username + badge
+    document.getElementById('headerUsername').innerHTML = `${username} ${renderTeamBadge(isTeamMember)}`;
+    // Side panel name + badge
+    document.getElementById('sidePanelName').innerHTML = `${username} ${renderTeamBadge(isTeamMember)}`;
     document.getElementById('sidePanelEmail').textContent = u.email;
+    
+    // Dashboard greeting - tanpa badge
+    document.getElementById('dashUsername').textContent = username;
+
+    // Settings username + badge
+    document.getElementById('settingsUsername').innerHTML = `${username} ${renderTeamBadge(isTeamMember)}`;
+
+    // Profile modal name + badge
+    document.getElementById('profileName').innerHTML = `${username} ${renderTeamBadge(isTeamMember)}`;
 
     const sidePanelAv = document.getElementById('sidePanelAvatar');
     if (u.avatarUrl) {
@@ -1237,7 +1246,8 @@
   function openProfileModal() {
     const u = window.currentUser;
     const username = u.username || u.email.split('@')[0];
-    document.getElementById('profileName').textContent = username;
+    const isTeamMember = u.isTeamMember === true;
+    document.getElementById('profileName').innerHTML = `${username} ${renderTeamBadge(isTeamMember)}`;
     document.getElementById('profileEmail').textContent = u.email;
     const picEl = document.getElementById('profilePicLarge');
     if (u.avatarUrl) {
@@ -1405,7 +1415,8 @@
     document.getElementById('settingsView').classList.add('visible');
     const u = window.currentUser;
     const username = u.username || u.email.split('@')[0];
-    document.getElementById('settingsUsername').textContent = username;
+    const isTeamMember = u.isTeamMember === true;
+    document.getElementById('settingsUsername').innerHTML = `${username} ${renderTeamBadge(isTeamMember)}`;
     document.getElementById('settingsEmail').textContent = u.email;
     document.getElementById('settingsAvatarUrl').value = u.avatarUrl || '';
     renderSettingsAvatar(u.avatarUrl, username);
@@ -1646,17 +1657,14 @@
       
       // Save goals
       for (const g of goals) {
-        await (await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js")).addDoc(
-          collection(db, 'users', cred.user.uid, 'goals'),
-          {
-            name: g.name,
-            target: g.target,
-            priority: g.priority,
-            saved: 0,
-            completed: false,
-            createdAt: Date.now()
-          }
-        );
+        await addDoc(collection(db, 'users', cred.user.uid, 'goals'), {
+          name: g.name,
+          target: g.target,
+          priority: g.priority,
+          saved: 0,
+          completed: false,
+          createdAt: Date.now()
+        });
       }
       
       // Clear guest data
