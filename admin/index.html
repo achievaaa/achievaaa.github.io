@@ -1,1 +1,100 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>TabungKu - Panel Pentadbir</title>
+  <link rel="icon" href="../logo.jpg" type="image/jpg">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+<div class="bg-orb orb1"></div>
+<div class="bg-orb orb2"></div>
 
+<div class="container" id="appContainer">
+  <div id="loginPanel" class="login-wrapper">
+    <div class="login-container">
+      <div class="login-logo">
+        <img src="../logo.jpg" alt="TabungKu" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2244%22 height=%2244%22 viewBox=%220 0 100 100%22%3E%3Ccircle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22%233ecf6e%22 /%3E%3Ctext x=%2250%22 y=%2270%22 font-size=%2240%22 text-anchor=%22middle%22 fill=%22%230a1410%22 font-family=%22Arial%22%3E💰%3C/text%3E%3C/svg%3E';">
+        <span>Pentadbir</span>
+      </div>
+      <div class="login-field"><label>E-mel Pentadbir</label><input type="email" id="adminEmail" class="login-input" placeholder="seasaltfloat@gmail.com"></div>
+      <div class="login-field"><label>Kata Laluan</label><input type="password" id="adminPassword" class="login-input" placeholder="••••••••"></div>
+      <button class="login-btn" id="adminLoginBtn">Log Masuk Sebagai Pentadbir</button>
+      <div id="loginError" class="error-msg"></div>
+    </div>
+  </div>
+
+  <div id="adminDashboard" style="display:none;">
+    <div class="admin-header">
+      <div class="admin-title">Panel Pentadbir 💰 TabungKu</div>
+      <button class="admin-logout" id="logoutBtn">🚪 Log Keluar</button>
+    </div>
+
+    <div class="admin-hero" id="adminHero">
+      <div class="admin-avatar" id="adminAvatar">👤</div>
+      <div class="admin-info">
+        <div class="name">
+          <span id="adminName">-</span>
+          <span class="admin-badge">⭐ Pentadbir</span>
+        </div>
+        <div class="email" id="adminEmailDisplay">-</div>
+      </div>
+    </div>
+
+    <div class="stats-grid" id="statsGrid"></div>
+
+    <div class="admin-layout">
+      <div class="user-sidebar">
+        <h3>📋 SENARAI PENGGUNA</h3>
+        <div class="user-search"><input type="text" id="searchUser" placeholder="Cari nama atau e-mel..."></div>
+        <div class="user-list" id="userListContainer"><div class="no-users">Memuatkan...</div></div>
+      </div>
+      <div class="user-detail" id="userDetailPanel">
+        <div class="detail-header">
+          <div class="detail-title" id="selectedUserName">Pilih pengguna</div>
+          <button class="btn-edit" id="toggleTeamBtn" style="display:none;">⭐ Toggle Ahli Pasukan</button>
+        </div>
+        <div class="tabs" id="userTabs">
+          <button class="tab-btn active" data-tab="profile">👤 Profil</button>
+          <button class="tab-btn" data-tab="plan">📊 Pelan</button>
+          <button class="tab-btn" data-tab="goals">🎯 Matlamat</button>
+          <button class="tab-btn" data-tab="danger">⚠️ Bahaya</button>
+        </div>
+        <div id="tabProfile" class="tab-content active"></div>
+        <div id="tabPlan" class="tab-content"></div>
+        <div id="tabGoals" class="tab-content"></div>
+        <div id="tabDanger" class="tab-content"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Popup Delete Account -->
+<div class="popup-overlay" id="popupDeleteAccount" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:1000; align-items:center; justify-content:center;">
+  <div class="popup" style="background:#0e1a14; border-radius:20px; padding:24px; max-width:380px; width:90%;">
+    <div class="popup-title" style="font-size:18px; font-weight:700; color:#e05555; margin-bottom:16px;">⚠️ Padam Akaun Pengguna</div>
+    <div style="margin-bottom:16px; color:#8a9e90; font-size:13px; line-height:1.6;">
+      Tindakan ini akan memadam:
+      <ul style="margin-top:8px; margin-left:20px;">
+        <li>Semua data pelan kewangan</li>
+        <li>Semua matlamat (aktif & selesai)</li>
+        <li>Akaun Firebase pengguna (login)</li>
+      </ul>
+      <b style="color:#e05555; display:block; margin-top:12px;">Tindakan ini TIDAK BOLEH dibatalkan!</b>
+    </div>
+    <div style="margin-bottom:16px;">
+      <div style="font-size:12px; font-weight:600; color:#5a7a60; margin-bottom:6px;">Taip "DELETE" untuk sahkan</div>
+      <input type="text" id="deleteConfirmText" class="admin-input" placeholder="DELETE" style="background:#0a1410; border:1.5px solid #2a3d2e; border-radius:10px; padding:10px; width:100%; color:#f0ebe1;">
+    </div>
+    <div class="popup-actions" style="display:flex; gap:10px; margin-top:8px;">
+      <button class="popup-btn-cancel" onclick="closeDeletePopup()" style="flex:1; padding:10px; background:none; border:1.5px solid #2a3d2e; border-radius:10px; color:#5a7a60; cursor:pointer;">Batal</button>
+      <button class="btn-confirm-delete" id="confirmDeleteBtn" onclick="confirmDeleteUser()" style="flex:2; padding:10px; background:#e05555; color:white; border:none; border-radius:10px; font-weight:700; cursor:pointer;">Padam Akaun</button>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="js/admin.js"></script>
+</body>
+</html>
