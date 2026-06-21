@@ -1,0 +1,1529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TabungKu — Your Savings Planner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  /* ─── TOKENS ─────────────────────────────────────────────── */
+  :root {
+    --bg:        #0e1a14;
+    --surface:   #111f16;
+    --card:      #162119;
+    --border:    #1e3024;
+    --border2:   #243829;
+    --accent:    #3ecf6e;
+    --accent-dim:#2aa556;
+    --accent-bg: rgba(62,207,110,.08);
+    --warn:      #f59e0b;
+    --warn-bg:   rgba(245,158,11,.08);
+    --err:       #ef4444;
+    --err-bg:    rgba(239,68,68,.08);
+    --text:      #e8f0eb;
+    --text2:     #8aaa92;
+    --text3:     #556b5c;
+    --mono:      'Space Mono', monospace;
+    --sans:      'Inter', sans-serif;
+    --radius:    12px;
+    --radius-sm: 8px;
+    --radius-xs: 6px;
+    --shadow:    0 2px 12px rgba(0,0,0,.4);
+  }
+
+  /* ─── RESET ──────────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px 80px;
+    line-height: 1.6;
+  }
+
+  /* ─── HEADER ─────────────────────────────────────────────── */
+  .app-header {
+    width: 100%;
+    max-width: 560px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+  }
+  .logo {
+    font-family: var(--mono);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: -0.5px;
+  }
+  .logo span { color: var(--text2); font-weight: 400; }
+
+  /* ─── STEP INDICATOR ─────────────────────────────────────── */
+  .steps {
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+  .step-dot {
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--card);
+    border: 2px solid var(--border2);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text3);
+    transition: all .25s;
+    position: relative;
+    z-index: 1;
+  }
+  .step-dot.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #0e1a14;
+    font-weight: 700;
+  }
+  .step-dot.done {
+    background: var(--accent-bg);
+    border-color: var(--accent-dim);
+    color: var(--accent);
+  }
+  .step-line {
+    width: 24px; height: 2px;
+    background: var(--border2);
+    transition: background .25s;
+  }
+  .step-line.done { background: var(--accent-dim); }
+
+  /* ─── CARD ───────────────────────────────────────────────── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    width: 100%;
+    max-width: 560px;
+    box-shadow: var(--shadow);
+    animation: fadeUp .3s ease;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 8px;
+  }
+  .card-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.3;
+    margin-bottom: 6px;
+  }
+  .card-sub {
+    font-size: 14px;
+    color: var(--text2);
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+
+  /* ─── FORM ELEMENTS ──────────────────────────────────────── */
+  .field { margin-bottom: 20px; }
+  .field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text2);
+    margin-bottom: 7px;
+    letter-spacing: .2px;
+  }
+  .input-wrap {
+    display: flex;
+    align-items: center;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    transition: border-color .2s;
+  }
+  .input-wrap:focus-within { border-color: var(--accent); }
+  .input-prefix {
+    padding: 0 14px;
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--text3);
+    background: var(--card);
+    height: 44px;
+    display: flex; align-items: center;
+    border-right: 1px solid var(--border2);
+    user-select: none;
+    flex-shrink: 0;
+  }
+  .input-wrap input, .input-wrap select {
+    flex: 1;
+    height: 44px;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px;
+    padding: 0 14px;
+  }
+  .input-wrap input::placeholder { color: var(--text3); }
+  .input-wrap select option { background: var(--surface); }
+
+  input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    background: var(--border2);
+    border-radius: 2px;
+    outline: none;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    border: 2px solid var(--bg);
+  }
+
+  /* ─── FORMULA CARDS ──────────────────────────────────────── */
+  .formula-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .formula-card {
+    background: var(--surface);
+    border: 2px solid var(--border2);
+    border-radius: var(--radius-sm);
+    padding: 14px;
+    cursor: pointer;
+    transition: all .2s;
+    user-select: none;
+  }
+  .formula-card:hover { border-color: var(--accent-dim); }
+  .formula-card.selected {
+    border-color: var(--accent);
+    background: var(--accent-bg);
+  }
+  .formula-card .f-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .formula-card .f-split {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text3);
+    line-height: 1.7;
+  }
+  .formula-card.selected .f-split { color: var(--accent); }
+
+  /* custom formula row */
+  .custom-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-top: 12px;
+  }
+  .custom-row .input-wrap { flex-direction: column; height: auto; }
+  .custom-row .input-wrap input {
+    height: 40px;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  /* live validator */
+  .formula-total-bar {
+    height: 4px;
+    border-radius: 2px;
+    background: var(--border2);
+    margin: 12px 0 6px;
+    overflow: hidden;
+  }
+  .formula-total-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width .3s, background .3s;
+    background: var(--accent);
+  }
+  .formula-hint {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text3);
+    text-align: right;
+  }
+  .formula-hint.ok   { color: var(--accent); }
+  .formula-hint.over { color: var(--err); }
+
+  /* ─── ALERTS ─────────────────────────────────────────────── */
+  .alert {
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    line-height: 1.5;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .alert-icon { flex-shrink: 0; margin-top: 1px; }
+  .alert.warn {
+    background: var(--warn-bg);
+    border: 1px solid rgba(245,158,11,.2);
+    color: var(--warn);
+  }
+  .alert.err {
+    background: var(--err-bg);
+    border: 1px solid rgba(239,68,68,.2);
+    color: #fca5a5;
+  }
+  .alert.info {
+    background: var(--accent-bg);
+    border: 1px solid rgba(62,207,110,.15);
+    color: var(--accent);
+  }
+
+  /* ─── BUTTONS ────────────────────────────────────────────── */
+  .btn-row { display: flex; gap: 10px; margin-top: 24px; }
+  .btn {
+    flex: 1;
+    height: 46px;
+    border-radius: var(--radius-sm);
+    border: none;
+    font-family: var(--sans);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .2s;
+    letter-spacing: .2px;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: #0e1a14;
+  }
+  .btn-primary:hover:not(:disabled) { background: #4fdb7d; transform: translateY(-1px); }
+  .btn-primary:disabled {
+    background: var(--border2);
+    color: var(--text3);
+    cursor: not-allowed;
+    transform: none;
+  }
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--border2);
+    color: var(--text2);
+  }
+  .btn-ghost:hover { border-color: var(--text2); color: var(--text); }
+
+  /* ─── COMMITMENT ROWS ────────────────────────────────────── */
+  .commit-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+  .commit-item {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 8px;
+    align-items: center;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-xs);
+    padding: 10px 12px;
+    animation: fadeUp .2s ease;
+  }
+  .commit-item .c-name { font-size: 14px; font-weight: 500; color: var(--text); }
+  .commit-item .c-amt {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+  }
+  .commit-item .c-del {
+    background: none;
+    border: none;
+    color: var(--text3);
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 16px;
+    line-height: 1;
+    transition: color .15s;
+  }
+  .commit-item .c-del:hover { color: var(--err); }
+
+  .add-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 8px;
+    align-items: end;
+  }
+  .add-btn {
+    height: 44px;
+    padding: 0 16px;
+    background: var(--accent-bg);
+    border: 1px dashed rgba(62,207,110,.3);
+    border-radius: var(--radius-sm);
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all .2s;
+  }
+  .add-btn:hover { background: rgba(62,207,110,.15); }
+
+  /* needs budget indicator */
+  .needs-bar-wrap { margin: 16px 0; }
+  .needs-bar-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text3);
+    margin-bottom: 6px;
+  }
+  .needs-bar-label span:last-child { font-family: var(--mono); }
+  .needs-bar {
+    height: 6px;
+    background: var(--border2);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .needs-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: var(--accent);
+    transition: width .4s, background .3s;
+  }
+
+  /* ─── GOAL CARDS ─────────────────────────────────────────── */
+  .goal-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+  .goal-item {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    animation: fadeUp .2s ease;
+  }
+  .goal-item-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .goal-item-name { font-size: 15px; font-weight: 600; color: var(--text); }
+  .goal-badge {
+    font-size: 10px;
+    font-weight: 700;
+    font-family: var(--mono);
+    padding: 2px 8px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+  }
+  .badge-high   { background: rgba(239,68,68,.15);   color: #fca5a5; }
+  .badge-medium { background: rgba(245,158,11,.15);   color: #fcd34d; }
+  .badge-low    { background: rgba(62,207,110,.1);    color: var(--accent); }
+
+  .goal-item-meta {
+    display: flex;
+    gap: 16px;
+    font-size: 13px;
+    color: var(--text2);
+  }
+  .goal-item-meta span { font-family: var(--mono); color: var(--accent); }
+  .goal-item-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+  }
+  .goal-action-btn {
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid var(--border2);
+    background: transparent;
+    color: var(--text3);
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .goal-action-btn:hover { color: var(--text); border-color: var(--text3); }
+  .goal-action-btn.del:hover { color: var(--err); border-color: var(--err); }
+
+  /* sequence preview strip */
+  .seq-preview {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    margin-top: 16px;
+  }
+  .seq-label {
+    font-size: 11px;
+    font-weight: 700;
+    font-family: var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text3);
+    margin-bottom: 12px;
+  }
+  .seq-track {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .seq-row {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 12px;
+    align-items: center;
+    font-size: 12px;
+  }
+  .seq-name {
+    color: var(--text2);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .seq-bar-wrap {
+    position: relative;
+    height: 20px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .seq-bar-fill {
+    position: absolute;
+    top: 0; bottom: 0;
+    background: var(--accent);
+    opacity: .7;
+    border-radius: 3px;
+    transition: all .4s;
+  }
+  .seq-bar-label {
+    position: absolute;
+    top: 0; bottom: 0; right: 6px;
+    display: flex; align-items: center;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text);
+    z-index: 1;
+  }
+  .seq-note {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 10px;
+    line-height: 1.5;
+  }
+
+  /* ─── RESULTS ────────────────────────────────────────────── */
+  .results-header {
+    margin-bottom: 24px;
+  }
+  .results-income-note {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text3);
+    margin-top: 6px;
+  }
+
+  /* donut chart */
+  .donut-section {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin: 24px 0;
+    flex-wrap: wrap;
+  }
+  .donut-wrap { position: relative; flex-shrink: 0; }
+  .donut-wrap svg { display: block; }
+  .donut-center {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+  .donut-center-val {
+    font-family: var(--mono);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.1;
+  }
+  .donut-center-lbl {
+    font-size: 10px;
+    color: var(--text3);
+    margin-top: 2px;
+  }
+  .donut-legend { flex: 1; min-width: 140px; }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .legend-item:last-child { border-bottom: none; }
+  .legend-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .legend-name { flex: 1; font-size: 13px; color: var(--text2); }
+  .legend-pct  { font-family: var(--mono); font-size: 12px; color: var(--text3); }
+  .legend-amt  { font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--text); }
+
+  /* budget rows */
+  .budget-section { margin: 20px 0; }
+  .budget-section-title {
+    font-size: 11px;
+    font-weight: 700;
+    font-family: var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text3);
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+  .budget-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .budget-row:last-child { border-bottom: none; }
+  .budget-row-name { font-size: 14px; color: var(--text2); }
+  .budget-row-val  {
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .budget-row.highlight .budget-row-name { color: var(--text); font-weight: 600; }
+  .budget-row.highlight .budget-row-val  { color: var(--accent); font-size: 16px; }
+
+  /* goals breakdown */
+  .goals-grid { display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
+  .goal-result {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .goal-result-accent {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    border-radius: 3px 0 0 3px;
+  }
+  .goal-result-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+  }
+  .goal-result-name { font-size: 15px; font-weight: 600; color: var(--text); padding-left: 12px; }
+  .goal-result-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    padding-left: 12px;
+    margin-top: 10px;
+  }
+  .stat-box {
+    background: var(--card);
+    border-radius: var(--radius-xs);
+    padding: 8px 10px;
+  }
+  .stat-box-label {
+    font-size: 10px;
+    color: var(--text3);
+    font-family: var(--mono);
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin-bottom: 3px;
+  }
+  .stat-box-val {
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .goal-progress-wrap { padding-left: 12px; margin-top: 10px; }
+  .goal-progress-bar {
+    height: 6px;
+    background: var(--border2);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .goal-progress-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width .6s ease;
+  }
+  .goal-progress-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text3);
+    font-family: var(--mono);
+    margin-top: 5px;
+  }
+
+  /* gantt */
+  .gantt-section { margin-top: 24px; }
+  .gantt-title {
+    font-size: 11px;
+    font-weight: 700;
+    font-family: var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text3);
+    margin-bottom: 14px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+  .gantt-chart { display: flex; flex-direction: column; gap: 8px; }
+  .gantt-row {
+    display: grid;
+    grid-template-columns: 110px 1fr auto;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+  }
+  .gantt-name { color: var(--text2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .gantt-track {
+    position: relative;
+    height: 22px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .gantt-bar {
+    position: absolute;
+    top: 0; bottom: 0;
+    border-radius: 4px;
+    display: flex; align-items: center;
+    padding-left: 6px;
+    overflow: hidden;
+    transition: all .4s;
+  }
+  .gantt-bar-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: rgba(255,255,255,.8);
+    white-space: nowrap;
+  }
+  .gantt-end { font-family: var(--mono); font-size: 11px; color: var(--text3); white-space: nowrap; }
+
+  /* empty state */
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text3);
+  }
+  .empty-icon { font-size: 36px; margin-bottom: 12px; opacity: .5; }
+  .empty-text { font-size: 14px; line-height: 1.6; }
+
+  /* divider */
+  .divider { height: 1px; background: var(--border); margin: 20px 0; }
+
+  /* toast */
+  .toast {
+    position: fixed;
+    bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--card);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    padding: 12px 20px;
+    font-size: 13px;
+    color: var(--text);
+    box-shadow: 0 8px 32px rgba(0,0,0,.5);
+    transition: transform .3s ease;
+    z-index: 999;
+    white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* responsive */
+  @media (max-width: 420px) {
+    .formula-grid { grid-template-columns: 1fr; }
+    .custom-row { grid-template-columns: 1fr 1fr 1fr; }
+    .donut-section { flex-direction: column; align-items: flex-start; }
+    .gantt-row { grid-template-columns: 80px 1fr auto; }
+    .seq-row { grid-template-columns: 100px 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="app-header">
+  <div class="logo">TabungKu<span>.my</span></div>
+  <div class="steps" id="stepIndicator"></div>
+</header>
+
+<!-- STEP CARDS -->
+<div id="appRoot"></div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── STATE ───────────────────────────────────────────────────
+const state = {
+  step: 1,
+  income: '',
+  formula: '50/30/20',
+  customNeeds: 50,
+  customWants: 30,
+  customSavings: 20,
+  commitments: [],
+  goals: [],
+  results: null,
+};
+
+const FORMULAS = [
+  { id: '50/30/20', name: '50/30/20',  needs: 50, wants: 30, savings: 20, desc: '50% Needs\n30% Wants\n20% Savings' },
+  { id: '70/20/10', name: '70/20/10',  needs: 70, wants: 20, savings: 10, desc: '70% Needs\n20% Wants\n10% Savings' },
+  { id: '40/30/30', name: '40/30/30',  needs: 40, wants: 30, savings: 30, desc: '40% Needs\n30% Wants\n30% Savings' },
+  { id: 'custom',   name: 'Custom',    needs: 0,  wants: 0,  savings: 0,  desc: 'Set your\nown split' },
+];
+
+const PRIORITY_ORDER = { high: 0, medium: 1, low: 2 };
+const PRIORITY_COLORS = { high: '#ef4444', medium: '#f59e0b', low: '#3ecf6e' };
+
+// ─── HELPERS ─────────────────────────────────────────────────
+const fmt = n => 'RM ' + Math.round(n).toLocaleString('en-MY');
+const pct = n => Math.round(n) + '%';
+
+function getFormulaValues() {
+  if (state.formula === 'custom') {
+    return { needs: +state.customNeeds, wants: +state.customWants, savings: +state.customSavings };
+  }
+  const f = FORMULAS.find(x => x.id === state.formula);
+  return { needs: f.needs, wants: f.wants, savings: f.savings };
+}
+
+function computeResults() {
+  const inc = +state.income;
+  const { needs, wants, savings } = getFormulaValues();
+  const needsAmt   = inc * needs   / 100;
+  const wantsAmt   = inc * wants   / 100;
+  const savingsAmt = inc * savings / 100;
+
+  // commitments draw from needs
+  const totalCommit = state.commitments.reduce((s, c) => s + +c.amount, 0);
+  const flexNeeds   = needsAmt - totalCommit;
+  const freeSavings = savingsAmt;
+
+  // sort goals by priority then by order added
+  const sorted = [...state.goals].sort((a, b) => {
+    const pd = PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority];
+    return pd !== 0 ? pd : a._idx - b._idx;
+  });
+
+  let month = 0;
+  const computed = sorted.map(g => {
+    const target   = +g.amount;
+    const monthly  = g.mode === 'auto' ? freeSavings : +g.monthly;
+    const months   = monthly > 0 ? Math.ceil(target / monthly) : Infinity;
+    const startM   = month;
+    month += months;
+    return {
+      ...g,
+      target,
+      monthly: Math.round(monthly),
+      months,
+      startMonth: startM,
+      endMonth: month,
+    };
+  });
+
+  return {
+    income: inc,
+    needsPct: needs, wantsPct: wants, savingsPct: savings,
+    needsAmt: Math.round(needsAmt),
+    wantsAmt: Math.round(wantsAmt),
+    savingsAmt: Math.round(savingsAmt),
+    totalCommit: Math.round(totalCommit),
+    flexNeeds: Math.round(flexNeeds),
+    freeSavings: Math.round(freeSavings),
+    goals: computed,
+    totalMonths: month,
+  };
+}
+
+// ─── TOAST ───────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ─── STEP INDICATOR ──────────────────────────────────────────
+function renderSteps() {
+  const ind = document.getElementById('stepIndicator');
+  const total = 5;
+  let html = '';
+  for (let i = 1; i <= total; i++) {
+    const cls = i < state.step ? 'done' : i === state.step ? 'active' : '';
+    const label = i < state.step ? '✓' : i;
+    html += `<div class="step-dot ${cls}">${label}</div>`;
+    if (i < total) {
+      const lc = i < state.step ? 'done' : '';
+      html += `<div class="step-line ${lc}"></div>`;
+    }
+  }
+  ind.innerHTML = html;
+}
+
+// ─── NAVIGATION ──────────────────────────────────────────────
+function goTo(step) {
+  state.step = step;
+  render();
+}
+function next() { goTo(state.step + 1); }
+function back() { goTo(state.step - 1); }
+
+// ─── STEP 1: INCOME ──────────────────────────────────────────
+function renderStep1() {
+  return `
+  <div class="card">
+    <div class="card-eyebrow">Step 1 of 5</div>
+    <div class="card-title">What's your monthly income?</div>
+    <div class="card-sub">Enter your take-home pay after tax — this is the number we'll build your budget from.</div>
+    <div class="field">
+      <label>Monthly take-home pay</label>
+      <div class="input-wrap">
+        <div class="input-prefix">RM</div>
+        <input type="number" id="incomeInput" placeholder="e.g. 3,500" value="${state.income}"
+          oninput="state.income=this.value; updateStep1()">
+      </div>
+    </div>
+    <div id="incomeNote"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="step1Next" onclick="next()" ${!state.income || +state.income <= 0 ? 'disabled' : ''}>
+        Continue →
+      </button>
+    </div>
+  </div>`;
+}
+
+function updateStep1() {
+  const btn  = document.getElementById('step1Next');
+  const note = document.getElementById('incomeNote');
+  const v    = +state.income;
+  if (btn) btn.disabled = !state.income || v <= 0;
+  if (note) {
+    if (v > 0 && v < 1500) {
+      note.innerHTML = `<div class="alert warn"><span class="alert-icon">⚠</span><span>Income below RM 1,500 may limit how much you can save toward goals. Make sure this is accurate.</span></div>`;
+    } else {
+      note.innerHTML = '';
+    }
+  }
+}
+
+// ─── STEP 2: FORMULA ─────────────────────────────────────────
+function renderStep2() {
+  const { needs, wants, savings } = getFormulaValues();
+  const total = needs + wants + savings;
+  const ok    = total === 100;
+  const pctFill = Math.min(total, 100);
+  const fillColor = total > 100 ? 'var(--err)' : ok ? 'var(--accent)' : 'var(--warn)';
+
+  return `
+  <div class="card">
+    <div class="card-eyebrow">Step 2 of 5</div>
+    <div class="card-title">Choose a budget formula</div>
+    <div class="card-sub">This splits your income into Needs, Wants, and Savings. Pick a preset or set your own.</div>
+
+    <div class="formula-grid">
+      ${FORMULAS.map(f => `
+      <div class="formula-card ${state.formula === f.id ? 'selected' : ''}" onclick="selectFormula('${f.id}')">
+        <div class="f-name">${f.name}</div>
+        <div class="f-split" style="white-space:pre">${f.desc}</div>
+      </div>`).join('')}
+    </div>
+
+    ${state.formula === 'custom' ? `
+    <div class="custom-row">
+      <div class="field">
+        <label style="text-align:center;display:block">Needs %</label>
+        <div class="input-wrap">
+          <input type="number" min="0" max="100" value="${state.customNeeds}"
+            oninput="state.customNeeds=+this.value; reRenderFormula()" id="cNeeds">
+        </div>
+      </div>
+      <div class="field">
+        <label style="text-align:center;display:block">Wants %</label>
+        <div class="input-wrap">
+          <input type="number" min="0" max="100" value="${state.customWants}"
+            oninput="state.customWants=+this.value; reRenderFormula()" id="cWants">
+        </div>
+      </div>
+      <div class="field">
+        <label style="text-align:center;display:block">Savings %</label>
+        <div class="input-wrap">
+          <input type="number" min="0" max="100" value="${state.customSavings}"
+            oninput="state.customSavings=+this.value; reRenderFormula()" id="cSavings">
+        </div>
+      </div>
+    </div>
+    <div class="formula-total-bar">
+      <div class="formula-total-fill" style="width:${pctFill}%;background:${fillColor}"></div>
+    </div>
+    <div class="formula-hint ${ok ? 'ok' : total > 100 ? 'over' : ''}">
+      ${total === 100 ? '✓ Total = 100%' : total > 100 ? `${total}% — reduce by ${total - 100}%` : `${total}% — add ${100 - total}% more`}
+    </div>` : `
+    <div class="alert info">
+      <span class="alert-icon">ℹ</span>
+      <span>With <strong>${state.formula}</strong>: your <strong>${fmt(+state.income * needs/100)}</strong> needs budget,
+      <strong>${fmt(+state.income * wants/100)}</strong> for wants,
+      and <strong>${fmt(+state.income * savings/100)}</strong> toward savings.</span>
+    </div>`}
+
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="back()">← Back</button>
+      <button class="btn btn-primary" ${!ok && state.formula === 'custom' ? 'disabled' : ''} onclick="next()">Continue →</button>
+    </div>
+  </div>`;
+}
+
+function selectFormula(id) {
+  state.formula = id;
+  render();
+}
+function reRenderFormula() {
+  // partial re-render for custom inputs
+  const { needs, wants, savings } = getFormulaValues();
+  const total = needs + wants + savings;
+  const ok = total === 100;
+  const pctFill = Math.min(total, 100);
+  const fillColor = total > 100 ? 'var(--err)' : ok ? 'var(--accent)' : 'var(--warn)';
+  const bar  = document.querySelector('.formula-total-fill');
+  const hint = document.querySelector('.formula-hint');
+  const btn  = document.querySelector('#appRoot .btn-primary');
+  if (bar)  { bar.style.width = pctFill + '%'; bar.style.background = fillColor; }
+  if (hint) {
+    hint.className = 'formula-hint' + (ok ? ' ok' : total > 100 ? ' over' : '');
+    hint.textContent = total === 100 ? '✓ Total = 100%' : total > 100 ? `${total}% — reduce by ${total - 100}%` : `${total}% — add ${100 - total}% more`;
+  }
+  if (btn) btn.disabled = !ok;
+}
+
+// ─── STEP 3: COMMITMENTS ─────────────────────────────────────
+let newCommitName = '', newCommitAmt = '';
+
+function renderStep3() {
+  const { needs } = getFormulaValues();
+  const needsAmt = +state.income * needs / 100;
+  const totalCommit = state.commitments.reduce((s, c) => s + +c.amount, 0);
+  const pctUsed = needsAmt > 0 ? Math.min(totalCommit / needsAmt * 100, 100) : 0;
+  const over = totalCommit > needsAmt;
+  const barColor = over ? 'var(--err)' : pctUsed > 80 ? 'var(--warn)' : 'var(--accent)';
+
+  return `
+  <div class="card">
+    <div class="card-eyebrow">Step 3 of 5</div>
+    <div class="card-title">Fixed monthly commitments</div>
+    <div class="card-sub">Rent, car loan, insurance — bills you must pay every month. These come out of your <strong>${pct(needs)}</strong> needs budget (${fmt(needsAmt)}).</div>
+
+    ${state.commitments.length > 0 ? `
+    <div class="commit-list" id="commitList">
+      ${state.commitments.map((c, i) => `
+      <div class="commit-item">
+        <div class="c-name">${c.name}</div>
+        <div class="c-amt">${fmt(c.amount)}</div>
+        <button class="c-del" onclick="removeCommit(${i})" title="Remove">×</button>
+      </div>`).join('')}
+    </div>
+
+    <div class="needs-bar-wrap">
+      <div class="needs-bar-label">
+        <span>Needs budget used</span>
+        <span>${fmt(totalCommit)} / ${fmt(needsAmt)}</span>
+      </div>
+      <div class="needs-bar">
+        <div class="needs-fill" style="width:${pctUsed}%;background:${barColor}"></div>
+      </div>
+    </div>
+
+    ${over ? `<div class="alert err" style="margin-bottom:12px"><span class="alert-icon">⚠</span><span>Commitments exceed your needs budget by ${fmt(totalCommit - needsAmt)}. Consider adjusting your formula or reviewing your fixed bills.</span></div>` : ''}
+    ` : ''}
+
+    <div style="margin-bottom:16px">
+      <div class="add-row">
+        <div>
+          <label style="font-size:13px;font-weight:600;color:var(--text2);display:block;margin-bottom:7px">Bill name</label>
+          <div class="input-wrap">
+            <input type="text" id="commitName" placeholder="e.g. Rent" value="${newCommitName}"
+              oninput="newCommitName=this.value" onkeydown="if(event.key==='Enter')addCommit()">
+          </div>
+        </div>
+        <div>
+          <label style="font-size:13px;font-weight:600;color:var(--text2);display:block;margin-bottom:7px">Amount</label>
+          <div class="input-wrap">
+            <div class="input-prefix">RM</div>
+            <input type="number" id="commitAmt" placeholder="0" value="${newCommitAmt}"
+              oninput="newCommitAmt=this.value" onkeydown="if(event.key==='Enter')addCommit()">
+          </div>
+        </div>
+        <div style="align-self:flex-end">
+          <button class="add-btn" onclick="addCommit()">+ Add</button>
+        </div>
+      </div>
+    </div>
+
+    ${state.commitments.length === 0 ? `
+    <div class="alert info" style="margin-bottom:16px">
+      <span class="alert-icon">ℹ</span>
+      <span>No commitments yet. Add your fixed bills above, or skip if you have none.</span>
+    </div>` : ''}
+
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="back()">← Back</button>
+      <button class="btn btn-primary" onclick="next()">Continue →</button>
+    </div>
+  </div>`;
+}
+
+function addCommit() {
+  const name = newCommitName.trim();
+  const amt  = +newCommitAmt;
+  if (!name || !amt || amt <= 0) { showToast('Enter a name and amount.'); return; }
+  state.commitments.push({ name, amount: amt });
+  newCommitName = ''; newCommitAmt = '';
+  render();
+}
+function removeCommit(i) {
+  state.commitments.splice(i, 1);
+  render();
+}
+
+// ─── STEP 4: GOALS ───────────────────────────────────────────
+let newGoal = { name: '', amount: '', priority: 'medium', mode: 'auto', monthly: '' };
+let addingGoal = false;
+
+function renderGoalSequencePreview() {
+  if (state.goals.length === 0) return '';
+  const { freeSavings } = state.results || computeResults();
+  const sorted = [...state.goals].sort((a, b) => {
+    const pd = PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority];
+    return pd !== 0 ? pd : a._idx - b._idx;
+  });
+
+  const totalMonths = sorted.reduce((s, g) => {
+    const m = g.mode === 'auto' ? freeSavings : +g.monthly;
+    return s + (m > 0 ? Math.ceil(+g.amount / m) : 0);
+  }, 0);
+
+  let accum = 0;
+  const rows = sorted.map(g => {
+    const m = g.mode === 'auto' ? freeSavings : +g.monthly;
+    const months = m > 0 ? Math.ceil(+g.amount / m) : 0;
+    const startPct = totalMonths > 0 ? (accum / totalMonths * 100) : 0;
+    const widthPct = totalMonths > 0 ? (months / totalMonths * 100) : 0;
+    accum += months;
+    const color = PRIORITY_COLORS[g.priority];
+    return `
+    <div class="seq-row">
+      <div class="seq-name" title="${g.name}">${g.name}</div>
+      <div class="seq-bar-wrap">
+        <div class="seq-bar-fill" style="left:${startPct}%;width:${widthPct}%;background:${color}"></div>
+        <div class="seq-bar-label">${months}mo</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  return `
+  <div class="seq-preview">
+    <div class="seq-label">Live goal sequence preview</div>
+    <div class="seq-track">${rows}</div>
+    <div class="seq-note">Goals run one at a time, in priority order. High → Medium → Low. Total timeline: <strong>${totalMonths} months</strong>.</div>
+  </div>`;
+}
+
+function renderStep4() {
+  return `
+  <div class="card">
+    <div class="card-eyebrow">Step 4 of 5</div>
+    <div class="card-title">Set your savings goals</div>
+    <div class="card-sub">Goals are funded one at a time in priority order — finish the first, then start the next.</div>
+
+    ${state.goals.length > 0 ? `
+    <div class="goal-list">
+      ${state.goals.map((g, i) => `
+      <div class="goal-item">
+        <div class="goal-item-header">
+          <div class="goal-item-name">${g.name}</div>
+          <span class="goal-badge badge-${g.priority}">${g.priority}</span>
+        </div>
+        <div class="goal-item-meta">
+          Target: <span>${fmt(g.amount)}</span>
+          &nbsp;·&nbsp; Mode: <span>${g.mode === 'auto' ? 'Auto' : fmt(g.monthly) + '/mo'}</span>
+        </div>
+        <div class="goal-item-actions">
+          <button class="goal-action-btn del" onclick="removeGoal(${i})">Remove</button>
+        </div>
+      </div>`).join('')}
+    </div>` : ''}
+
+    ${addingGoal ? `
+    <div class="card" style="background:var(--surface);border-color:var(--border2);margin-bottom:16px">
+      <div style="font-size:13px;font-weight:700;color:var(--text2);margin-bottom:14px;text-transform:uppercase;letter-spacing:.5px;font-family:var(--mono)">New Goal</div>
+      <div class="field">
+        <label>Goal name</label>
+        <div class="input-wrap">
+          <input type="text" id="gName" placeholder="e.g. Emergency Fund" value="${newGoal.name}"
+            oninput="newGoal.name=this.value">
+        </div>
+      </div>
+      <div class="field">
+        <label>Target amount</label>
+        <div class="input-wrap">
+          <div class="input-prefix">RM</div>
+          <input type="number" id="gAmt" placeholder="0" value="${newGoal.amount}"
+            oninput="newGoal.amount=this.value">
+        </div>
+      </div>
+      <div class="field">
+        <label>Priority</label>
+        <div class="input-wrap">
+          <select onchange="newGoal.priority=this.value">
+            <option value="high"   ${newGoal.priority==='high'   ?'selected':''}>High</option>
+            <option value="medium" ${newGoal.priority==='medium' ?'selected':''}>Medium</option>
+            <option value="low"    ${newGoal.priority==='low'    ?'selected':''}>Low</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Monthly contribution</label>
+        <div class="input-wrap">
+          <select onchange="newGoal.mode=this.value;renderGoalModeToggle()">
+            <option value="auto"   ${newGoal.mode==='auto'  ?'selected':''}>Auto (use savings allocation)</option>
+            <option value="manual" ${newGoal.mode==='manual'?'selected':''}>Manual (set amount)</option>
+          </select>
+        </div>
+      </div>
+      <div id="goalModeExtra">
+        ${newGoal.mode === 'manual' ? `
+        <div class="field">
+          <label>Manual monthly amount</label>
+          <div class="input-wrap">
+            <div class="input-prefix">RM</div>
+            <input type="number" id="gMonthly" placeholder="0" value="${newGoal.monthly}"
+              oninput="newGoal.monthly=this.value">
+          </div>
+        </div>` : ''}
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-ghost" onclick="addingGoal=false;render()">Cancel</button>
+        <button class="btn btn-primary" onclick="saveGoal()">Add Goal</button>
+      </div>
+    </div>` : `
+    <button class="add-btn" style="width:100%;height:44px;margin-bottom:16px" onclick="addingGoal=true;render()">+ Add a goal</button>`}
+
+    ${renderGoalSequencePreview()}
+
+    ${state.goals.length === 0 && !addingGoal ? `
+    <div class="alert info" style="margin-top:12px">
+      <span class="alert-icon">ℹ</span>
+      <span>No goals added — that's fine. You can skip to see your budget breakdown, or add goals to track your savings targets.</span>
+    </div>` : ''}
+
+    <div class="btn-row" style="margin-top:${state.goals.length === 0 ? '12' : '24'}px">
+      <button class="btn btn-ghost" onclick="back()">← Back</button>
+      <button class="btn btn-primary" onclick="calculateAndNext()">
+        ${state.goals.length === 0 ? 'Skip Goals →' : 'Calculate →'}
+      </button>
+    </div>
+  </div>`;
+}
+
+function renderGoalModeToggle() {
+  const extra = document.getElementById('goalModeExtra');
+  if (!extra) return;
+  extra.innerHTML = newGoal.mode === 'manual' ? `
+  <div class="field">
+    <label>Manual monthly amount</label>
+    <div class="input-wrap">
+      <div class="input-prefix">RM</div>
+      <input type="number" id="gMonthly" placeholder="0" value="${newGoal.monthly}"
+        oninput="newGoal.monthly=this.value">
+    </div>
+  </div>` : '';
+}
+
+function saveGoal() {
+  const name = newGoal.name.trim();
+  const amt  = +newGoal.amount;
+  if (!name)      { showToast('Enter a goal name.'); return; }
+  if (!amt || amt <= 0) { showToast('Enter a valid target amount.'); return; }
+  if (newGoal.mode === 'manual' && (!+newGoal.monthly || +newGoal.monthly <= 0)) {
+    showToast('Enter a monthly contribution amount.'); return;
+  }
+  state.goals.push({ ...newGoal, _idx: Date.now() });
+  newGoal = { name: '', amount: '', priority: 'medium', mode: 'auto', monthly: '' };
+  addingGoal = false;
+  render();
+}
+function removeGoal(i) { state.goals.splice(i, 1); render(); }
+
+function calculateAndNext() {
+  state.results = computeResults();
+  goTo(5);
+}
+
+// ─── STEP 5: RESULTS ─────────────────────────────────────────
+function renderStep5() {
+  const r = state.results;
+  if (!r) return '<div class="card"><div class="card-sub">No results yet.</div></div>';
+
+  // donut segments: needs/wants/savings
+  const donutData = [
+    { label: 'Needs',   pct: r.needsPct,   color: '#3ecf6e', amt: r.needsAmt },
+    { label: 'Wants',   pct: r.wantsPct,   color: '#22d3ee', amt: r.wantsAmt },
+    { label: 'Savings', pct: r.savingsPct, color: '#a78bfa', amt: r.savingsAmt },
+  ];
+  const donutSVG = buildDonut(donutData, 80);
+
+  // Gantt timeline
+  const maxMonth = r.totalMonths || 1;
+  const ganttBars = r.goals.map(g => {
+    const color = PRIORITY_COLORS[g.priority];
+    const startPct = g.startMonth / maxMonth * 100;
+    const widthPct = (g.endMonth - g.startMonth) / maxMonth * 100;
+    const endDate  = monthLabel(g.endMonth);
+    return `
+    <div class="gantt-row">
+      <div class="gantt-name" title="${g.name}">${g.name}</div>
+      <div class="gantt-track">
+        <div class="gantt-bar" style="left:${startPct}%;width:${widthPct}%;background:${color}">
+          <span class="gantt-bar-label">${g.months}mo</span>
+        </div>
+      </div>
+      <div class="gantt-end">${endDate}</div>
+    </div>`;
+  }).join('');
+
+  // goal result cards
+  const goalCards = r.goals.map(g => {
+    const color  = PRIORITY_COLORS[g.priority];
+    const progPct = 0; // starts at 0 when just calculated
+    return `
+    <div class="goal-result">
+      <div class="goal-result-accent" style="background:${color}"></div>
+      <div class="goal-result-header">
+        <div class="goal-result-name">${g.name}</div>
+        <span class="goal-badge badge-${g.priority}">${g.priority}</span>
+      </div>
+      <div class="goal-result-stats">
+        <div class="stat-box">
+          <div class="stat-box-label">Target</div>
+          <div class="stat-box-val">${fmt(g.target)}</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-box-label">Monthly</div>
+          <div class="stat-box-val">${fmt(g.monthly)}</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-box-label">Timeline</div>
+          <div class="stat-box-val">${g.months === Infinity ? '∞' : g.months + ' mo'}</div>
+        </div>
+      </div>
+      <div class="goal-progress-wrap">
+        <div class="goal-progress-bar">
+          <div class="goal-progress-fill" style="width:${progPct}%;background:${color}"></div>
+        </div>
+        <div class="goal-progress-meta">
+          <span>Starts: ${monthLabel(g.startMonth)}</span>
+          <span>Done: ${g.months === Infinity ? '—' : monthLabel(g.endMonth)}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  return `
+  <div class="card">
+    <div class="results-header">
+      <div class="card-eyebrow">Your plan</div>
+      <div class="card-title">Budget breakdown</div>
+      <div class="results-income-note">Based on ${fmt(r.income)} monthly income · ${state.formula} formula</div>
+    </div>
+
+    <div class="donut-section">
+      <div class="donut-wrap">
+        ${donutSVG}
+        <div class="donut-center">
+          <div class="donut-center-val">${fmt(r.income)}</div>
+          <div class="donut-center-lbl">monthly</div>
+        </div>
+      </div>
+      <div class="donut-legend">
+        ${donutData.map(d => `
+        <div class="legend-item">
+          <div class="legend-dot" style="background:${d.color}"></div>
+          <div class="legend-name">${d.label}</div>
+          <div class="legend-pct">${d.pct}%</div>
+          <div class="legend-amt">${fmt(d.amt)}</div>
+        </div>`).join('')}
+      </div>
+    </div>
+
+    <div class="budget-section">
+      <div class="budget-section-title">Needs (${r.needsPct}%)</div>
+      <div class="budget-row highlight">
+        <div class="budget-row-name">Needs budget</div>
+        <div class="budget-row-val">${fmt(r.needsAmt)}</div>
+      </div>
+      ${r.totalCommit > 0 ? `
+      ${state.commitments.map(c => `
+      <div class="budget-row">
+        <div class="budget-row-name">· ${c.name}</div>
+        <div class="budget-row-val" style="color:var(--text3)">−${fmt(c.amount)}</div>
+      </div>`).join('')}
+      <div class="budget-row highlight">
+        <div class="budget-row-name">Flexible needs remaining</div>
+        <div class="budget-row-val" style="color:${r.flexNeeds < 0 ? 'var(--err)' : 'var(--accent)'}">
+          ${fmt(r.flexNeeds)}
+        </div>
+      </div>` : ''}
+    </div>
+
+    <div class="budget-section">
+      <div class="budget-section-title">Wants (${r.wantsPct}%)</div>
+      <div class="budget-row highlight">
+        <div class="budget-row-name">Discretionary budget</div>
+        <div class="budget-row-val">${fmt(r.wantsAmt)}</div>
+      </div>
+    </div>
+
+    <div class="budget-section">
+      <div class="budget-section-title">Savings (${r.savingsPct}%)</div>
+      <div class="budget-row highlight">
+        <div class="budget-row-name">Available for goals</div>
+        <div class="budget-row-val">${fmt(r.freeSavings)}</div>
+      </div>
+    </div>
+
+    ${r.flexNeeds < 0 ? `
+    <div class="alert err">
+      <span class="alert-icon">⚠</span>
+      <span>Your fixed bills exceed your needs budget by ${fmt(Math.abs(r.flexNeeds))}. Consider revising your formula or reducing fixed commitments.</span>
+    </div>` : ''}
+
+    ${r.goals.length > 0 ? `
+    <div class="divider"></div>
+    <div class="card-eyebrow" style="margin-bottom:8px">Goals</div>
+    <div class="alert info" style="margin-bottom:16px">
+      <span class="alert-icon">ℹ</span>
+      <span>Goals are funded sequentially by priority — each goal starts only after the previous one is complete.</span>
+    </div>
+    <div class="goals-grid">${goalCards}</div>
+
+    ${r.goals.length > 1 ? `
+    <div class="gantt-section">
+      <div class="gantt-title">Timeline overview</div>
+      <div class="gantt-chart">${ganttBars}</div>
+    </div>` : ''}
+    ` : `
+    <div class="divider"></div>
+    <div class="empty-state">
+      <div class="empty-icon">◎</div>
+      <div class="empty-text">No savings goals set.<br>Go back to Step 4 to add goals — they'll appear here with a timeline.</div>
+    </div>`}
+
+    <div class="btn-row" style="margin-top:28px">
+      <button class="btn btn-ghost" onclick="back()">← Edit Goals</button>
+      <button class="btn btn-primary" onclick="restart()">Start Over</button>
+    </div>
+  </div>`;
+}
+
+// ─── DONUT CHART ─────────────────────────────────────────────
+function buildDonut(segments, r) {
+  const size = r * 2 + 32;
+  const cx = size / 2, cy = size / 2;
+  const stroke = 18;
+  const R = r;
+  const circ = 2 * Math.PI * R;
+  let offset = 0;
+  const arcs = segments.map(s => {
+    const dash = s.pct / 100 * circ;
+    const gap  = circ - dash;
+    const arc  = `<circle cx="${cx}" cy="${cy}" r="${R}"
+      fill="none" stroke="${s.color}" stroke-width="${stroke}"
+      stroke-dasharray="${dash} ${gap}"
+      stroke-dashoffset="${-offset}"
+      transform="rotate(-90 ${cx} ${cy})"
+      style="transition:stroke-dasharray .5s"/>`;
+    offset += dash;
+    return arc;
+  });
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+    <circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="var(--border)" stroke-width="${stroke}"/>
+    ${arcs.join('')}
+  </svg>`;
+}
+
+// ─── MONTH LABEL ─────────────────────────────────────────────
+function monthLabel(n) {
+  if (!n) return 'Now';
+  const now = new Date();
+  const d   = new Date(now.getFullYear(), now.getMonth() + n, 1);
+  return d.toLocaleDateString('en-MY', { month: 'short', year: 'numeric' });
+}
+
+// ─── RESTART ─────────────────────────────────────────────────
+function restart() {
+  Object.assign(state, {
+    step: 1, income: '', formula: '50/30/20',
+    customNeeds: 50, customWants: 30, customSavings: 20,
+    commitments: [], goals: [], results: null,
+  });
+  newCommitName = ''; newCommitAmt = '';
+  newGoal = { name: '', amount: '', priority: 'medium', mode: 'auto', monthly: '' };
+  addingGoal = false;
+  render();
+}
+
+// ─── RENDER ───────────────────────────────────────────────────
+function render() {
+  renderSteps();
+  const root = document.getElementById('appRoot');
+  const steps = { 1: renderStep1, 2: renderStep2, 3: renderStep3, 4: renderStep4, 5: renderStep5 };
+  root.innerHTML = (steps[state.step] || (() => ''))();
+  if (state.step === 1) updateStep1();
+}
+
+render();
+</script>
+</body>
+</html>
