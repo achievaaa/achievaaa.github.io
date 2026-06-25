@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ms">
 <head>
@@ -7,45 +8,62 @@
 
 <!-- PWA setup -->
 <link rel="manifest" href="manifest.json" />
-<meta name="theme-color" content="#080f1e" />
+<meta name="theme-color" content="#fdf7f0" />
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
 <meta name="apple-mobile-web-app-title" content="Achieva" />
 <link rel="icon" href="icon-192.png" />
 <link rel="apple-touch-icon" href="apple-touch-icon.png" />
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg:          #080f1e;
-    --card:        #0d1a30;
-    --card-border: rgba(59,130,246,0.18);
-    --subtle:      #0a1220;
-    --inner:       #0e1830;
-    --prog-bg:     #162440;
-    --accent:      #60a5fa;
-    --accent-dim:  rgba(59,130,246,0.10);
-    --accent-bdr:  rgba(59,130,246,0.28);
-    --text:        #e0eeff;
-    --text-2:      #4a6a8a;
-    --text-3:      #1e3050;
-    --go-high:     #f472b6;
-    --go-med:      #fbbf24;
-    --go-low:      #818cf8;
-    --col-needs:   #38bdf8;
-    --col-wants:   #fbbf24;
-    --col-savings: #60a5fa;
-    --warn:        rgba(251,191,36,0.08);
-    --warn-bdr:    rgba(251,191,36,0.22);
-    --warn-text:   #b8912a;
+    /* ── Cheerful, bright palette ── */
+    --bg:          #fdf7f0;   /* warm cream */
+    --bg-2:        #f6ecdf;   /* deeper cream */
+    --card:        #ffffff;   /* white cards */
+    --inner:       #fbf5ec;   /* subtle inner */
+    --subtle:      #f7efe3;
+    --border:      #efe2d1;
+    --prog-bg:     #efe4d4;
+
+    --text:        #2c2218;   /* deep warm brown */
+    --text-2:      #8d7d6c;   /* muted warm grey */
+    --text-3:      #c4b5a1;   /* light */
+
+    /* accent: emerald = growth/savings */
+    --accent:      #10a87a;
+    --accent-2:    #0c8a64;
+    --accent-dim:  #e4f6ee;
+    --accent-bdr:  #b9e6d4;
+
+    /* category + priority colors */
+    --col-needs:   #2f9be0;   /* sky blue */
+    --col-wants:   #f0a020;   /* honey amber */
+    --col-savings: #10a87a;   /* emerald */
+    --go-high:     #fb6f6f;   /* coral */
+    --go-med:      #f0a020;   /* amber */
+    --go-low:      #2f9be0;   /* sky blue */
+
+    --needs-soft:  #e3f1fb;
+    --wants-soft:  #fdf0d9;
+    --coral-soft:  #ffe7e3;
+
+    --warn:        #fdf0d9;
+    --warn-bdr:    #f6dcab;
+    --warn-text:   #b87a12;
+
+    --shadow:      0 6px 22px rgba(120,90,50,0.08);
+    --shadow-sm:   0 2px 10px rgba(120,90,50,0.06);
+
     --ff-sans:     'Inter', sans-serif;
     --ff-mono:     'JetBrains Mono', monospace;
   }
 
-  html { scroll-behavior: smooth; overflow-x: hidden; }
+  html { scroll-behavior: smooth; overflow-x: hidden; background: var(--bg); }
 
   body {
     font-family: var(--ff-sans);
@@ -57,90 +75,120 @@
   }
 
   /* ── Layout ── */
-  .container { max-width: 600px; margin: 0 auto; padding: 36px 20px 80px; }
+  .container { max-width: 600px; margin: 0 auto; padding: 26px 18px calc(100px + env(safe-area-inset-bottom)); }
 
-  /* ── Header ── */
-  .app-header { text-align: center; margin-bottom: 40px; }
-  .logo-chip {
-    display: inline-flex; align-items: center; gap: 7px;
-    background: var(--accent-dim); border: 1px solid var(--accent-bdr);
-    border-radius: 100px; padding: 5px 16px;
-    font-size: 11px; font-weight: 600; color: var(--accent);
-    letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 18px;
+  /* ── App top bar ── */
+  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
+  .brand { display: inline-flex; align-items: center; gap: 9px; }
+  .brand-mark {
+    width: 34px; height: 34px; border-radius: 11px;
+    background: var(--accent); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 17px; box-shadow: var(--shadow-sm);
   }
-  .app-header h1 {
-    font-size: clamp(26px, 5vw, 38px); font-weight: 700;
-    color: var(--text); line-height: 1.15; letter-spacing: -0.02em;
+  .brand-name { font-size: 17px; font-weight: 800; letter-spacing: -0.02em; }
+  .brand-name span { color: var(--accent); }
+  .topbar-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--wants-soft); color: var(--warn-text);
+    border-radius: 100px; padding: 6px 12px; font-size: 12px; font-weight: 700;
+    font-family: var(--ff-mono);
   }
-  .app-header h1 span { color: var(--accent); }
-  .app-header p { margin-top: 10px; font-size: 14px; color: var(--text-2); font-weight: 300; }
 
-  /* ── Step bar ── */
-  .steps { display: flex; align-items: center; justify-content: center; gap: 0; margin-bottom: 36px; }
+  /* ── Views ── */
+  .view { display: none; animation: fadeUp 0.3s ease; }
+  .view.active { display: block; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  .view-head { margin-bottom: 18px; }
+  .view-head h2 { font-size: 24px; font-weight: 800; letter-spacing: -0.02em; }
+  .view-head p { margin-top: 4px; font-size: 13px; color: var(--text-2); }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 20px; padding: 22px; box-shadow: var(--shadow);
+  }
+  .card + .card { margin-top: 14px; }
+  @media (max-width: 380px) { .container { padding: 22px 13px 100px; } .card { padding: 18px; } }
+
+  .card-title { font-size: 17px; font-weight: 700; margin-bottom: 3px; letter-spacing: -0.01em; }
+  .card-sub { font-size: 13px; color: var(--text-2); margin-bottom: 20px; line-height: 1.6; }
+
+  /* ════════ DASHBOARD ════════ */
+  .hero-card {
+    background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+    border: none; color: #fff; position: relative; overflow: hidden;
+    border-radius: 22px; padding: 22px; box-shadow: 0 10px 30px rgba(16,168,122,0.28);
+  }
+  .hero-card::after {
+    content: ''; position: absolute; right: -30px; top: -30px;
+    width: 130px; height: 130px; border-radius: 50%;
+    background: rgba(255,255,255,0.12);
+  }
+  .hero-top { display: flex; align-items: center; gap: 16px; position: relative; z-index: 1; }
+  .hero-ring { flex-shrink: 0; }
+  .hero-info { flex: 1; min-width: 0; }
+  .hero-label { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; opacity: 0.85; }
+  .hero-amt { font-family: var(--ff-mono); font-size: 32px; font-weight: 700; line-height: 1.1; margin-top: 4px; }
+  .hero-note { font-size: 12px; opacity: 0.9; margin-top: 6px; }
+  .hero-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; margin-top: 18px; position: relative; z-index: 1; }
+  .hero-box {
+    background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 13px; padding: 12px 8px; text-align: center;
+  }
+  .hb-lbl { font-size: 9px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; opacity: 0.85; }
+  .hb-val { font-family: var(--ff-mono); font-size: 14px; font-weight: 700; margin-top: 4px; }
+
+  .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
+  .mini-stat {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 18px; padding: 16px; box-shadow: var(--shadow-sm);
+  }
+  .ms-icon {
+    width: 38px; height: 38px; border-radius: 11px; display: flex;
+    align-items: center; justify-content: center; margin-bottom: 12px;
+  }
+  .ms-val { font-family: var(--ff-mono); font-size: 22px; font-weight: 700; line-height: 1; }
+  .ms-lbl { font-size: 12px; color: var(--text-2); margin-top: 5px; }
+
+  .dash-goal { background: var(--inner); border: 1px solid var(--border); border-radius: 14px; padding: 14px; margin-bottom: 10px; }
+  .dg-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 9px; }
+  .dg-name { font-size: 13px; font-weight: 600; }
+  .dg-pct { font-family: var(--ff-mono); font-size: 12px; font-weight: 700; color: var(--accent); }
+  .dg-bar { height: 8px; background: var(--prog-bg); border-radius: 100px; overflow: hidden; }
+  .dg-fill { height: 100%; border-radius: 100px; transition: width 0.8s ease; }
+  .dg-sub { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-2); margin-top: 7px; font-family: var(--ff-mono); }
+
+  /* ════════ STEP / WIZARD (Planner) ════════ */
+  .steps { display: flex; align-items: center; justify-content: center; gap: 0; margin-bottom: 24px; }
   .step-dot {
-    width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center;
-    justify-content: center; font-size: 11px; font-weight: 600;
+    width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center;
+    justify-content: center; font-size: 11px; font-weight: 700;
     font-family: var(--ff-mono); border: 1.5px solid var(--prog-bg);
-    background: var(--subtle); color: var(--text-3); flex-shrink: 0; transition: all 0.3s;
+    background: var(--card); color: var(--text-3); flex-shrink: 0; transition: all 0.3s;
   }
-  .step-dot.active { background: var(--accent); border-color: var(--accent); color: var(--bg); box-shadow: 0 0 0 4px rgba(59,130,246,0.15); }
-  .step-dot.done { background: var(--inner); border-color: var(--accent-bdr); color: var(--accent); }
-  .step-line { width: 36px; height: 1.5px; background: var(--prog-bg); transition: background 0.3s; }
+  .step-dot.active { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 0 0 4px var(--accent-dim); }
+  .step-dot.done { background: var(--accent-dim); border-color: var(--accent-bdr); color: var(--accent); }
+  .step-line { width: 30px; height: 2px; background: var(--prog-bg); transition: background 0.3s; }
   .step-line.done { background: var(--accent-bdr); }
 
-  /* ── Card ── */
-  .card {
-    background: var(--card); border: 1px solid var(--card-border);
-    border-radius: 18px; padding: 28px;
-    animation: fadeUp 0.35s ease;
-  }
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
-  @media (max-width: 380px) {
-    .container { padding: 28px 14px 60px; }
-    .card { padding: 20px; }
-  }
-  .card-title { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 4px; letter-spacing: -0.01em; }
-  .card-sub { font-size: 13px; color: var(--text-2); margin-bottom: 24px; line-height: 1.6; }
-
   /* ── Inputs ── */
-  .field-label {
-    display: block; font-size: 10px; font-weight: 600; color: var(--text-2);
-    letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 7px;
-  }
-  .input-wrap {
-    display: flex; align-items: center; background: var(--subtle);
-    border: 1.5px solid var(--prog-bg); border-radius: 11px; overflow: hidden;
-    transition: border-color 0.2s; margin-bottom: 6px;
-  }
+  .field-label { display: block; font-size: 10px; font-weight: 700; color: var(--text-2); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 7px; }
+  .input-wrap { display: flex; align-items: center; background: var(--inner); border: 1.5px solid var(--prog-bg); border-radius: 12px; overflow: hidden; transition: border-color 0.2s; margin-bottom: 6px; }
   .input-wrap:focus-within { border-color: var(--accent); }
-  .input-prefix {
-    padding: 0 14px; font-family: var(--ff-mono); font-size: 12px;
-    color: var(--accent); font-weight: 600; background: var(--accent-dim);
-    height: 48px; display: flex; align-items: center;
-    border-right: 1.5px solid var(--prog-bg);
-  }
-  .input-wrap input {
-    flex: 1; background: transparent; border: none; outline: none;
-    padding: 0 14px; height: 48px; font-family: var(--ff-mono);
-    font-size: 15px; color: var(--text); min-width: 0;
-  }
+  .input-prefix { padding: 0 14px; font-family: var(--ff-mono); font-size: 12px; color: var(--accent); font-weight: 700; height: 48px; display: flex; align-items: center; background: var(--accent-dim); border-right: 1.5px solid var(--accent-bdr); }
+  .input-wrap input { flex: 1; background: transparent; border: none; outline: none; padding: 0 14px; height: 48px; font-family: var(--ff-mono); font-size: 15px; color: var(--text); min-width: 0; }
   .input-wrap input::placeholder { color: var(--text-3); }
 
-  .income-preview {
-    text-align: center; background: var(--accent-dim);
-    border: 1px solid var(--accent-bdr); border-radius: 12px;
-    padding: 14px; margin: 10px 0 18px;
-  }
-  .income-big { font-family: var(--ff-mono); font-size: 28px; font-weight: 600; color: var(--accent); }
+  .income-preview { text-align: center; background: var(--accent-dim); border: 1px solid var(--accent-bdr); border-radius: 13px; padding: 14px; margin: 12px 0 18px; }
+  .income-big { font-family: var(--ff-mono); font-size: 28px; font-weight: 700; color: var(--accent); }
   .income-sub { font-size: 11px; color: var(--text-2); margin-top: 3px; }
 
   /* ── Formula ── */
   .formula-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
   @media (max-width: 480px) { .formula-grid { grid-template-columns: 1fr; } }
-  .f-card {
-    background: var(--subtle); border: 1.5px solid var(--prog-bg);
-    border-radius: 13px; padding: 14px 10px; cursor: pointer; transition: all 0.2s;
-  }
+  .f-card { background: var(--inner); border: 1.5px solid var(--prog-bg); border-radius: 14px; padding: 14px 10px; cursor: pointer; transition: all 0.2s; }
   .f-card:hover { border-color: var(--accent-bdr); }
   .f-card.sel { border-color: var(--accent); background: var(--accent-dim); }
   .f-name { font-family: var(--ff-mono); font-size: 13px; font-weight: 700; color: var(--accent); margin-bottom: 10px; text-align: center; }
@@ -151,220 +199,223 @@
   .f-val.w { color: var(--col-wants); }
   .f-val.s { color: var(--col-savings); }
 
-  /* Donut + legend */
-  .donut-row {
-    display: flex; align-items: center; gap: 16px;
-    background: var(--subtle); border-radius: 13px; padding: 16px; margin-bottom: 18px;
-  }
+  .donut-row { display: flex; align-items: center; gap: 16px; background: var(--inner); border-radius: 14px; padding: 16px; margin-bottom: 18px; }
   .donut-legend { flex: 1; }
   .leg-item { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 12px; }
-  .leg-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .leg-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
   .leg-lbl { color: var(--text-2); flex: 1; }
   .leg-val { font-family: var(--ff-mono); color: var(--text); font-size: 12px; }
 
-  /* Free mode */
   .free-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-  .free-box { background: var(--subtle); border: 1.5px solid var(--prog-bg); border-radius: 12px; padding: 12px; text-align: center; }
+  .free-box { background: var(--inner); border: 1.5px solid var(--prog-bg); border-radius: 13px; padding: 12px; text-align: center; }
   .free-box label { font-size: 10px; color: var(--text-2); display: block; margin-bottom: 6px; letter-spacing: 0.06em; text-transform: uppercase; }
-  .free-box input {
-    background: transparent; border: none; outline: none;
-    font-family: var(--ff-mono); font-size: 22px; font-weight: 700;
-    width: 60px; text-align: center; height: auto; padding: 0;
-  }
+  .free-box input { background: transparent; border: none; outline: none; font-family: var(--ff-mono); font-size: 22px; font-weight: 700; width: 60px; text-align: center; height: auto; padding: 0; }
   .free-box.n input { color: var(--col-needs); }
   .free-box.w input { color: var(--col-wants); }
   .free-box.s input { color: var(--col-savings); }
 
-  /* ── Commitments ── */
-  .empty-state {
-    text-align: center; padding: 28px 16px;
-    border: 1.5px dashed var(--prog-bg); border-radius: 13px; margin-bottom: 14px;
-  }
-  .empty-icon { font-size: 28px; color: var(--text-3); margin-bottom: 10px; }
+  /* ── Commitments / lists ── */
+  .empty-state { text-align: center; padding: 28px 16px; border: 1.5px dashed var(--prog-bg); border-radius: 14px; margin-bottom: 14px; }
+  .empty-icon { font-size: 28px; margin-bottom: 10px; }
   .empty-text { font-size: 13px; color: var(--text-2); line-height: 1.7; }
 
-  .commit-item {
-    display: flex; align-items: center; gap: 10px;
-    background: var(--subtle); border: 1px solid var(--inner);
-    border-radius: 10px; padding: 10px 14px; margin-bottom: 8px;
-  }
-  .ci-name { flex: 1; font-size: 13px; color: var(--text); }
-  .ci-amt { font-family: var(--ff-mono); font-size: 13px; color: var(--col-wants); }
-  .btn-x {
-    background: none; border: none; cursor: pointer;
-    color: var(--text-3); font-size: 18px; line-height: 1;
-    padding: 2px 4px; transition: color 0.2s; display: flex; align-items: center;
-  }
+  .commit-item { display: flex; align-items: center; gap: 10px; background: var(--inner); border: 1px solid var(--border); border-radius: 11px; padding: 10px 14px; margin-bottom: 8px; }
+  .ci-name { flex: 1; font-size: 13px; }
+  .ci-amt { font-family: var(--ff-mono); font-size: 13px; color: var(--col-wants); font-weight: 600; }
+  .btn-x { background: none; border: none; cursor: pointer; color: var(--text-3); font-size: 18px; line-height: 1; padding: 2px 4px; transition: color 0.2s; display: flex; align-items: center; }
   .btn-x:hover { color: var(--go-high); }
 
   .add-row { display: flex; flex-wrap: wrap; gap: 8px; }
-  .plain-input {
-    flex: 1 1 100%; min-width: 0;
-    height: 42px; background: var(--subtle); border: 1.5px solid var(--prog-bg);
-    border-radius: 10px; padding: 0 12px; font-size: 13px;
-    font-family: var(--ff-mono); color: var(--text); outline: none; transition: border-color 0.2s;
-  }
+  .plain-input { flex: 1 1 100%; min-width: 0; height: 44px; background: var(--inner); border: 1.5px solid var(--prog-bg); border-radius: 11px; padding: 0 12px; font-size: 13px; font-family: var(--ff-mono); color: var(--text); outline: none; transition: border-color 0.2s; }
   .plain-input:focus { border-color: var(--accent); }
-  .amt-wrap { flex: 1 1 120px; min-width: 0; display: flex; align-items: center; background: var(--subtle); border: 1.5px solid var(--prog-bg); border-radius: 10px; overflow: hidden; transition: border-color 0.2s; }
+  .amt-wrap { flex: 1 1 120px; min-width: 0; display: flex; align-items: center; background: var(--inner); border: 1.5px solid var(--prog-bg); border-radius: 11px; overflow: hidden; transition: border-color 0.2s; }
   .amt-wrap:focus-within { border-color: var(--accent); }
-  .amt-prefix { padding: 0 10px; font-family: var(--ff-mono); font-size: 12px; color: var(--accent); font-weight: 600; height: 42px; display: flex; align-items: center; background: var(--accent-dim); border-right: 1.5px solid var(--prog-bg); flex-shrink: 0; }
-  .amt-wrap input { flex: 1; min-width: 0; width: 0; background: transparent; border: none; outline: none; height: 42px; font-family: var(--ff-mono); font-size: 14px; color: var(--text); padding: 0 10px; }
-  .btn-add {
-    flex: 0 0 auto;
-    height: 42px; padding: 0 16px; background: var(--accent-dim);
-    border: 1.5px solid var(--accent-bdr); color: var(--accent);
-    border-radius: 10px; font-size: 13px; font-weight: 600;
-    cursor: pointer; white-space: nowrap; transition: all 0.2s;
-    font-family: var(--ff-sans);
-  }
-  .btn-add:hover { background: rgba(59,130,246,0.18); }
+  .amt-prefix { padding: 0 10px; font-family: var(--ff-mono); font-size: 12px; color: var(--accent); font-weight: 700; height: 44px; display: flex; align-items: center; background: var(--accent-dim); border-right: 1.5px solid var(--accent-bdr); flex-shrink: 0; }
+  .amt-wrap input { flex: 1; min-width: 0; width: 0; background: transparent; border: none; outline: none; height: 44px; font-family: var(--ff-mono); font-size: 14px; color: var(--text); padding: 0 10px; }
+  .btn-add { flex: 0 0 auto; height: 44px; padding: 0 16px; background: var(--accent); border: none; color: #fff; border-radius: 11px; font-size: 13px; font-weight: 700; cursor: pointer; white-space: nowrap; transition: all 0.2s; font-family: var(--ff-sans); }
+  .btn-add:hover { background: var(--accent-2); }
 
-  .total-row {
-    display: flex; justify-content: space-between; align-items: center;
-    background: var(--accent-dim); border: 1px solid var(--accent-bdr);
-    border-radius: 10px; padding: 10px 14px; margin-top: 10px; font-size: 13px;
-    color: var(--text-2);
-  }
-  .total-row b { font-family: var(--ff-mono); color: var(--col-wants); font-weight: 600; }
+  .total-row { display: flex; justify-content: space-between; align-items: center; background: var(--accent-dim); border: 1px solid var(--accent-bdr); border-radius: 11px; padding: 10px 14px; margin-top: 10px; font-size: 13px; color: var(--text-2); }
+  .total-row b { font-family: var(--ff-mono); color: var(--col-wants); font-weight: 700; }
 
-  .skip-btn {
-    width: 100%; padding: 10px; background: none;
-    border: 1.5px solid var(--inner); border-radius: 10px;
-    color: var(--text-2); font-size: 13px; cursor: pointer; margin-top: 10px;
-    font-family: var(--ff-sans); transition: all 0.2s;
-  }
+  .skip-btn { width: 100%; padding: 11px; background: none; border: 1.5px solid var(--border); border-radius: 11px; color: var(--text-2); font-size: 13px; cursor: pointer; margin-top: 10px; font-family: var(--ff-sans); transition: all 0.2s; }
   .skip-btn:hover { border-color: var(--accent-bdr); color: var(--accent); }
 
-  /* ── Goals ── */
-  .goal-form {
-    background: var(--subtle); border: 1.5px dashed var(--prog-bg);
-    border-radius: 14px; padding: 20px; margin-bottom: 16px;
-  }
-  .form-label { font-size: 10px; font-weight: 600; color: var(--text-2); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 7px; display: block; margin-top: 14px; }
+  /* ── Goals form ── */
+  .goal-form { background: var(--inner); border: 1.5px dashed var(--prog-bg); border-radius: 16px; padding: 20px; margin-bottom: 16px; }
+  .form-label { font-size: 10px; font-weight: 700; color: var(--text-2); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 7px; display: block; margin-top: 14px; }
   .form-label:first-of-type { margin-top: 0; }
-  .goal-input {
-    width: 100%; height: 42px; background: var(--inner);
-    border: 1.5px solid var(--prog-bg); border-radius: 10px;
-    padding: 0 12px; font-size: 13px; font-family: var(--ff-mono);
-    color: var(--text); outline: none; transition: border-color 0.2s;
-  }
+  .goal-input { width: 100%; height: 44px; background: var(--card); border: 1.5px solid var(--prog-bg); border-radius: 11px; padding: 0 12px; font-size: 13px; font-family: var(--ff-mono); color: var(--text); outline: none; transition: border-color 0.2s; }
   .goal-input:focus { border-color: var(--accent); }
-  .goal-amt-wrap { display: flex; align-items: center; background: var(--inner); border: 1.5px solid var(--prog-bg); border-radius: 10px; overflow: hidden; transition: border-color 0.2s; }
+  .goal-amt-wrap { display: flex; align-items: center; background: var(--card); border: 1.5px solid var(--prog-bg); border-radius: 11px; overflow: hidden; transition: border-color 0.2s; }
   .goal-amt-wrap:focus-within { border-color: var(--accent); }
-  .goal-amt-wrap .prefix { padding: 0 10px; font-family: var(--ff-mono); font-size: 12px; color: var(--accent); font-weight: 600; height: 42px; display: flex; align-items: center; background: var(--accent-dim); border-right: 1.5px solid var(--prog-bg); }
-  .goal-amt-wrap input { flex: 1; background: transparent; border: none; outline: none; height: 42px; font-family: var(--ff-mono); font-size: 14px; color: var(--text); padding: 0 12px; }
+  .goal-amt-wrap .prefix { padding: 0 10px; font-family: var(--ff-mono); font-size: 12px; color: var(--accent); font-weight: 700; height: 44px; display: flex; align-items: center; background: var(--accent-dim); border-right: 1.5px solid var(--accent-bdr); }
+  .goal-amt-wrap input { flex: 1; background: transparent; border: none; outline: none; height: 44px; font-family: var(--ff-mono); font-size: 14px; color: var(--text); padding: 0 12px; }
 
   .p-row { display: flex; gap: 6px; }
-  .p-btn { flex: 1; padding: 9px 0; border-radius: 9px; border: 1.5px solid var(--prog-bg); font-size: 11px; font-weight: 600; cursor: pointer; background: var(--inner); color: var(--text-2); transition: all 0.15s; font-family: var(--ff-sans); }
-  .p-btn.high.sel { background: rgba(244,114,182,0.10); color: var(--go-high); border-color: rgba(244,114,182,0.35); }
-  .p-btn.medium.sel { background: rgba(251,191,36,0.10); color: var(--go-med); border-color: rgba(251,191,36,0.35); }
-  .p-btn.low.sel { background: rgba(129,140,248,0.10); color: var(--go-low); border-color: rgba(129,140,248,0.35); }
+  .p-btn { flex: 1; padding: 10px 0; border-radius: 10px; border: 1.5px solid var(--prog-bg); font-size: 11px; font-weight: 700; cursor: pointer; background: var(--card); color: var(--text-2); transition: all 0.15s; font-family: var(--ff-sans); }
+  .p-btn.high.sel { background: var(--coral-soft); color: var(--go-high); border-color: var(--go-high); }
+  .p-btn.medium.sel { background: var(--wants-soft); color: var(--go-med); border-color: var(--go-med); }
+  .p-btn.low.sel { background: var(--needs-soft); color: var(--go-low); border-color: var(--go-low); }
 
   .t-row { display: flex; gap: 6px; }
-  .t-btn { flex: 1; padding: 9px; border-radius: 9px; border: 1.5px solid var(--prog-bg); background: var(--inner); color: var(--text-2); font-size: 11px; font-weight: 600; cursor: pointer; font-family: var(--ff-sans); transition: all 0.15s; }
+  .t-btn { flex: 1; padding: 10px; border-radius: 10px; border: 1.5px solid var(--prog-bg); background: var(--card); color: var(--text-2); font-size: 11px; font-weight: 700; cursor: pointer; font-family: var(--ff-sans); transition: all 0.15s; }
   .t-btn.sel { background: var(--accent-dim); color: var(--accent); border-color: var(--accent-bdr); }
 
-  .auto-note {
-    font-size: 11px; color: var(--text-2); margin-top: 10px; line-height: 1.65;
-    background: var(--inner); border-radius: 9px; padding: 9px 11px;
-    border-left: 3px solid var(--accent-bdr);
-  }
+  .auto-note { font-size: 11px; color: var(--text-2); margin-top: 10px; line-height: 1.65; background: var(--card); border-radius: 10px; padding: 10px 12px; border-left: 3px solid var(--accent-bdr); }
   .month-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
   .month-row input { flex: 1; }
   .month-sfx { font-size: 12px; color: var(--text-2); white-space: nowrap; }
 
-  .goal-card { background: var(--subtle); border: 1px solid var(--inner); border-radius: 13px; padding: 15px; margin-bottom: 10px; position: relative; overflow: hidden; }
-  .goal-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; border-radius: 0; }
+  .goal-card { background: var(--inner); border: 1px solid var(--border); border-radius: 14px; padding: 15px; margin-bottom: 10px; position: relative; overflow: hidden; }
+  .goal-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; }
   .goal-card.high::before { background: var(--go-high); }
   .goal-card.medium::before { background: var(--go-med); }
   .goal-card.low::before { background: var(--go-low); }
   .gc-header { display: flex; align-items: flex-start; gap: 8px; padding-left: 12px; margin-bottom: 6px; }
-  .gc-name { font-size: 13px; font-weight: 600; color: var(--text); flex: 1; }
+  .gc-name { font-size: 13px; font-weight: 600; flex: 1; }
   .gc-target { font-size: 11px; color: var(--text-2); font-family: var(--ff-mono); padding-left: 12px; }
-  .p-badge { font-size: 10px; font-weight: 600; padding: 3px 10px; border-radius: 100px; letter-spacing: 0.05em; flex-shrink: 0; }
-  .p-badge.high { background: rgba(244,114,182,0.12); color: var(--go-high); }
-  .p-badge.medium { background: rgba(251,191,36,0.12); color: var(--go-med); }
-  .p-badge.low { background: rgba(129,140,248,0.12); color: var(--go-low); }
+  .p-badge { font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 100px; letter-spacing: 0.04em; flex-shrink: 0; text-transform: capitalize; }
+  .p-badge.high { background: var(--coral-soft); color: var(--go-high); }
+  .p-badge.medium { background: var(--wants-soft); color: var(--go-med); }
+  .p-badge.low { background: var(--needs-soft); color: var(--go-low); }
 
   /* ── Buttons ── */
-  .btn-primary {
-    width: 100%; padding: 14px; background: var(--accent); color: var(--bg);
-    border: none; border-radius: 12px; font-family: var(--ff-sans);
-    font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; margin-top: 20px;
-  }
-  .btn-primary:hover { background: #7ab8fb; }
-  .btn-primary:disabled { opacity: 0.35; cursor: not-allowed; }
-  .btn-secondary {
-    background: none; border: 1.5px solid var(--prog-bg); color: var(--text-2);
-    border-radius: 12px; padding: 12px 20px; font-family: var(--ff-sans);
-    font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-top: 12px;
-  }
+  .btn-primary { width: 100%; padding: 14px; background: var(--accent); color: #fff; border: none; border-radius: 13px; font-family: var(--ff-sans); font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s; margin-top: 20px; box-shadow: 0 4px 14px rgba(16,168,122,0.25); }
+  .btn-primary:hover { background: var(--accent-2); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
+  .btn-secondary { background: var(--card); border: 1.5px solid var(--border); color: var(--text-2); border-radius: 13px; padding: 12px 20px; font-family: var(--ff-sans); font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; margin-top: 12px; }
   .btn-secondary:hover { border-color: var(--accent-bdr); color: var(--accent); }
   .nav-row { display: flex; gap: 10px; margin-top: 20px; }
   .nav-row .btn-secondary { flex: 1; margin-top: 0; }
   .nav-row .btn-primary { flex: 2; margin-top: 0; }
-  .add-goal-btn {
-    width: 100%; padding: 11px; margin-top: 14px;
-    background: var(--accent-dim); border: 1.5px solid var(--accent-bdr);
-    color: var(--accent); border-radius: 10px; font-size: 13px; font-weight: 600;
-    cursor: pointer; transition: all 0.2s; font-family: var(--ff-sans);
-  }
-  .add-goal-btn:hover { background: rgba(59,130,246,0.18); }
+  .add-goal-btn { width: 100%; padding: 12px; margin-top: 14px; background: var(--accent-dim); border: 1.5px solid var(--accent-bdr); color: var(--accent); border-radius: 11px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; font-family: var(--ff-sans); }
+  .add-goal-btn:hover { background: #d4f0e5; }
 
   /* ── Results ── */
   .results-hero { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
-  .hero-stat { background: var(--subtle); border-radius: 12px; padding: 14px 10px; text-align: center; }
-  .hs-val { font-family: var(--ff-mono); font-size: 16px; font-weight: 600; color: var(--accent); margin-bottom: 5px; }
+  .hero-stat { background: var(--inner); border-radius: 13px; padding: 14px 10px; text-align: center; }
+  .hs-val { font-family: var(--ff-mono); font-size: 16px; font-weight: 700; color: var(--accent); margin-bottom: 5px; }
   .hs-lbl { font-size: 9px; color: var(--text-2); letter-spacing: 0.08em; text-transform: uppercase; }
 
-  .budget-table { background: var(--subtle); border-radius: 13px; padding: 14px 16px; margin-bottom: 18px; }
-  .budget-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--inner); }
+  .budget-table { background: var(--inner); border-radius: 14px; padding: 14px 16px; margin-bottom: 18px; }
+  .budget-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); }
   .budget-row:last-child { border-bottom: none; }
   .br-label { font-size: 12px; color: var(--text-2); }
   .br-val { font-family: var(--ff-mono); font-size: 12px; color: var(--text); }
-  .br-val.accent { color: var(--accent); }
+  .br-val.accent { color: var(--accent); font-weight: 700; }
   .br-val.warn { color: var(--col-wants); }
 
-  .section-hd { font-size: 13px; font-weight: 600; color: var(--text); margin: 20px 0 12px; }
+  .section-hd { font-size: 13px; font-weight: 700; margin: 20px 0 12px; }
 
-  
-  .goal-result-card { background: var(--subtle); border: 1px solid var(--inner); border-radius: 14px; padding: 16px; margin-bottom: 10px; position: relative; overflow: hidden; }
-  .goal-result-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; border-radius: 0; }
+  .goal-result-card { background: var(--inner); border: 1px solid var(--border); border-radius: 15px; padding: 16px; margin-bottom: 10px; position: relative; overflow: hidden; }
+  .goal-result-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; }
   .goal-result-card.high::before { background: var(--go-high); }
   .goal-result-card.medium::before { background: var(--go-med); }
   .goal-result-card.low::before { background: var(--go-low); }
   .grc-header { display: flex; justify-content: space-between; align-items: flex-start; padding-left: 12px; margin-bottom: 12px; }
-  .grc-name { font-size: 14px; font-weight: 600; color: var(--text); }
+  .grc-name { font-size: 14px; font-weight: 600; }
   .grc-target { font-size: 11px; color: var(--text-2); font-family: var(--ff-mono); margin-top: 2px; }
   .delayed-note { font-size: 11px; color: var(--text-2); padding: 0 0 8px 12px; line-height: 1.5; }
 
   .phase-wrap { margin: 0 12px 6px; }
   .phase-label-row { display: flex; justify-content: space-between; font-size: 9px; color: var(--text-3); margin-bottom: 5px; }
-  .phase-bar { height: 6px; background: var(--inner); border-radius: 100px; overflow: hidden; display: flex; }
+  .phase-bar { height: 7px; background: var(--prog-bg); border-radius: 100px; overflow: hidden; display: flex; }
   .phase-wait { height: 100%; background: var(--prog-bg); }
   .phase-save { height: 100%; border-radius: 0 100px 100px 0; transition: width 0.8s ease; }
 
   .goal-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 10px 12px 0; }
-  .stat-box { background: var(--inner); border-radius: 9px; padding: 9px 11px; }
+  .stat-box { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 9px 11px; }
   .stat-lbl { font-size: 9px; color: var(--text-2); letter-spacing: 0.07em; text-transform: uppercase; margin-bottom: 4px; }
   .stat-val { font-family: var(--ff-mono); font-size: 13px; color: var(--text); }
   .stat-box.highlight { grid-column: 1 / -1; background: var(--accent-dim); border: 1px solid var(--accent-bdr); }
-  .stat-box.highlight .stat-val { color: var(--accent); font-size: 15px; }
+  .stat-box.highlight .stat-val { color: var(--accent); font-size: 15px; font-weight: 700; }
 
-  .warn-box { background: var(--warn); border: 1px solid var(--warn-bdr); border-radius: 10px; padding: 12px 14px; font-size: 12px; color: var(--warn-text); line-height: 1.6; margin-top: 14px; }
+  .warn-box { background: var(--warn); border: 1px solid var(--warn-bdr); border-radius: 11px; padding: 12px 14px; font-size: 12px; color: var(--warn-text); line-height: 1.6; margin-top: 14px; }
+
+  /* ════════ TRACKER ════════ */
+  .seg-row { display: flex; gap: 6px; background: var(--inner); padding: 5px; border-radius: 13px; margin-bottom: 18px; }
+  .seg-btn { flex: 1; padding: 9px; border: none; background: transparent; border-radius: 9px; font-size: 12px; font-weight: 700; color: var(--text-2); cursor: pointer; font-family: var(--ff-sans); transition: all 0.18s; }
+  .seg-btn.sel { background: var(--card); color: var(--accent); box-shadow: var(--shadow-sm); }
+
+  .log-suggest { font-size: 12px; color: var(--text-2); margin-bottom: 14px; text-align: center; }
+  .log-suggest b { color: var(--accent); font-family: var(--ff-mono); }
+
+  .log-item { display: flex; align-items: center; gap: 12px; background: var(--inner); border: 1px solid var(--border); border-radius: 13px; padding: 12px 14px; margin-bottom: 9px; }
+  .log-emoji { width: 38px; height: 38px; border-radius: 11px; background: var(--accent-dim); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .log-mid { flex: 1; min-width: 0; }
+  .log-amt { font-family: var(--ff-mono); font-size: 15px; font-weight: 700; color: var(--accent); }
+  .log-meta { font-size: 11px; color: var(--text-2); margin-top: 2px; }
+  .log-period { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; padding: 3px 8px; border-radius: 100px; background: var(--needs-soft); color: var(--col-needs); }
+
+  .streak-banner { display: flex; align-items: center; gap: 14px; background: linear-gradient(135deg, #ff8a4c, #f0a020); color: #fff; border-radius: 18px; padding: 18px; margin-bottom: 14px; box-shadow: 0 8px 24px rgba(240,160,32,0.28); }
+  .streak-flame { font-size: 34px; line-height: 1; }
+  .streak-num { font-family: var(--ff-mono); font-size: 28px; font-weight: 700; line-height: 1; }
+  .streak-lbl { font-size: 12px; opacity: 0.95; margin-top: 3px; }
+
+  /* ════════ BADGES ════════ */
+  .badge-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .badge { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 18px 14px; text-align: center; box-shadow: var(--shadow-sm); transition: transform 0.2s; position: relative; overflow: hidden; }
+  .badge.locked { opacity: 0.55; filter: grayscale(0.8); }
+  .badge.unlocked { border-color: var(--accent-bdr); }
+  .badge-ico { font-size: 36px; line-height: 1; margin-bottom: 10px; }
+  .badge-name { font-size: 13px; font-weight: 700; }
+  .badge-desc { font-size: 11px; color: var(--text-2); margin-top: 4px; line-height: 1.5; }
+  .badge-tag { display: inline-block; margin-top: 10px; font-size: 9px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 4px 10px; border-radius: 100px; }
+  .badge.unlocked .badge-tag { background: var(--accent-dim); color: var(--accent); }
+  .badge.locked .badge-tag { background: var(--inner); color: var(--text-3); }
+
+  .badge-progress { display: flex; align-items: center; gap: 12px; background: var(--accent-dim); border: 1px solid var(--accent-bdr); border-radius: 16px; padding: 16px; margin-bottom: 16px; }
+  .bp-ring { flex-shrink: 0; }
+  .bp-info b { font-size: 18px; font-weight: 800; }
+  .bp-info p { font-size: 12px; color: var(--text-2); margin-top: 2px; }
+
+  /* ════════ PROFILE ════════ */
+  .profile-head { text-align: center; padding: 8px 0 4px; }
+  .avatar { width: 76px; height: 76px; border-radius: 24px; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 30px; font-weight: 800; margin: 0 auto 14px; box-shadow: 0 8px 22px rgba(16,168,122,0.3); }
+  .profile-name { font-size: 20px; font-weight: 800; }
+  .profile-sub { font-size: 13px; color: var(--text-2); margin-top: 3px; }
+  .prof-stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 18px; }
+  .prof-stat { background: var(--inner); border-radius: 14px; padding: 14px 8px; text-align: center; }
+  .prof-stat .v { font-family: var(--ff-mono); font-size: 18px; font-weight: 700; color: var(--accent); }
+  .prof-stat .l { font-size: 9px; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px; }
+  .list-row { display: flex; align-items: center; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .list-row:last-child { border-bottom: none; }
+  .lr-ico { width: 36px; height: 36px; border-radius: 10px; background: var(--inner); display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--text-2); }
+  .lr-mid { flex: 1; }
+  .lr-title { font-size: 14px; font-weight: 600; }
+  .lr-sub { font-size: 12px; color: var(--text-2); margin-top: 1px; }
+  .btn-danger { width: 100%; padding: 13px; background: var(--coral-soft); color: var(--go-high); border: 1px solid #f6cfcb; border-radius: 13px; font-family: var(--ff-sans); font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; margin-top: 14px; }
+  .btn-danger:hover { background: #ffd9d4; }
+
+  /* ════════ BOTTOM NAV ════════ */
+  .bottom-nav {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 50;
+    background: rgba(255,255,255,0.92); backdrop-filter: blur(14px);
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: space-around; align-items: stretch;
+    padding: 8px 4px calc(8px + env(safe-area-inset-bottom));
+    box-shadow: 0 -4px 20px rgba(120,90,50,0.06);
+  }
+  .nav-btn { flex: 1; background: none; border: none; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px 0; color: var(--text-3); transition: color 0.2s; font-family: var(--ff-sans); }
+  .nav-btn svg { width: 23px; height: 23px; stroke-width: 2; }
+  .nav-btn span { font-size: 10px; font-weight: 700; letter-spacing: 0.02em; }
+  .nav-btn.active { color: var(--accent); }
+  .nav-btn.active .nav-ico { background: var(--accent-dim); }
+  .nav-ico { width: 46px; height: 30px; border-radius: 100px; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
 
   /* ── Toast ── */
-  .toast {
-    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(10px);
-    background: rgba(13,26,48,0.95); border: 1px solid var(--accent-bdr);
-    border-radius: 100px; padding: 9px 20px; font-size: 12px; color: var(--accent);
-    opacity: 0; transition: all 0.3s; pointer-events: none; white-space: nowrap; z-index: 100;
-  }
+  .toast { position: fixed; bottom: calc(86px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%) translateY(10px); background: var(--text); color: #fff; border-radius: 100px; padding: 10px 20px; font-size: 12px; font-weight: 600; opacity: 0; transition: all 0.3s; pointer-events: none; white-space: nowrap; z-index: 100; box-shadow: var(--shadow); }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
   /* ── Utility ── */
   .hidden { display: none !important; }
   .mg-top { margin-top: 14px; }
+  .empty-block { text-align: center; padding: 40px 20px; }
+  .empty-block .ico { font-size: 44px; margin-bottom: 14px; }
+  .empty-block .t { font-size: 15px; font-weight: 700; }
+  .empty-block .s { font-size: 13px; color: var(--text-2); margin-top: 6px; line-height: 1.6; }
+  .empty-block .btn-primary { max-width: 240px; margin-left: auto; margin-right: auto; }
 </style>
 </head>
 <body>
@@ -373,167 +424,373 @@
 
 <div class="container">
 
-  <div class="app-header">
-    <div class="logo-chip">💧 Achieva </div>
-    <h1>Plan Smart, <span>Save More!</span></h1>
-    <p>Kira savings kau, set goals, and achieve it — step by step.</p>
+  <!-- ══════════ TOP BAR ══════════ -->
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark">A</div>
+      <div class="brand-name">Achie<span>va</span></div>
+    </div>
+    <div class="topbar-pill" id="topPill">🔥 0 hari</div>
   </div>
 
-  <div class="steps" id="stepsBar"></div>
+  <!-- ══════════ DASHBOARD ══════════ -->
+  <section class="view active" id="view-dashboard">
+    <div class="view-head">
+      <h2 id="greetName">Hai, Saver! 👋</h2>
+      <p>Ni summary savings kau hari ni.</p>
+    </div>
 
-  <!-- Step 1: Income -->
-  <div class="card" id="step1">
-    <div class="card-title">Berapa income bulanan?</div>
-    <div class="card-sub">Gaji bersih selepas EPF &amp; cukai — bukan gross.</div>
-    <label class="field-label">Monthly take-home pay</label>
-    <div class="input-wrap">
-      <div class="input-prefix">RM</div>
-      <input type="number" id="incomeInput" placeholder="cth: 3500" inputmode="decimal" autocomplete="off" oninput="onIncomeType()" />
-    </div>
-    <div class="income-preview hidden" id="incomePreview">
-      <div class="income-big" id="incomePreviewAmt"></div>
-      <div class="income-sub">sebulan</div>
-    </div>
-    <button class="btn-primary" onclick="goStep(2)">Seterusnya →</button>
-  </div>
-
-  <!-- Step 2: Formula -->
-  <div class="card hidden" id="step2">
-    <div class="card-title">Pilih formula simpanan - you are free to choose</div>
-    <div class="card-sub">Setiap kad dah tunjuk breakdown berdasarkan income kau.</div>
-    <div class="formula-grid" id="formulaGrid"></div>
-    <div class="donut-row" id="donutRow">
-      <svg width="80" height="80" viewBox="0 0 80 80" id="donutSvg"></svg>
-      <div class="donut-legend" id="donutLegend"></div>
-    </div>
-    <div id="freeModeWrap" class="hidden">
-      <div class="free-grid">
-        <div class="free-box n"><label>Keperluan %</label><input type="number" id="freeN" value="50" min="0" max="100" oninput="onFreeChange()" /></div>
-        <div class="free-box w"><label>Kehendak %</label><input type="number" id="freeW" value="30" min="0" max="100" oninput="onFreeChange()" /></div>
-        <div class="free-box s"><label>Simpanan %</label><input type="number" id="freeS" value="20" min="0" max="100" oninput="onFreeChange()" /></div>
-      </div>
-      <div class="warn-box hidden mg-top" id="freeTotalWarn"></div>
-    </div>
-    <div class="nav-row">
-      <button class="btn-secondary" onclick="goStep(1)">← Balik</button>
-      <button class="btn-primary" id="step2Next" onclick="goStep(3)">Seterusnya →</button>
-    </div>
-  </div>
-
-  <!-- Step 3: Commitments -->
-  <div class="card hidden" id="step3">
-    <div class="card-title">Komitmen bulanan</div>
-    <div class="card-sub">Sewa, ansuran kereta, loan, subscription — semua yang keluar tiap bulan. Boleh skip kalau takde.</div>
-    <div id="commitList"></div>
-    <div class="add-row">
-      <input class="plain-input" type="text" id="cName" placeholder="cth: Sewa rumah" autocomplete="off" autocorrect="off" onkeydown="if(event.key==='Enter')addCommit()" />
-      <div class="amt-wrap">
-        <div class="amt-prefix">RM</div>
-        <input type="number" id="cAmt" placeholder="500" onkeydown="if(event.key==='Enter')addCommit()" />
-      </div>
-      <button class="btn-add" onclick="addCommit()">+ Tambah</button>
-    </div>
-    <div class="total-row hidden" id="commitTotalRow">
-      Jumlah komitmen: <b id="commitTotalAmt"></b>
-    </div>
-    <div class="warn-box hidden mg-top" id="commitWarn"></div>
-    <button class="skip-btn" onclick="goStep(4)">Tiada komitmen — terus ke step seterusnya →</button>
-    <div class="nav-row">
-      <button class="btn-secondary" onclick="goStep(2)">← Balik</button>
-      <button class="btn-primary" onclick="goStep(4)">Seterusnya →</button>
-    </div>
-  </div>
-
-  <!-- Step 4: Goals -->
-  <div class="card hidden" id="step4">
-    <div class="card-title">Goals kau apa, what u want to achieve?</div>
-    <div class="card-sub">Rumah, kereta, travel, emergency fund — masukkan semua goal kau.</div>
-    <div id="goalList"></div>
-    <div class="goal-form">
-      <div style="font-size:11px;font-weight:700;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:16px;">Tambah goal baru</div>
-      <label class="form-label">Nama goal</label>
-      <input class="goal-input" type="text" id="gName" placeholder="cth: Emergency Fund" autocomplete="off" autocorrect="off" />
-      <label class="form-label">Target amount</label>
-      <div class="goal-amt-wrap">
-        <div class="prefix">RM</div>
-        <input type="number" id="gTarget" placeholder="10000" />
-      </div>
-      <label class="form-label">Priority</label>
-      <div class="p-row" id="pRow">
-        <button class="p-btn high" onclick="setPrio('high')">🔴 Tinggi</button>
-        <button class="p-btn medium sel" onclick="setPrio('medium')">🟡 Sederhana</button>
-        <button class="p-btn low" onclick="setPrio('low')">🔵 Rendah</button>
-      </div>
-      <label class="form-label">Timeline</label>
-      <div class="t-row" id="tRow">
-        <button class="t-btn sel" onclick="setTL('auto')">🤖 Auto-kira</button>
-        <button class="t-btn" onclick="setTL('manual')">📅 tetapkan sendiri </button>
-      </div>
-      <div class="auto-note" id="autoNote">
-        Semua savings (<b id="autoNoteAmt" style="color:var(--accent);font-family:var(--ff-mono)">-</b>/bln) akan ditumpu sepenuhnya ke goal ini dulu sebelum beralih ke goal seterusnya.
-      </div>
-      <div class="hidden month-row" id="manualRow">
-        <div class="goal-amt-wrap" style="flex:1">
-          <div class="prefix">Bln</div>
-          <input type="number" id="gMonths" placeholder="12" inputmode="numeric" />
+    <div class="hero-card">
+      <div class="hero-top">
+        <div class="hero-ring">
+          <svg width="78" height="78" viewBox="0 0 78 78" id="dashRing"></svg>
         </div>
-        <span class="month-sfx">bulan untuk capai</span>
+        <div class="hero-info">
+          <div class="hero-label">Simpanan Bulanan</div>
+          <div class="hero-amt" id="dashSavAmt">RM 0</div>
+          <div class="hero-note" id="dashSavNote">Set income kau dulu dalam Planner</div>
+        </div>
       </div>
-      <button class="add-goal-btn" onclick="addGoal()">+ Tambah Goal</button>
+      <div class="hero-grid">
+        <div class="hero-box"><div class="hb-lbl">Keperluan</div><div class="hb-val" id="dashNeeds">RM 0</div></div>
+        <div class="hero-box"><div class="hb-lbl">Kehendak</div><div class="hb-val" id="dashWants">RM 0</div></div>
+        <div class="hero-box"><div class="hb-lbl">Simpanan</div><div class="hb-val" id="dashSav">RM 0</div></div>
+      </div>
     </div>
-    <div class="nav-row">
-      <button class="btn-secondary" onclick="goStep(3)">← Balik</button>
-      <button class="btn-primary" onclick="calcResults()">Kira Sekarang ✨</button>
-    </div>
-  </div>
 
-  <!-- Step 5: Results -->
-  <div class="card hidden" id="step5">
-    <div class="card-title">Breakdown Savings Kau 🏆</div>
-    <div class="card-sub">Semua dah dikira — termasuk tarikh sebenar bila goal akan tercapai.</div>
-    <div id="resultsContent"></div>
-    <div class="nav-row" style="margin-top:20px">
-      <button class="btn-secondary" onclick="restart()">🔄 Restart</button>
-      <button class="btn-primary" onclick="goStep(4)">✏️ Edit Goals</button>
+    <div class="stat-grid">
+      <div class="mini-stat">
+        <div class="ms-icon" style="background:var(--coral-soft)">🎯</div>
+        <div class="ms-val" id="dashGoals">0</div>
+        <div class="ms-lbl">goals aktif</div>
+      </div>
+      <div class="mini-stat">
+        <div class="ms-icon" style="background:var(--wants-soft)">🔥</div>
+        <div class="ms-val" id="dashStreak">0 <span style="font-size:13px;color:var(--text-2)">hari</span></div>
+        <div class="ms-lbl">streak logging</div>
+      </div>
+      <div class="mini-stat">
+        <div class="ms-icon" style="background:var(--accent-dim)">📈</div>
+        <div class="ms-val" id="dashTotal" style="font-size:18px">RM 0</div>
+        <div class="ms-lbl">total disimpan</div>
+      </div>
+      <div class="mini-stat">
+        <div class="ms-icon" style="background:var(--needs-soft)">🏅</div>
+        <div class="ms-val" id="dashBadges">0</div>
+        <div class="ms-lbl">badge diperoleh</div>
+      </div>
     </div>
-  </div>
+
+    <div class="card" style="margin-top:14px">
+      <div class="card-title">Progress Goals</div>
+      <div class="card-sub">Berdasarkan jumlah yang kau dah log dalam Tracker.</div>
+      <div id="dashGoalList"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ PLANNER ══════════ -->
+  <section class="view" id="view-planner">
+    <div class="view-head">
+      <h2>Planner</h2>
+      <p>Kira savings kau, set goals & achieve it.</p>
+    </div>
+
+    <div class="steps" id="stepsBar"></div>
+
+    <!-- Step 1: Income -->
+    <div class="card" id="step1">
+      <div class="card-title">Berapa income bulanan?</div>
+      <div class="card-sub">Gaji bersih selepas EPF &amp; cukai — bukan gross.</div>
+      <label class="field-label">Monthly take-home pay</label>
+      <div class="input-wrap">
+        <div class="input-prefix">RM</div>
+        <input type="number" id="incomeInput" placeholder="cth: 3500" inputmode="decimal" autocomplete="off" oninput="onIncomeType()" />
+      </div>
+      <div class="income-preview hidden" id="incomePreview">
+        <div class="income-big" id="incomePreviewAmt"></div>
+        <div class="income-sub">sebulan</div>
+      </div>
+      <button class="btn-primary" onclick="goStep(2)">Seterusnya →</button>
+    </div>
+
+    <!-- Step 2: Formula -->
+    <div class="card hidden" id="step2">
+      <div class="card-title">Pilih formula simpanan</div>
+      <div class="card-sub">Setiap kad dah tunjuk breakdown berdasarkan income kau.</div>
+      <div class="formula-grid" id="formulaGrid"></div>
+      <div class="donut-row" id="donutRow">
+        <svg width="80" height="80" viewBox="0 0 80 80" id="donutSvg"></svg>
+        <div class="donut-legend" id="donutLegend"></div>
+      </div>
+      <div id="freeModeWrap" class="hidden">
+        <div class="free-grid">
+          <div class="free-box n"><label>Keperluan %</label><input type="number" id="freeN" value="50" min="0" max="100" oninput="onFreeChange()" /></div>
+          <div class="free-box w"><label>Kehendak %</label><input type="number" id="freeW" value="30" min="0" max="100" oninput="onFreeChange()" /></div>
+          <div class="free-box s"><label>Simpanan %</label><input type="number" id="freeS" value="20" min="0" max="100" oninput="onFreeChange()" /></div>
+        </div>
+        <div class="warn-box hidden mg-top" id="freeTotalWarn"></div>
+      </div>
+      <div class="nav-row">
+        <button class="btn-secondary" onclick="goStep(1)">← Balik</button>
+        <button class="btn-primary" id="step2Next" onclick="goStep(3)">Seterusnya →</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Commitments -->
+    <div class="card hidden" id="step3">
+      <div class="card-title">Komitmen bulanan</div>
+      <div class="card-sub">Sewa, ansuran kereta, loan, subscription — semua yang keluar tiap bulan. Boleh skip kalau takde.</div>
+      <div id="commitList"></div>
+      <div class="add-row">
+        <input class="plain-input" type="text" id="cName" placeholder="cth: Sewa rumah" autocomplete="off" autocorrect="off" onkeydown="if(event.key==='Enter')addCommit()" />
+        <div class="amt-wrap">
+          <div class="amt-prefix">RM</div>
+          <input type="number" id="cAmt" placeholder="500" onkeydown="if(event.key==='Enter')addCommit()" />
+        </div>
+        <button class="btn-add" onclick="addCommit()">+ Tambah</button>
+      </div>
+      <div class="total-row hidden" id="commitTotalRow">
+        Jumlah komitmen: <b id="commitTotalAmt"></b>
+      </div>
+      <div class="warn-box hidden mg-top" id="commitWarn"></div>
+      <button class="skip-btn" onclick="goStep(4)">Tiada komitmen — terus ke step seterusnya →</button>
+      <div class="nav-row">
+        <button class="btn-secondary" onclick="goStep(2)">← Balik</button>
+        <button class="btn-primary" onclick="goStep(4)">Seterusnya →</button>
+      </div>
+    </div>
+
+    <!-- Step 4: Goals -->
+    <div class="card hidden" id="step4">
+      <div class="card-title">Goals kau apa?</div>
+      <div class="card-sub">Rumah, kereta, travel, emergency fund — masukkan semua goal kau.</div>
+      <div id="goalList"></div>
+      <div class="goal-form">
+        <div style="font-size:11px;font-weight:700;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:16px;">Tambah goal baru</div>
+        <label class="form-label">Nama goal</label>
+        <input class="goal-input" type="text" id="gName" placeholder="cth: Emergency Fund" autocomplete="off" autocorrect="off" />
+        <label class="form-label">Target amount</label>
+        <div class="goal-amt-wrap">
+          <div class="prefix">RM</div>
+          <input type="number" id="gTarget" placeholder="10000" />
+        </div>
+        <label class="form-label">Priority</label>
+        <div class="p-row" id="pRow">
+          <button class="p-btn high" onclick="setPrio('high')">🔴 Tinggi</button>
+          <button class="p-btn medium sel" onclick="setPrio('medium')">🟡 Sederhana</button>
+          <button class="p-btn low" onclick="setPrio('low')">🔵 Rendah</button>
+        </div>
+        <label class="form-label">Timeline</label>
+        <div class="t-row" id="tRow">
+          <button class="t-btn sel" onclick="setTL('auto')">🤖 Auto-kira</button>
+          <button class="t-btn" onclick="setTL('manual')">📅 Tetapkan sendiri</button>
+        </div>
+        <div class="auto-note" id="autoNote">
+          Semua savings (<b id="autoNoteAmt" style="color:var(--accent);font-family:var(--ff-mono)">-</b>/bln) akan ditumpu sepenuhnya ke goal ini dulu sebelum beralih ke goal seterusnya.
+        </div>
+        <div class="hidden month-row" id="manualRow">
+          <div class="goal-amt-wrap" style="flex:1">
+            <div class="prefix">Bln</div>
+            <input type="number" id="gMonths" placeholder="12" inputmode="numeric" />
+          </div>
+          <span class="month-sfx">bulan untuk capai</span>
+        </div>
+        <button class="add-goal-btn" onclick="addGoal()">+ Tambah Goal</button>
+      </div>
+      <div class="nav-row">
+        <button class="btn-secondary" onclick="goStep(3)">← Balik</button>
+        <button class="btn-primary" onclick="calcResults()">Kira Sekarang ✨</button>
+      </div>
+    </div>
+
+    <!-- Step 5: Results -->
+    <div class="card hidden" id="step5">
+      <div class="card-title">Breakdown Savings Kau 🏆</div>
+      <div class="card-sub">Semua dah dikira — termasuk tarikh sebenar bila goal akan tercapai.</div>
+      <div id="resultsContent"></div>
+      <div class="nav-row" style="margin-top:20px">
+        <button class="btn-secondary" onclick="restartPlanner()">🔄 Restart</button>
+        <button class="btn-primary" onclick="goStep(4)">✏️ Edit Goals</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════ TRACKER ══════════ -->
+  <section class="view" id="view-tracker">
+    <div class="view-head">
+      <h2>Tracker</h2>
+      <p>Log simpanan kau & jaga streak.</p>
+    </div>
+
+    <div class="streak-banner">
+      <div class="streak-flame">🔥</div>
+      <div>
+        <div class="streak-num" id="trackStreak">0</div>
+        <div class="streak-lbl">hari streak — log hari ni untuk teruskan!</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Log simpanan baru</div>
+      <div class="card-sub">Pilih jenis & masukkan jumlah yang kau simpan.</div>
+
+      <div class="seg-row" id="periodSeg">
+        <button class="seg-btn sel" onclick="setPeriod('harian')">Harian</button>
+        <button class="seg-btn" onclick="setPeriod('mingguan')">Mingguan</button>
+        <button class="seg-btn" onclick="setPeriod('bulanan')">Bulanan</button>
+      </div>
+
+      <div class="log-suggest" id="logSuggest"></div>
+
+      <div class="add-row">
+        <div class="amt-wrap" style="flex:1 1 100%">
+          <div class="amt-prefix">RM</div>
+          <input type="number" id="logAmt" placeholder="50" inputmode="decimal" onkeydown="if(event.key==='Enter')addLog()" />
+        </div>
+        <input class="plain-input" type="text" id="logNote" placeholder="Nota (pilihan) — cth: bonus" autocomplete="off" />
+        <button class="btn-add" style="flex:1 1 100%" onclick="addLog()">+ Simpan Log</button>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <div class="card-title">Sejarah log</div>
+      <div class="card-sub" id="trackTotalSub">Jumlah disimpan: RM 0</div>
+      <div id="logList"></div>
+    </div>
+  </section>
+
+  <!-- ══════════ BADGES ══════════ -->
+  <section class="view" id="view-badges">
+    <div class="view-head">
+      <h2>Badges</h2>
+      <p>Kumpul pencapaian sambil menyimpan!</p>
+    </div>
+
+    <div class="badge-progress">
+      <div class="bp-ring"><svg width="58" height="58" viewBox="0 0 58 58" id="badgeRing"></svg></div>
+      <div class="bp-info">
+        <b id="badgeCount">0 / 0</b>
+        <p>badge telah dibuka kunci</p>
+      </div>
+    </div>
+
+    <div class="badge-grid" id="badgeGrid"></div>
+  </section>
+
+  <!-- ══════════ PROFILE ══════════ -->
+  <section class="view" id="view-profile">
+    <div class="view-head">
+      <h2>Profile</h2>
+      <p>Tetapan & ringkasan akaun kau.</p>
+    </div>
+
+    <div class="card">
+      <div class="profile-head">
+        <div class="avatar" id="profAvatar">S</div>
+        <div class="profile-name" id="profName">Saver</div>
+        <div class="profile-sub">Member Achieva 💧</div>
+      </div>
+      <div class="prof-stat-grid">
+        <div class="prof-stat"><div class="v" id="profGoals">0</div><div class="l">Goals</div></div>
+        <div class="prof-stat"><div class="v" id="profBadges">0</div><div class="l">Badges</div></div>
+        <div class="prof-stat"><div class="v" id="profStreak">0</div><div class="l">Streak</div></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <div class="card-title">Nama kau</div>
+      <div class="card-sub">Kami guna ni untuk sapa kau di Dashboard.</div>
+      <div class="add-row">
+        <input class="plain-input" type="text" id="nameInput" placeholder="Masukkan nama" autocomplete="off" maxlength="20" onkeydown="if(event.key==='Enter')saveName()" />
+        <button class="btn-add" style="flex:1 1 100%" onclick="saveName()">Simpan Nama</button>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <div class="list-row">
+        <div class="lr-ico">💰</div>
+        <div class="lr-mid"><div class="lr-title">Total disimpan</div><div class="lr-sub">Sepanjang masa</div></div>
+        <div style="font-family:var(--ff-mono);font-weight:700;color:var(--accent)" id="profTotal">RM 0</div>
+      </div>
+      <div class="list-row">
+        <div class="lr-ico">📝</div>
+        <div class="lr-mid"><div class="lr-title">Jumlah log</div><div class="lr-sub">Rekod simpanan</div></div>
+        <div style="font-family:var(--ff-mono);font-weight:700" id="profLogs">0</div>
+      </div>
+      <div class="list-row">
+        <div class="lr-ico">💧</div>
+        <div class="lr-mid"><div class="lr-title">Tentang Achieva</div><div class="lr-sub">Plan Smart, Save More</div></div>
+        <div style="font-size:12px;color:var(--text-3)">v2.0</div>
+      </div>
+    </div>
+
+    <button class="btn-danger" onclick="resetAll()">🗑️ Reset semua data</button>
+  </section>
 
 </div>
 
+<!-- ══════════ BOTTOM NAV ══════════ -->
+<nav class="bottom-nav" id="bottomNav">
+  <button class="nav-btn active" data-tab="dashboard" onclick="switchTab('dashboard')">
+    <span class="nav-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg></span>
+    <span>Dashboard</span>
+  </button>
+  <button class="nav-btn" data-tab="planner" onclick="switchTab('planner')">
+    <span class="nav-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="0.8" fill="currentColor"/></svg></span>
+    <span>Planner</span>
+  </button>
+  <button class="nav-btn" data-tab="tracker" onclick="switchTab('tracker')">
+    <span class="nav-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-5 4 3 6-7"/><path d="M16 5h4v4"/></svg></span>
+    <span>Tracker</span>
+  </button>
+  <button class="nav-btn" data-tab="badges" onclick="switchTab('badges')">
+    <span class="nav-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v5a6 6 0 0 1-12 0z"/><path d="M6 5H3v2a3 3 0 0 0 3 3M18 5h3v2a3 3 0 0 1-3 3"/><path d="M9 20h6M12 14v6"/></svg></span>
+    <span>Badges</span>
+  </button>
+  <button class="nav-btn" data-tab="profile" onclick="switchTab('profile')">
+    <span class="nav-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.5-6 8-6s8 2 8 6"/></svg></span>
+    <span>Profile</span>
+  </button>
+</nav>
+
 <script>
-  /* ── State ── */
+  /* ═══════════════ STATE ═══════════════ */
+  let currentTab = 'dashboard';
   let currentStep = 1;
   let formula = '50/30/20';
   let prio = 'medium';
   let tlMode = 'auto';
   let commits = [];
   let goals = [];
+  let logs = [];            /* { id, date(YYYY-MM-DD), ts, amount, note, period } */
+  let trackPeriod = 'harian';
+  let profileName = '';
+  let unlockedBadges = [];  /* badge ids already celebrated */
 
-  /* ── Persistence (localStorage) ── */
-  const STORAGE_KEY = 'tabungku_progress_v1';
+  const STORAGE_KEY = 'achieva_state_v2';
 
+  /* ═══════════════ PERSISTENCE ═══════════════ */
   function saveState() {
     try {
-      const data = {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
         income: document.getElementById('incomeInput').value,
         formula, prio, tlMode,
         freeN: document.getElementById('freeN').value,
         freeW: document.getElementById('freeW').value,
         freeS: document.getElementById('freeS').value,
-        commits, goals,
-        currentStep,
-      };
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    } catch (e) { /* storage unavailable — fail silently */ }
-  }
-
-  function clearState() {
-    try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+        commits, goals, currentStep,
+        logs, trackPeriod, profileName, unlockedBadges,
+      }));
+    } catch (e) {}
   }
 
   function loadState() {
     let data;
     try { data = JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch (e) { data = null; }
+    /* migrate from old key if present */
+    if (!data) {
+      try { data = JSON.parse(localStorage.getItem('tabungku_progress_v1')); } catch (e) { data = null; }
+    }
     if (!data) return;
 
     if (data.income) document.getElementById('incomeInput').value = data.income;
@@ -545,25 +802,18 @@
     tlMode = data.tlMode || tlMode;
     commits = Array.isArray(data.commits) ? data.commits : [];
     goals = Array.isArray(data.goals) ? data.goals : [];
+    logs = Array.isArray(data.logs) ? data.logs : [];
+    trackPeriod = data.trackPeriod || 'harian';
+    profileName = data.profileName || '';
+    unlockedBadges = Array.isArray(data.unlockedBadges) ? data.unlockedBadges : [];
+    currentStep = Math.min(data.currentStep || 1, 5);
 
     onIncomeType();
     setPrio(prio);
     setTL(tlMode);
-
-    const target = Math.min(data.currentStep || 1, 4);
-    if (target > 1) {
-      document.getElementById('step1').classList.add('hidden');
-      currentStep = target;
-      document.getElementById('step' + currentStep).classList.remove('hidden');
-      renderFormulas();
-      renderCommits();
-      if (currentStep === 4) { renderGoals(); updateAutoNote(); }
-      renderSteps();
-      showToast('👋 Progress kau dipulihkan!');
-      saveState();
-    }
   }
 
+  /* ═══════════════ FORMULAS / HELPERS ═══════════════ */
   const FORMULAS = {
     '70/20/10': { n: 70, w: 20, s: 10 },
     '50/30/20': { n: 50, w: 30, s: 20 },
@@ -571,7 +821,6 @@
   };
   const FKEYS = Object.keys(FORMULAS);
 
-  /* ── Helpers ── */
   function getInc() { return parseFloat(document.getElementById('incomeInput').value) || 0; }
   function round(n) { return Math.round(n); }
   function fmt(n) { return round(n).toLocaleString('ms-MY'); }
@@ -590,15 +839,107 @@
     const t = document.getElementById('toast');
     t.textContent = msg;
     t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 1800);
+    clearTimeout(t._t);
+    t._t = setTimeout(() => t.classList.remove('show'), 1900);
   }
   function fmtDate(months) {
     const d = new Date();
     d.setMonth(d.getMonth() + months);
     return d.toLocaleDateString('ms-MY', { month: 'short', year: 'numeric' });
   }
+  function todayStr() { return new Date().toISOString().slice(0, 10); }
+  function totalSaved() { return logs.reduce((s, l) => s + l.amount, 0); }
 
-  /* ── Steps ── */
+  /* ═══════════════ TAB NAVIGATION ═══════════════ */
+  function switchTab(tab) {
+    currentTab = tab;
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById('view-' + tab).classList.add('active');
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (tab === 'dashboard') renderDashboard();
+    if (tab === 'tracker') renderTracker();
+    if (tab === 'badges') renderBadges();
+    if (tab === 'profile') renderProfile();
+  }
+
+  /* ═══════════════ RING (donut) HELPER ═══════════════ */
+  function ringSvg(size, pct, color, track, label, labelColor) {
+    const cx = size / 2, cy = size / 2, sw = Math.max(6, size * 0.13);
+    const r = (size - sw) / 2 - 1;
+    const circ = 2 * Math.PI * r;
+    const dash = (pct / 100) * circ;
+    return `
+      <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${track}" stroke-width="${sw}"/>
+      <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="${sw}"
+        stroke-linecap="round" stroke-dasharray="${dash.toFixed(2)} ${(circ-dash).toFixed(2)}"
+        transform="rotate(-90 ${cx} ${cy})"/>
+      <text x="${cx}" y="${cy+1}" text-anchor="middle" dominant-baseline="middle"
+        fill="${labelColor}" font-size="${size*0.2}" font-family="'JetBrains Mono',monospace" font-weight="700">${label}</text>`;
+  }
+
+  /* ═══════════════ DASHBOARD ═══════════════ */
+  function distributeToGoals() {
+    /* fill goals in priority order using totalSaved */
+    const order = { high: 0, medium: 1, low: 2 };
+    const sorted = [...goals].sort((a, b) => order[a.prio] - order[b.prio]);
+    let pool = totalSaved();
+    return sorted.map(g => {
+      const alloc = Math.min(pool, g.target);
+      pool -= alloc;
+      return { ...g, saved: alloc, pct: g.target > 0 ? Math.min(100, round(alloc / g.target * 100)) : 0 };
+    });
+  }
+
+  function renderDashboard() {
+    const name = profileName.trim();
+    document.getElementById('greetName').textContent = name ? `Hai, ${name}! 👋` : 'Hai, Saver! 👋';
+
+    const inc = getInc();
+    const p = getPct();
+    const sav = getSavings();
+    const needs = round(inc * (p.n || 0) / 100);
+    const wants = round(inc * (p.w || 0) / 100);
+
+    document.getElementById('dashSavAmt').textContent = 'RM ' + fmt(sav);
+    document.getElementById('dashSavNote').textContent = inc > 0
+      ? `${p.s || 0}% daripada income RM ${fmt(inc)}`
+      : 'Set income kau dulu dalam Planner';
+    document.getElementById('dashNeeds').textContent = 'RM ' + fmt(needs);
+    document.getElementById('dashWants').textContent = 'RM ' + fmt(wants);
+    document.getElementById('dashSav').textContent = 'RM ' + fmt(sav);
+
+    const savPct = p.s || 0;
+    document.getElementById('dashRing').innerHTML = ringSvg(78, savPct, '#ffffff', 'rgba(255,255,255,0.25)', savPct + '%', '#ffffff');
+
+    document.getElementById('dashGoals').textContent = goals.length;
+    const streak = calcStreak();
+    document.getElementById('dashStreak').innerHTML = streak + ' <span style="font-size:13px;color:var(--text-2)">hari</span>';
+    document.getElementById('dashTotal').textContent = 'RM ' + fmt(totalSaved());
+    document.getElementById('dashBadges').textContent = getBadges().filter(b => b.done).length;
+    document.getElementById('topPill').textContent = '🔥 ' + streak + ' hari';
+
+    /* goal progress */
+    const list = document.getElementById('dashGoalList');
+    if (goals.length === 0) {
+      list.innerHTML = `<div class="empty-state"><div class="empty-icon">🎯</div><div class="empty-text">Belum ada goal lagi.<br>Pergi ke <b>Planner</b> untuk set goal pertama kau!</div></div>`;
+      return;
+    }
+    const priColors = { high: 'var(--go-high)', medium: 'var(--go-med)', low: 'var(--go-low)' };
+    list.innerHTML = distributeToGoals().map(g => `
+      <div class="dash-goal">
+        <div class="dg-top">
+          <div class="dg-name">${escapeHtml(g.name)}</div>
+          <div class="dg-pct">${g.pct}%</div>
+        </div>
+        <div class="dg-bar"><div class="dg-fill" style="width:${g.pct}%;background:${priColors[g.prio]}"></div></div>
+        <div class="dg-sub"><span>RM ${fmt(g.saved)}</span><span>RM ${fmt(g.target)}</span></div>
+      </div>`).join('');
+  }
+
+  function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c])); }
+
+  /* ═══════════════ PLANNER: STEPS ═══════════════ */
   function renderSteps() {
     const bar = document.getElementById('stepsBar');
     bar.innerHTML = '';
@@ -615,6 +956,16 @@
     }
   }
 
+  function showStep(n) {
+    for (let s = 1; s <= 5; s++) document.getElementById('step' + s).classList.toggle('hidden', s !== n);
+    currentStep = n;
+    renderSteps();
+    if (n === 2) renderFormulas();
+    if (n === 3) renderCommits();
+    if (n === 4) { renderGoals(); updateAutoNote(); }
+    if (n === 5) calcResults();
+  }
+
   function goStep(n) {
     if (n === 2 && getInc() <= 0) { showToast('Sila masukkan income dulu!'); return; }
     if (n === 5) { calcResults(); return; }
@@ -629,27 +980,21 @@
     saveState();
   }
 
-  /* ── Step 1 ── */
   function onIncomeType() {
     const v = getInc();
     const prev = document.getElementById('incomePreview');
     if (v > 0) {
       prev.classList.remove('hidden');
       document.getElementById('incomePreviewAmt').textContent = 'RM ' + fmt(v);
-    } else {
-      prev.classList.add('hidden');
-    }
+    } else { prev.classList.add('hidden'); }
     saveState();
   }
 
-  /* ── Step 2 ── */
   function renderFormulas() {
     const inc = getInc();
     const grid = document.getElementById('formulaGrid');
     grid.innerHTML = '';
-
-    const allKeys = [...FKEYS, 'free'];
-    allKeys.forEach(k => {
+    [...FKEYS, 'free'].forEach(k => {
       const div = document.createElement('div');
       div.className = 'f-card' + (k === formula ? ' sel' : '');
       div.onclick = () => selectFormula(k);
@@ -664,23 +1009,13 @@
       }
       grid.appendChild(div);
     });
-
     document.getElementById('freeModeWrap').classList.toggle('hidden', formula !== 'free');
     updateDonut();
     validateFree();
   }
 
-  function selectFormula(f) {
-    formula = f;
-    renderFormulas();
-    saveState();
-  }
-
-  function onFreeChange() {
-    updateDonut();
-    validateFree();
-    saveState();
-  }
+  function selectFormula(f) { formula = f; renderFormulas(); saveState(); }
+  function onFreeChange() { updateDonut(); validateFree(); saveState(); }
 
   function validateFree() {
     const btn = document.getElementById('step2Next');
@@ -692,10 +1027,7 @@
       warn.classList.remove('hidden');
       warn.textContent = `⚠️ Jumlah mesti 100%. Sekarang: ${total}%`;
       btn.disabled = true;
-    } else {
-      warn.classList.add('hidden');
-      btn.disabled = false;
-    }
+    } else { warn.classList.add('hidden'); btn.disabled = false; }
   }
 
   function updateDonut() {
@@ -703,7 +1035,6 @@
     const p = getPct();
     const total = p.n + p.w + p.s;
     if (formula === 'free' && total !== 100) return;
-
     const svg = document.getElementById('donutSvg');
     const cx = 40, cy = 40, r = 30, sw = 12;
     const circ = 2 * Math.PI * r;
@@ -717,55 +1048,33 @@
       const dash = seg.pct * circ;
       const gap = circ - dash;
       const rot = -90 + offset * 360;
-      paths += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${seg.color}" stroke-width="${sw}" stroke-dasharray="${dash.toFixed(2)} ${gap.toFixed(2)}" stroke-dashoffset="${(-offset * circ).toFixed(2)}" transform="rotate(${rot} ${cx} ${cy})" />`;
+      paths += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${seg.color}" stroke-width="${sw}" stroke-dasharray="${dash.toFixed(2)} ${gap.toFixed(2)}" transform="rotate(${rot} ${cx} ${cy})" />`;
       offset += seg.pct;
     });
-    svg.innerHTML = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--prog-bg)" stroke-width="${sw}"/>${paths}<text x="${cx}" y="${cy+1}" text-anchor="middle" dominant-baseline="middle" fill="var(--accent)" font-size="11" font-family="'JetBrains Mono',monospace" font-weight="600">${p.s}%</text>`;
-
-    const leg = document.getElementById('donutLegend');
-    leg.innerHTML = segs.map(seg => `
-      <div class="leg-item">
-        <div class="leg-dot" style="background:${seg.color}"></div>
-        <span class="leg-lbl">${seg.label}</span>
-        <span class="leg-val">RM ${fmt(seg.val)}</span>
-      </div>`).join('');
+    svg.innerHTML = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--prog-bg)" stroke-width="${sw}"/>${paths}<text x="${cx}" y="${cy+1}" text-anchor="middle" dominant-baseline="middle" fill="var(--accent)" font-size="11" font-family="'JetBrains Mono',monospace" font-weight="700">${p.s}%</text>`;
+    document.getElementById('donutLegend').innerHTML = segs.map(seg => `
+      <div class="leg-item"><div class="leg-dot" style="background:${seg.color}"></div><span class="leg-lbl">${seg.label}</span><span class="leg-val">RM ${fmt(seg.val)}</span></div>`).join('');
   }
 
-  /* ── Step 3 ── */
+  /* ── Commitments ── */
   function renderCommits() {
     const list = document.getElementById('commitList');
     const total = commits.reduce((s, c) => s + c.amt, 0);
     const savAmt = getSavings();
-
     if (commits.length === 0) {
-      list.innerHTML = `<div class="empty-state">
-        <div class="empty-icon">📋</div>
-        <div class="empty-text">Tiada komitmen lagi.<br>Tambah sewa, ansuran, atau langganan<br>untuk kiraan yang lebih tepat.</div>
-      </div>`;
+      list.innerHTML = `<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-text">Tiada komitmen lagi.<br>Tambah sewa, ansuran, atau langganan<br>untuk kiraan yang lebih tepat.</div></div>`;
     } else {
       list.innerHTML = commits.map(c => `
-        <div class="commit-item">
-          <span class="ci-name">${c.name}</span>
-          <span class="ci-amt">RM ${fmt(c.amt)}</span>
-          <button class="btn-x" onclick="removeCommit(${c.id})" aria-label="Padam">✕</button>
-        </div>`).join('');
+        <div class="commit-item"><span class="ci-name">${escapeHtml(c.name)}</span><span class="ci-amt">RM ${fmt(c.amt)}</span><button class="btn-x" onclick="removeCommit(${c.id})" aria-label="Padam">✕</button></div>`).join('');
     }
-
     const tr = document.getElementById('commitTotalRow');
-    if (commits.length > 0) {
-      tr.classList.remove('hidden');
-      document.getElementById('commitTotalAmt').textContent = 'RM ' + fmt(total);
-    } else {
-      tr.classList.add('hidden');
-    }
-
+    if (commits.length > 0) { tr.classList.remove('hidden'); document.getElementById('commitTotalAmt').textContent = 'RM ' + fmt(total); }
+    else tr.classList.add('hidden');
     const warn = document.getElementById('commitWarn');
     if (total > savAmt && savAmt > 0) {
       warn.classList.remove('hidden');
       warn.textContent = `⚠️ Komitmen (RM ${fmt(total)}) melebihi peruntukan savings (RM ${fmt(savAmt)}). Pertimbangkan adjust formula atau kurangkan komitmen.`;
-    } else {
-      warn.classList.add('hidden');
-    }
+    } else warn.classList.add('hidden');
   }
 
   function addCommit() {
@@ -775,37 +1084,25 @@
     commits.push({ id: Date.now(), name, amt: round(amt) });
     document.getElementById('cName').value = '';
     document.getElementById('cAmt').value = '';
-    renderCommits();
-    showToast('✓ Komitmen ditambah!');
-    saveState();
+    renderCommits(); showToast('✓ Komitmen ditambah!'); saveState();
   }
+  function removeCommit(id) { commits = commits.filter(c => c.id !== id); renderCommits(); saveState(); }
 
-  function removeCommit(id) {
-    commits = commits.filter(c => c.id !== id);
-    renderCommits();
-    saveState();
-  }
-
-  /* ── Step 4 ── */
+  /* ── Goals ── */
   function setPrio(p) {
     prio = p;
     document.querySelectorAll('.p-btn').forEach(b => b.classList.remove('sel'));
     document.querySelector('.p-btn.' + p).classList.add('sel');
     saveState();
   }
-
   function setTL(t) {
     tlMode = t;
-    document.querySelectorAll('.t-btn').forEach((b, i) =>
-      b.classList.toggle('sel', (i === 0 && t === 'auto') || (i === 1 && t === 'manual')));
+    document.querySelectorAll('.t-btn').forEach((b, i) => b.classList.toggle('sel', (i === 0 && t === 'auto') || (i === 1 && t === 'manual')));
     document.getElementById('manualRow').classList.toggle('hidden', t !== 'manual');
     document.getElementById('autoNote').classList.toggle('hidden', t !== 'auto');
     saveState();
   }
-
-  function updateAutoNote() {
-    document.getElementById('autoNoteAmt').textContent = 'RM ' + fmt(getSavings());
-  }
+  function updateAutoNote() { document.getElementById('autoNoteAmt').textContent = 'RM ' + fmt(getSavings()); }
 
   function addGoal() {
     const name = document.getElementById('gName').value.trim();
@@ -816,25 +1113,15 @@
     document.getElementById('gName').value = '';
     document.getElementById('gTarget').value = '';
     document.getElementById('gMonths').value = '';
-    renderGoals();
-    showToast('✓ Goal ditambah!');
-    saveState();
+    renderGoals(); showToast('✓ Goal ditambah!'); saveState(); checkBadges();
   }
-
-  function removeGoal(id) {
-    goals = goals.filter(g => g.id !== id);
-    renderGoals();
-    saveState();
-  }
+  function removeGoal(id) { goals = goals.filter(g => g.id !== id); renderGoals(); saveState(); }
 
   function renderGoals() {
-    const list = document.getElementById('goalList');
-    list.innerHTML = goals.map(g => `
+    document.getElementById('goalList').innerHTML = goals.map(g => `
       <div class="goal-card ${g.prio}">
         <div class="gc-header">
-          <div style="flex:1">
-            <div class="gc-name">${g.name}</div>
-          </div>
+          <div style="flex:1"><div class="gc-name">${escapeHtml(g.name)}</div></div>
           <span class="p-badge ${g.prio}">${g.prio}</span>
           <button class="btn-x" style="margin-left:8px" onclick="removeGoal(${g.id})" aria-label="Padam">✕</button>
         </div>
@@ -842,57 +1129,32 @@
       </div>`).join('');
   }
 
-  /* ── Step 5: Results ── */
+  /* ── Results ── */
   function calcResults() {
     const inc = getInc();
     const pct = getPct();
     const savAmt = round(inc * (pct.s || 0) / 100);
     const totalCommit = commits.reduce((s, c) => s + c.amt, 0);
-
     const sortOrder = { high: 0, medium: 1, low: 2 };
     const sorted = [...goals].sort((a, b) => sortOrder[a.prio] - sortOrder[b.prio]);
 
     let cursor = 0;
     const computed = sorted.map(g => {
       let ma, months, startM, endM;
-      if (g.mode === 'manual' && g.months) {
-        months = g.months;
-        ma = round(g.target / months);
-        startM = 0;
-        endM = months;
-      } else {
-        ma = savAmt;
-        months = savAmt > 0 ? Math.ceil(g.target / savAmt) : 999;
-        startM = cursor;
-        endM = cursor + months;
-        cursor = endM;
-      }
+      if (g.mode === 'manual' && g.months) { months = g.months; ma = round(g.target / months); startM = 0; endM = months; }
+      else { ma = savAmt; months = savAmt > 0 ? Math.ceil(g.target / savAmt) : 999; startM = cursor; endM = cursor + months; cursor = endM; }
       return { ...g, ma, months, startM, endM };
     });
-
     const totalMonths = computed.length > 0 ? Math.max(...computed.map(g => g.endM)) : 0;
-
     const priColors = { high: 'var(--go-high)', medium: 'var(--go-med)', low: 'var(--go-low)' };
 
-    /* Hero stats */
     let html = `<div class="results-hero">
-      <div class="hero-stat">
-        <div class="hs-val">RM ${fmt(savAmt)}</div>
-        <div class="hs-lbl">Simpanan/bulan</div>
-      </div>
-      <div class="hero-stat">
-        <div class="hs-val">${goals.length}</div>
-        <div class="hs-lbl">Goals aktif</div>
-      </div>
-      <div class="hero-stat">
-        <div class="hs-val" style="font-size:13px">${totalMonths > 0 ? fmtDate(totalMonths) : '—'}</div>
-        <div class="hs-lbl">Semua siap</div>
-      </div>
+      <div class="hero-stat"><div class="hs-val">RM ${fmt(savAmt)}</div><div class="hs-lbl">Simpanan/bulan</div></div>
+      <div class="hero-stat"><div class="hs-val">${goals.length}</div><div class="hs-lbl">Goals aktif</div></div>
+      <div class="hero-stat"><div class="hs-val" style="font-size:13px">${totalMonths > 0 ? fmtDate(totalMonths) : '—'}</div><div class="hs-lbl">Semua siap</div></div>
     </div>`;
 
-    /* Budget breakdown */
-    html += `<div class="section-hd">Breakdown budget</div>
-    <div class="budget-table">
+    html += `<div class="section-hd">Breakdown budget</div><div class="budget-table">
       <div class="budget-row"><span class="br-label">💼 Income</span><span class="br-val">RM ${fmt(inc)}</span></div>
       <div class="budget-row"><span class="br-label">🏠 Keperluan (${pct.n}%)</span><span class="br-val">RM ${fmt(inc * pct.n / 100)}</span></div>
       <div class="budget-row"><span class="br-label">🎮 Kehendak (${pct.w}%)</span><span class="br-val">RM ${fmt(inc * pct.w / 100)}</span></div>
@@ -900,63 +1162,34 @@
       ${totalCommit > 0 ? `<div class="budget-row"><span class="br-label">📋 Komitmen tetap</span><span class="br-val warn">RM ${fmt(totalCommit)}</span></div>` : ''}
     </div>`;
 
-    /* Per-goal breakdown */
     if (computed.length > 0) {
       html += `<div class="section-hd">Breakdown tiap goal</div>`;
       computed.forEach(g => {
         const isDelayed = g.mode !== 'manual' && g.startM > 0;
         const waitPct = totalMonths > 0 ? round(g.startM / totalMonths * 100) : 0;
         const savePct = totalMonths > 0 ? round((g.endM - g.startM) / totalMonths * 100) : 100;
-
         const durYrs = Math.floor(g.months / 12);
         const durMths = g.months % 12;
         const durStr = durYrs > 0 ? `${durYrs} thn${durMths > 0 ? ' ' + durMths + ' bln' : ''}` : `${g.months} bln`;
-
         html += `<div class="goal-result-card ${g.prio}">
-          <div class="grc-header">
-            <div>
-              <div class="grc-name">${g.name}</div>
-              <div class="grc-target">Target: RM ${fmt(g.target)}</div>
-            </div>
-            <span class="p-badge ${g.prio}">${g.prio}</span>
-          </div>
+          <div class="grc-header"><div><div class="grc-name">${escapeHtml(g.name)}</div><div class="grc-target">Target: RM ${fmt(g.target)}</div></div><span class="p-badge ${g.prio}">${g.prio}</span></div>
           ${isDelayed ? `<div class="delayed-note">⏳ Mula selepas bulan ${g.startM} — tunggu goal sebelum selesai dulu.</div>` : ''}
           <div class="phase-wrap">
             <div class="phase-label-row"><span>Bln ${g.startM}</span><span>Bln ${g.endM}</span></div>
-            <div class="phase-bar">
-              <div class="phase-wait" style="width:${waitPct}%"></div>
-              <div class="phase-save" style="width:${savePct}%;background:${priColors[g.prio]}"></div>
-            </div>
-            <div class="phase-label-row" style="margin-top:4px">
-              <span style="color:var(--text-3)">${g.startM > 0 ? 'tunggu' : 'mula simpan'}</span>
-              <span style="color:${priColors[g.prio]}">simpan ${durStr}</span>
-            </div>
+            <div class="phase-bar"><div class="phase-wait" style="width:${waitPct}%"></div><div class="phase-save" style="width:${savePct}%;background:${priColors[g.prio]}"></div></div>
+            <div class="phase-label-row" style="margin-top:4px"><span style="color:var(--text-3)">${g.startM > 0 ? 'tunggu' : 'mula simpan'}</span><span style="color:${priColors[g.prio]}">simpan ${durStr}</span></div>
           </div>
           <div class="goal-stats">
-            <div class="stat-box">
-              <div class="stat-lbl">Simpan / bulan</div>
-              <div class="stat-val">RM ${fmt(g.ma)}</div>
-            </div>
-            <div class="stat-box">
-              <div class="stat-lbl">Tempoh simpan</div>
-              <div class="stat-val">${durStr}</div>
-            </div>
-            <div class="stat-box highlight">
-              <div class="stat-lbl">Capai pada</div>
-              <div class="stat-val">${fmtDate(g.endM)}</div>
-            </div>
+            <div class="stat-box"><div class="stat-lbl">Simpan / bulan</div><div class="stat-val">RM ${fmt(g.ma)}</div></div>
+            <div class="stat-box"><div class="stat-lbl">Tempoh simpan</div><div class="stat-val">${durStr}</div></div>
+            <div class="stat-box highlight"><div class="stat-lbl">Capai pada</div><div class="stat-val">${fmtDate(g.endM)}</div></div>
           </div>
         </div>`;
       });
     }
-
-    if (totalCommit > 0) {
-      html += `<div class="warn-box">💡 Komitmen bulanan RM ${fmt(totalCommit)} telah dikira sebagai sebahagian daripada perbelanjaan keperluan kau.</div>`;
-    }
+    if (totalCommit > 0) html += `<div class="warn-box">💡 Komitmen bulanan RM ${fmt(totalCommit)} telah dikira sebagai sebahagian daripada perbelanjaan keperluan kau.</div>`;
 
     document.getElementById('resultsContent').innerHTML = html;
-
-    /* Animate bars */
     setTimeout(() => {
       document.querySelectorAll('.phase-save').forEach(el => {
         const w = el.style.width; el.style.width = '0';
@@ -969,38 +1202,188 @@
     document.getElementById('step5').classList.remove('hidden');
     renderSteps();
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    saveState();
+    checkBadges();
   }
 
-  /* ── Restart ── */
-  function restart() {
+  function restartPlanner() {
     commits = []; goals = [];
-    ['incomeInput', 'cName', 'cAmt', 'gName', 'gTarget', 'gMonths'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.value = '';
-    });
+    ['incomeInput', 'cName', 'cAmt', 'gName', 'gTarget', 'gMonths'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
     document.getElementById('incomePreview').classList.add('hidden');
     formula = '50/30/20'; prio = 'medium'; tlMode = 'auto';
-    document.getElementById('step' + currentStep).classList.add('hidden');
-    currentStep = 1;
-    document.getElementById('step1').classList.remove('hidden');
-    renderSteps();
+    setPrio('medium'); setTL('auto');
+    showStep(1);
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    clearState();
+    saveState();
   }
 
-  /* ── Init ── */
-  renderSteps();
-  loadState();
+  /* ═══════════════ TRACKER ═══════════════ */
+  function setPeriod(p) {
+    trackPeriod = p;
+    document.querySelectorAll('#periodSeg .seg-btn').forEach((b, i) =>
+      b.classList.toggle('sel', ['harian', 'mingguan', 'bulanan'][i] === p));
+    updateLogSuggest();
+    saveState();
+  }
+  function updateLogSuggest() {
+    const sav = getSavings();
+    const el = document.getElementById('logSuggest');
+    if (sav <= 0) { el.innerHTML = 'Set income dalam Planner untuk cadangan jumlah simpanan.'; return; }
+    const map = { harian: sav / 30, mingguan: sav / 4.345, bulanan: sav };
+    const lbl = { harian: 'sehari', mingguan: 'seminggu', bulanan: 'sebulan' };
+    el.innerHTML = `Cadangan ${lbl[trackPeriod]}: <b>RM ${fmt(map[trackPeriod])}</b>`;
+  }
 
-  /* ── PWA: register service worker ── */
+  const PERIOD_EMOJI = { harian: '☀️', mingguan: '📅', bulanan: '🗓️' };
+  const PERIOD_COLOR = {
+    harian: ['var(--needs-soft)', 'var(--col-needs)'],
+    mingguan: ['var(--wants-soft)', 'var(--col-wants)'],
+    bulanan: ['var(--accent-dim)', 'var(--accent)'],
+  };
+
+  function addLog() {
+    const amt = parseFloat(document.getElementById('logAmt').value);
+    if (!amt || amt <= 0) { showToast('Sila masukkan jumlah simpanan.'); return; }
+    const note = document.getElementById('logNote').value.trim();
+    logs.unshift({ id: Date.now(), date: todayStr(), ts: Date.now(), amount: round(amt), note, period: trackPeriod });
+    document.getElementById('logAmt').value = '';
+    document.getElementById('logNote').value = '';
+    renderTracker();
+    showToast('💰 +RM ' + fmt(amt) + ' disimpan!');
+    saveState();
+    checkBadges();
+  }
+  function removeLog(id) { logs = logs.filter(l => l.id !== id); renderTracker(); saveState(); }
+
+  function calcStreak() {
+    if (logs.length === 0) return 0;
+    const days = [...new Set(logs.map(l => l.date))].sort().reverse();
+    const today = todayStr();
+    const y = new Date(); y.setDate(y.getDate() - 1);
+    const yest = y.toISOString().slice(0, 10);
+    if (days[0] !== today && days[0] !== yest) return 0;
+    let streak = 1;
+    for (let i = 1; i < days.length; i++) {
+      const prev = new Date(days[i - 1]); prev.setDate(prev.getDate() - 1);
+      if (prev.toISOString().slice(0, 10) === days[i]) streak++;
+      else break;
+    }
+    return streak;
+  }
+
+  function renderTracker() {
+    setPeriod(trackPeriod);
+    const streak = calcStreak();
+    document.getElementById('trackStreak').textContent = streak;
+    document.getElementById('trackTotalSub').textContent = 'Jumlah disimpan: RM ' + fmt(totalSaved());
+    const list = document.getElementById('logList');
+    if (logs.length === 0) {
+      list.innerHTML = `<div class="empty-state"><div class="empty-icon">💸</div><div class="empty-text">Belum ada log.<br>Mula log simpanan pertama kau hari ni!</div></div>`;
+      return;
+    }
+    list.innerHTML = logs.map(l => {
+      const c = PERIOD_COLOR[l.period] || PERIOD_COLOR.harian;
+      const d = new Date(l.ts || l.date);
+      const dateStr = d.toLocaleDateString('ms-MY', { day: 'numeric', month: 'short', year: 'numeric' });
+      return `<div class="log-item">
+        <div class="log-emoji" style="background:${c[0]}">${PERIOD_EMOJI[l.period] || '💰'}</div>
+        <div class="log-mid">
+          <div class="log-amt">+ RM ${fmt(l.amount)}</div>
+          <div class="log-meta">${dateStr}${l.note ? ' · ' + escapeHtml(l.note) : ''}</div>
+        </div>
+        <span class="log-period" style="background:${c[0]};color:${c[1]}">${l.period}</span>
+        <button class="btn-x" onclick="removeLog(${l.id})" aria-label="Padam">✕</button>
+      </div>`;
+    }).join('');
+  }
+
+  /* ═══════════════ BADGES ═══════════════ */
+  function getBadges() {
+    const total = totalSaved();
+    const streak = calcStreak();
+    const logCount = logs.length;
+    const reached = distributeToGoals().some(g => g.pct >= 100);
+    return [
+      { id: 'income',    ico: '🧮', name: 'Set Income',        desc: 'Masukkan income dalam Planner', done: getInc() > 0 },
+      { id: 'first_goal',ico: '🎯', name: 'Ada Matlamat',      desc: 'Tambah goal pertama',           done: goals.length >= 1 },
+      { id: 'plan_done', ico: '📊', name: 'Pelan Siap',         desc: 'Lengkapkan kiraan Planner',     done: currentStep === 5 },
+      { id: 'first_log', ico: '🌱', name: 'Langkah Pertama',    desc: 'Log simpanan pertama',          done: logCount >= 1 },
+      { id: 'streak_3',  ico: '🔥', name: '3 Hari Berturut',    desc: 'Streak 3 hari',                 done: streak >= 3 },
+      { id: 'streak_7',  ico: '⚡', name: 'Seminggu Konsisten', desc: 'Streak 7 hari',                 done: streak >= 7 },
+      { id: 'saved_100', ico: '💯', name: 'RM100 Pertama',      desc: 'Simpan jumlah RM100',           done: total >= 100 },
+      { id: 'saved_1k',  ico: '💰', name: 'Ribu Pertama',       desc: 'Simpan jumlah RM1,000',         done: total >= 1000 },
+      { id: 'goal_done', ico: '🏆', name: 'Goal Tercapai',      desc: 'Penuhi satu goal sepenuhnya',   done: reached },
+    ];
+  }
+
+  function checkBadges() {
+    const newly = getBadges().filter(b => b.done && !unlockedBadges.includes(b.id));
+    if (newly.length) {
+      unlockedBadges = [...unlockedBadges, ...newly.map(b => b.id)];
+      saveState();
+      showToast(`${newly[0].ico} Badge dibuka: ${newly[0].name}!`);
+    }
+    /* keep pill / dashboard fresh if visible */
+    document.getElementById('topPill').textContent = '🔥 ' + calcStreak() + ' hari';
+  }
+
+  function renderBadges() {
+    const badges = getBadges();
+    const done = badges.filter(b => b.done).length;
+    const pct = round(done / badges.length * 100);
+    document.getElementById('badgeRing').innerHTML = ringSvg(58, pct, 'var(--accent)', 'var(--prog-bg)', done, 'var(--accent)');
+    document.getElementById('badgeCount').textContent = `${done} / ${badges.length}`;
+    document.getElementById('badgeGrid').innerHTML = badges.map(b => `
+      <div class="badge ${b.done ? 'unlocked' : 'locked'}">
+        <div class="badge-ico">${b.done ? b.ico : '🔒'}</div>
+        <div class="badge-name">${b.name}</div>
+        <div class="badge-desc">${b.desc}</div>
+        <span class="badge-tag">${b.done ? '✓ Dibuka' : 'Terkunci'}</span>
+      </div>`).join('');
+  }
+
+  /* ═══════════════ PROFILE ═══════════════ */
+  function renderProfile() {
+    const name = profileName.trim() || 'Saver';
+    document.getElementById('profName').textContent = name;
+    document.getElementById('profAvatar').textContent = name.charAt(0).toUpperCase();
+    document.getElementById('nameInput').value = profileName;
+    document.getElementById('profGoals').textContent = goals.length;
+    document.getElementById('profBadges').textContent = getBadges().filter(b => b.done).length;
+    document.getElementById('profStreak').textContent = calcStreak();
+    document.getElementById('profTotal').textContent = 'RM ' + fmt(totalSaved());
+    document.getElementById('profLogs').textContent = logs.length;
+  }
+  function saveName() {
+    profileName = document.getElementById('nameInput').value.trim();
+    renderProfile();
+    showToast('✓ Nama disimpan!');
+    saveState();
+  }
+  function resetAll() {
+    if (!confirm('Reset SEMUA data? Income, goals, log & badge akan dipadam.')) return;
+    try { localStorage.removeItem(STORAGE_KEY); localStorage.removeItem('tabungku_progress_v1'); } catch (e) {}
+    commits = []; goals = []; logs = []; unlockedBadges = []; profileName = '';
+    formula = '50/30/20'; prio = 'medium'; tlMode = 'auto';
+    ['incomeInput', 'cName', 'cAmt', 'gName', 'gTarget', 'gMonths', 'nameInput', 'logAmt', 'logNote'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+    document.getElementById('incomePreview').classList.add('hidden');
+    setPrio('medium'); setTL('auto');
+    showStep(1);
+    switchTab('dashboard');
+    showToast('🗑️ Semua data direset.');
+  }
+
+  /* ═══════════════ INIT ═══════════════ */
+  loadState();
+  renderSteps();
+  showStep(currentStep);
+  setPeriod(trackPeriod);
+  renderDashboard();
+  switchTab('dashboard');
+
+  /* PWA */
   if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js').catch(() => {
-        /* Fails harmlessly in environments where sw.js isn't hosted
-           alongside this file (e.g. preview sandboxes). Once deployed
-           to GitHub Pages with all PWA files together, this registers fine. */
-      });
-    });
+    window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
   }
 </script>
 </body>
