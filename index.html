@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>TabungKu — Plan Smart, Save More !</title>
+<title>Achieva — Plan Smart, Save More !</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -356,16 +356,16 @@
 <div class="container">
 
   <div class="app-header">
-    <div class="logo-chip">💧 TabungKu</div>
-    <h1>Plan Smart, <span>Simpan Lebih.</span></h1>
-    <p>Kira savings kau, set goals, capai impian — step by step.</p>
+    <div class="logo-chip">💧 Achieva </div>
+    <h1>Plan Smart, <span>Save More!</span></h1>
+    <p>Kira savings kau, set goals, and achieve it — step by step.</p>
   </div>
 
   <div class="steps" id="stepsBar"></div>
 
   <!-- Step 1: Income -->
   <div class="card" id="step1">
-    <div class="card-title">Berapa income bulanan kau?</div>
+    <div class="card-title">Berapa income bulanan?</div>
     <div class="card-sub">Gaji bersih selepas EPF &amp; cukai — bukan gross.</div>
     <label class="field-label">Monthly take-home pay</label>
     <div class="input-wrap">
@@ -381,7 +381,7 @@
 
   <!-- Step 2: Formula -->
   <div class="card hidden" id="step2">
-    <div class="card-title">Pilih formula simpanan kau</div>
+    <div class="card-title">Pilih formula simpanan - you are free to choose</div>
     <div class="card-sub">Setiap kad dah tunjuk breakdown berdasarkan income kau.</div>
     <div class="formula-grid" id="formulaGrid"></div>
     <div class="donut-row" id="donutRow">
@@ -404,7 +404,7 @@
 
   <!-- Step 3: Commitments -->
   <div class="card hidden" id="step3">
-    <div class="card-title">Komitmen bulanan kau</div>
+    <div class="card-title">Komitmen bulanan</div>
     <div class="card-sub">Sewa, ansuran kereta, loan, subscription — semua yang keluar tiap bulan. Boleh skip kalau takde.</div>
     <div id="commitList"></div>
     <div class="add-row">
@@ -428,7 +428,7 @@
 
   <!-- Step 4: Goals -->
   <div class="card hidden" id="step4">
-    <div class="card-title">Impian kau apa?</div>
+    <div class="card-title">Goals kau apa, what u want to achieve?</div>
     <div class="card-sub">Rumah, kereta, travel, emergency fund — masukkan semua goal kau.</div>
     <div id="goalList"></div>
     <div class="goal-form">
@@ -449,7 +449,7 @@
       <label class="form-label">Timeline</label>
       <div class="t-row" id="tRow">
         <button class="t-btn sel" onclick="setTL('auto')">🤖 Auto-kira</button>
-        <button class="t-btn" onclick="setTL('manual')">📅 Saya tetapkan</button>
+        <button class="t-btn" onclick="setTL('manual')">📅 tetapkan sendiri </button>
       </div>
       <div class="auto-note" id="autoNote">
         Semua savings (<b id="autoNoteAmt" style="color:var(--accent);font-family:var(--ff-mono)">-</b>/bln) akan ditumpu sepenuhnya ke goal ini dulu sebelum beralih ke goal seterusnya.
