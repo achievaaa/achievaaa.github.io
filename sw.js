@@ -1,7 +1,7 @@
 /* Achieva — Service Worker
    Bump CACHE_VERSION every time you deploy changes, so users get
    the fresh files instead of an old cached copy. */
-const CACHE_VERSION = 'achieva-v3';
+const CACHE_VERSION = 'achieva-v4';
 const APP_SHELL = [
   './',
   './index.html',
