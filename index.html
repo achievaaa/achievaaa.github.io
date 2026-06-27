@@ -533,17 +533,18 @@
   }
   .btn-x:hover { color: var(--go-high); }
 
-  .add-row { display: grid; grid-template-columns: 1fr auto auto; gap: 8px; align-items: center; }
+  .add-row { display: grid; grid-template-columns: 1fr; gap: 8px; align-items: center; }
+  .add-row-bottom { display: flex; gap: 8px; align-items: center; }
   .plain-input {
     height: 42px; background: var(--subtle); border: 1.5px solid var(--prog-bg);
-    border-radius: 10px; padding: 0 12px; font-size: 13px;
+    border-radius: 10px; padding: 0 12px; font-size: 13px; width: 100%;
     font-family: var(--ff-mono); color: var(--text); outline: none; transition: border-color 0.2s;
   }
   .plain-input:focus { border-color: var(--accent); }
-  .amt-wrap { display: flex; align-items: center; background: var(--subtle); border: 1.5px solid var(--prog-bg); border-radius: 10px; overflow: hidden; transition: border-color 0.2s; }
+  .amt-wrap { display: flex; align-items: center; background: var(--subtle); border: 1.5px solid var(--prog-bg); border-radius: 10px; overflow: hidden; transition: border-color 0.2s; flex: 1; }
   .amt-wrap:focus-within { border-color: var(--accent); }
-  .amt-prefix { padding: 0 10px; font-family: var(--ff-mono); font-size: 12px; color: var(--accent); font-weight: 600; height: 42px; display: flex; align-items: center; background: var(--accent-dim); border-right: 1.5px solid var(--prog-bg); }
-  .amt-wrap input { width: 80px; background: transparent; border: none; outline: none; height: 42px; font-family: var(--ff-mono); font-size: 14px; color: var(--text); padding: 0 10px; }
+  .amt-prefix { padding: 0 10px; font-family: var(--ff-mono); font-size: 12px; color: var(--accent); font-weight: 600; height: 42px; display: flex; align-items: center; background: var(--accent-dim); border-right: 1.5px solid var(--prog-bg); flex-shrink: 0; }
+  .amt-wrap input { flex: 1; min-width: 0; background: transparent; border: none; outline: none; height: 42px; font-family: var(--ff-mono); font-size: 14px; color: var(--text); padding: 0 10px; }
   .btn-add {
     height: 42px; padding: 0 16px; background: var(--accent-dim);
     border: 1.5px solid var(--accent-bdr); color: var(--accent);
@@ -978,11 +979,13 @@
     <div id="commitList"></div>
     <div class="add-row">
       <input class="plain-input" type="text" id="cName" placeholder="cth: Sewa rumah" autocomplete="off" autocorrect="off" onkeydown="if(event.key==='Enter')addCommit()" />
-      <div class="amt-wrap">
-        <div class="amt-prefix">RM</div>
-        <input type="number" id="cAmt" placeholder="500" onkeydown="if(event.key==='Enter')addCommit()" />
+      <div class="add-row-bottom">
+        <div class="amt-wrap">
+          <div class="amt-prefix">RM</div>
+          <input type="number" id="cAmt" placeholder="500" inputmode="decimal" onkeydown="if(event.key==='Enter')addCommit()" />
+        </div>
+        <button class="btn-add" onclick="addCommit()">+ Tambah</button>
       </div>
-      <button class="btn-add" onclick="addCommit()">+ Tambah</button>
     </div>
     <div class="total-row hidden" id="commitTotalRow">
       Jumlah komitmen: <b id="commitTotalAmt"></b>
