@@ -533,7 +533,7 @@
   }
   .btn-x:hover { color: var(--go-high); }
 
-  .add-row { display: grid; grid-template-columns: 1fr; gap: 8px; align-items: center; }
+  .add-row { display: flex; flex-direction: column; gap: 8px; }
   .add-row-bottom { display: flex; gap: 8px; align-items: center; }
   .plain-input {
     height: 42px; background: var(--subtle); border: 1.5px solid var(--prog-bg);
@@ -541,10 +541,11 @@
     font-family: var(--ff-mono); color: var(--text); outline: none; transition: border-color 0.2s;
   }
   .plain-input:focus { border-color: var(--accent); }
-  .amt-wrap { display: flex; align-items: center; background: var(--subtle); border: 1.5px solid var(--prog-bg); border-radius: 10px; overflow: hidden; transition: border-color 0.2s; flex: 1; }
+  .amt-wrap { display: flex; align-items: center; background: var(--subtle); border: 1.5px solid var(--prog-bg); border-radius: 10px; overflow: hidden; transition: border-color 0.2s; flex: 1; min-width: 0; }
   .amt-wrap:focus-within { border-color: var(--accent); }
   .amt-prefix { padding: 0 10px; font-family: var(--ff-mono); font-size: 12px; color: var(--accent); font-weight: 600; height: 42px; display: flex; align-items: center; background: var(--accent-dim); border-right: 1.5px solid var(--prog-bg); flex-shrink: 0; }
   .amt-wrap input { flex: 1; min-width: 0; background: transparent; border: none; outline: none; height: 42px; font-family: var(--ff-mono); font-size: 14px; color: var(--text); padding: 0 10px; }
+  .btn-add { flex-shrink: 0; }
   .btn-add {
     height: 42px; padding: 0 16px; background: var(--accent-dim);
     border: 1.5px solid var(--accent-bdr); color: var(--accent);
