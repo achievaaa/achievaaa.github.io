@@ -28,6 +28,37 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
+/* ── Push Notifications ── */
+self.addEventListener('push', (event) => {
+  let data = { title: 'Achieva', body: 'Ada update baru!' };
+  try { data = event.data.json(); } catch(e) {}
+  event.waitUntil(
+    self.registration.showNotification(data.title, {
+      body: data.body,
+      icon: './icon-192.png',
+      badge: './icon-192.png',
+      vibrate: [200, 100, 200],
+      tag: 'achieva-buddy',
+      renotify: true,
+      data: { url: self.location.origin }
+    })
+  );
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((list) => {
+      for (const client of list) {
+        if (client.url.includes(self.location.origin) && 'focus' in client) {
+          return client.focus();
+        }
+      }
+      return clients.openWindow(event.notification.data?.url || '/');
+    })
+  );
+});
+
 /* Network-first for navigation (so updates show up fast),
    cache-first for everything else (fonts, icons, etc), with offline fallback. */
 self.addEventListener('fetch', (event) => {
