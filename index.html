@@ -6,6 +6,37 @@
 <meta name="theme-color" content="#080f1e" />
 <title>Achieva — Plan Smart, Save More!</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+  import { getDatabase, ref, set, get, update, onValue, push } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyC7izJqKVWhn-Oztd4cxI8G2YxalD6gC8s",
+    authDomain: "achieva-e10b5.firebaseapp.com",
+    databaseURL: "https://achieva-e10b5-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "achieva-e10b5",
+    storageBucket: "achieva-e10b5.firebasestorage.app",
+    messagingSenderId: "922888309646",
+    appId: "1:922888309646:web:b4f0ac2a25397bb3d032df",
+    measurementId: "G-B5GV7JCEJM"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  // Expose Firebase helpers to global scope for Buddy module
+  window._fbDB = db;
+  window._fbRef = ref;
+  window._fbSet = set;
+  window._fbGet = get;
+  window._fbUpdate = update;
+  window._fbOnValue = onValue;
+  window._fbPush = push;
+  window._fbReady = true;
+
+  document.dispatchEvent(new Event('firebase-ready'));
+</script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -1125,8 +1156,8 @@
       <div class="stack" id="buddyList"></div>
     </div>
 
-    <div class="notice-box" style="margin-top:18px" data-i18n="buddy_notice">
-      💡 Buddy Goals currently sync on this device only. Real-time multi-device sync needs a connected backend — ask your developer to wire in real credentials when ready.
+    <div class="notice-box" style="margin-top:18px" id="buddySyncNotice" data-i18n="buddy_notice">
+      🔄 Buddy Goals syncing with Firebase...
     </div>
   </div>
 
@@ -1350,12 +1381,12 @@ en: {
   badge_unlocked_toast:'🏆 Badge unlocked: ',
   buddy_empty:"No buddy goals yet. Create one and invite a friend with a code, or join with one you've received.",
   buddy_create:'+ Create Goal', buddy_join:'Join with Code',
-  buddy_notice:'💡 Buddy Goals currently sync on this device only. Real-time multi-device sync needs a connected backend — ask your developer to wire in real credentials when ready.',
+  buddy_notice:'✅ Buddy Goals sync in real-time across all devices via Firebase.',
   buddy_create_title:'Create a Buddy Goal', buddy_create_sub:"Give it a name and a target — you'll get a code to share.",
   buddy_goal_name:'GOAL NAME', buddy_goal_target:'TARGET (RM)', buddy_create_cta:'Create',
   buddy_join_title:'Join a Buddy Goal', buddy_join_sub:'Enter the code your friend shared with you.', buddy_join_cta:'Join',
   buddy_created:'✓ Buddy Goal created!', buddy_joined:'✓ Joined buddy goal!',
-  buddy_not_found:"Code not found on this device. Buddy Goals need a connected backend to sync across devices.",
+  buddy_not_found:"Code not found. Make sure your friend's code is correct and try again.",
   buddy_fill_fields:'Please fill in both fields.', buddy_add_prompt:'Add a contribution amount (RM):',
   buddy_contributed:'✓ Contribution added!',
   settings_lang:'Language', settings_theme:'Theme', settings_replay:'Replay Onboarding',
@@ -1407,12 +1438,12 @@ ms: {
   badge_unlocked_toast:'🏆 Badge unlocked: ',
   buddy_empty:'Tiada buddy goal lagi. Cipta satu dan invite kawan dengan code, atau join dengan code yang kau dapat.',
   buddy_create:'+ Cipta Goal', buddy_join:'Join dengan Code',
-  buddy_notice:'💡 Buddy Goals sekarang sync dalam device ni je. Untuk sync real-time merentas device, perlukan backend — minta developer kau wire in credentials sebenar.',
+  buddy_notice:'✅ Buddy Goals sync real-time merentas semua device via Firebase.',
   buddy_create_title:'Cipta Buddy Goal', buddy_create_sub:'Bagi nama dan target — kau akan dapat code untuk share.',
   buddy_goal_name:'NAMA GOAL', buddy_goal_target:'TARGET (RM)', buddy_create_cta:'Cipta',
   buddy_join_title:'Join Buddy Goal', buddy_join_sub:'Masukkan code yang kawan kau share.', buddy_join_cta:'Join',
   buddy_created:'✓ Buddy Goal dicipta!', buddy_joined:'✓ Berjaya join buddy goal!',
-  buddy_not_found:'Code tak jumpa dalam device ni. Buddy Goals perlukan backend untuk sync merentas device.',
+  buddy_not_found:'Code tak jumpa. Pastikan code dari kawan kau betul dan cuba lagi.',
   buddy_fill_fields:'Sila isi kedua-dua field.', buddy_add_prompt:'Tambah jumlah contribution (RM):',
   buddy_contributed:'✓ Contribution ditambah!',
   settings_lang:'Bahasa', settings_theme:'Tema', settings_replay:'Replay Onboarding',
@@ -1811,62 +1842,127 @@ const Badges = {
 };
 
 /* ════════════════════════════════════════════════════════════
-   BUDDY GOALS
-   Local-only mock (see notice in the UI): no backend is wired
-   up, so "joining" only resolves codes that exist in THIS
-   browser's storage. Swapping in real Firebase later just means
-   replacing lsGet/lsSet calls in this module with Firestore
-   reads/writes — the rest of the UI doesn't need to change.
+   BUDDY GOALS — Firebase Realtime Database
+   Goals are stored at /buddyGoals/{code} so any device
+   that knows the code can read & write to the same node.
+   My joined codes are tracked in localStorage only.
    ════════════════════════════════════════════════════════════ */
 const Buddy = {
-  goals: lsGet('achieva_buddy_v1', []),
-  save() { lsSet('achieva_buddy_v1', this.goals); },
+  goals: [],          // live cache, populated from Firebase listeners
+  myCodes: lsGet('achieva_buddy_codes_v1', []),  // codes this device joined/created
+  listeners: {},      // active Firebase onValue listeners keyed by code
+
   genCode() { return Math.random().toString(36).slice(2, 8).toUpperCase(); },
   openCreate() { Modal.open('modalBuddyCreate'); },
-  openJoin() { Modal.open('modalBuddyJoin'); },
-  create() {
-    const name = document.getElementById('buddyNameInput').value.trim();
+  openJoin()   { Modal.open('modalBuddyJoin'); },
+
+  /* ── Attach a real-time listener for one code ── */
+  _listen(code) {
+    if (this.listeners[code]) return; // already listening
+    if (!window._fbReady) return;
+    const goalRef = window._fbRef(window._fbDB, 'buddyGoals/' + code);
+    this.listeners[code] = window._fbOnValue(goalRef, snap => {
+      const data = snap.val();
+      if (!data) return;
+      const idx = this.goals.findIndex(g => g.code === code);
+      if (idx >= 0) this.goals[idx] = data;
+      else this.goals.push(data);
+      this.render();
+      Badges.checkAndUnlock();
+    });
+  },
+
+  /* ── Boot: re-attach listeners for all saved codes ── */
+  init() {
+    // wait for Firebase to be ready (it's an ES module, loads async)
+    const attach = () => {
+      this.myCodes.forEach(code => this._listen(code));
+    };
+    if (window._fbReady) { attach(); }
+    else { document.addEventListener('firebase-ready', attach, { once: true }); }
+  },
+
+  /* ── Create a new buddy goal ── */
+  async create() {
+    const name   = document.getElementById('buddyNameInput').value.trim();
     const target = parseFloat(document.getElementById('buddyTargetInput').value);
     if (!name || !target || target <= 0) { showToast(t('buddy_fill_fields')); return; }
-    this.goals.push({ id: Date.now(), code: this.genCode(), name, target: round(target), contributions: [] });
-    this.save();
-    document.getElementById('buddyNameInput').value = '';
-    document.getElementById('buddyTargetInput').value = '';
-    Modal.close('modalBuddyCreate');
-    this.render();
-    showToast(t('buddy_created'));
-    Badges.checkAndUnlock();
+    if (!window._fbReady) { showToast('Firebase not ready yet, try again.'); return; }
+
+    const code = this.genCode();
+    const goal = { code, name, target: round(target), contributions: {}, createdAt: Date.now() };
+
+    try {
+      await window._fbSet(window._fbRef(window._fbDB, 'buddyGoals/' + code), goal);
+      if (!this.myCodes.includes(code)) this.myCodes.push(code);
+      lsSet('achieva_buddy_codes_v1', this.myCodes);
+      this._listen(code);
+      document.getElementById('buddyNameInput').value = '';
+      document.getElementById('buddyTargetInput').value = '';
+      Modal.close('modalBuddyCreate');
+      showToast(t('buddy_created') + ' Code: ' + code);
+      Badges.checkAndUnlock();
+    } catch(e) {
+      showToast('Error: ' + e.message);
+    }
   },
-  join() {
+
+  /* ── Join an existing buddy goal by code ── */
+  async join() {
     const code = document.getElementById('buddyCodeInput').value.trim().toUpperCase();
     if (!code) { showToast(t('buddy_fill_fields')); return; }
-    const found = this.goals.find(g => g.code === code);
-    Modal.close('modalBuddyJoin');
-    document.getElementById('buddyCodeInput').value = '';
-    if (found) { showToast(t('buddy_joined')); this.render(); }
-    else { showToast(t('buddy_not_found')); }
+    if (!window._fbReady) { showToast('Firebase not ready yet, try again.'); return; }
+
+    try {
+      const snap = await window._fbGet(window._fbRef(window._fbDB, 'buddyGoals/' + code));
+      Modal.close('modalBuddyJoin');
+      document.getElementById('buddyCodeInput').value = '';
+
+      if (!snap.exists()) { showToast(t('buddy_not_found')); return; }
+
+      if (!this.myCodes.includes(code)) this.myCodes.push(code);
+      lsSet('achieva_buddy_codes_v1', this.myCodes);
+      this._listen(code);
+      showToast(t('buddy_joined'));
+    } catch(e) {
+      showToast('Error: ' + e.message);
+    }
   },
-  addContribution(id) {
-    const g = this.goals.find(x => x.id === id);
-    if (!g) return;
+
+  /* ── Add a contribution ── */
+  async addContribution(code) {
+    if (!window._fbReady) { showToast('Firebase not ready yet.'); return; }
     const raw = window.prompt(t('buddy_add_prompt'));
     const amt = parseFloat(raw);
     if (!amt || amt <= 0) return;
-    g.contributions.push({ name: AppState.user.name || 'You', amount: round(amt), date: new Date().toISOString() });
-    this.save();
-    this.render();
-    showToast(t('buddy_contributed'));
-    Badges.checkAndUnlock();
+
+    try {
+      const contribRef = window._fbRef(window._fbDB, 'buddyGoals/' + code + '/contributions');
+      const newRef = window._fbPush(contribRef);
+      await window._fbSet(newRef, {
+        name: AppState.user.name || 'You',
+        amount: round(amt),
+        date: new Date().toISOString()
+      });
+      showToast(t('buddy_contributed'));
+      Badges.checkAndUnlock();
+    } catch(e) {
+      showToast('Error: ' + e.message);
+    }
   },
+
+  /* ── Render all goals from cache ── */
   render() {
     const empty = this.goals.length === 0;
     document.getElementById('buddyEmpty').classList.toggle('hidden', !empty);
     document.getElementById('buddyListWrap').classList.toggle('hidden', empty);
     if (empty) return;
+
     document.getElementById('buddyList').innerHTML = this.goals.map(g => {
-      const raised = g.contributions.reduce((s,c) => s + c.amount, 0);
+      const contribs = g.contributions ? Object.values(g.contributions) : [];
+      const raised = contribs.reduce((s,c) => s + (c.amount||0), 0);
       const pct = Math.min(100, Math.round(raised / g.target * 100));
-      const names = [...new Set(g.contributions.map(c => c.name))].slice(0, 4);
+      const names = [...new Set(contribs.map(c => c.name))].slice(0, 4);
       return `<div class="acard buddy-card">
         <div class="buddy-head">
           <div class="buddy-name">${g.name}</div>
@@ -1876,7 +1972,7 @@ const Buddy = {
         <div class="buddy-stats-row"><span>RM ${fmt(raised)} / RM ${fmt(g.target)}</span><span><b>${pct}%</b></span></div>
         <div style="display:flex;align-items:center;justify-content:space-between">
           <div class="contrib-avatars">${names.map(n => `<div class="contrib-avatar">${n.charAt(0).toUpperCase()}</div>`).join('') || '<span style="font-size:11px;color:var(--text-3)">—</span>'}</div>
-          <button class="btn-mini" onclick="Buddy.addContribution(${g.id})">+ RM</button>
+          <button class="btn-mini" onclick="Buddy.addContribution('${g.code}')">+ RM</button>
         </div>
       </div>`;
     }).join('');
@@ -1906,7 +2002,7 @@ const Settings = {
   },
   openReset() { Modal.open('modalReset'); },
   confirmReset() {
-    ['achieva_user_v1','achieva_tips_v1','achieva_tracker_v1','achieva_badges_v1','achieva_buddy_v1','tabungku_progress_v1']
+    ['achieva_user_v1','achieva_tips_v1','achieva_tracker_v1','achieva_badges_v1','achieva_buddy_v1','achieva_buddy_codes_v1','tabungku_progress_v1']
       .forEach(k => { try { localStorage.removeItem(k); } catch(e) {} });
     location.reload();
   }
@@ -1920,6 +2016,7 @@ const App = {
     document.getElementById('app-shell').style.display = 'block';
     Onb.buildHowFlow();
     I18n.apply();
+    Buddy.init();
     Nav.go('dashboard');
   },
   boot() {
