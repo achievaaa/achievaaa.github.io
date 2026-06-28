@@ -1346,6 +1346,13 @@ function lsGet(key, fallback) {
 }
 function lsSet(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {} }
 
+function urlB64ToUint8(base64String) {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const rawData = atob(base64);
+  return new Uint8Array([...rawData].map(c => c.charCodeAt(0)));
+}
+
 /* ── App user/profile state ── */
 const AppState = {
   user: lsGet('achieva_user_v1', { name: '', lang: 'en', theme: 'dark', onboarded: false, notif: false }),
@@ -1900,6 +1907,38 @@ const Buddy = {
     };
     if (window._fbReady) { attach(); }
     else { document.addEventListener('firebase-ready', attach, { once: true }); }
+    // Register push subscription
+    this._registerPush();
+  },
+
+  /* ── Register Web Push subscription ── */
+  async _registerPush() {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+    try {
+      const reg = await navigator.serviceWorker.ready;
+      let sub = await reg.pushManager.getSubscription();
+      if (!sub) {
+        sub = await reg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlB64ToUint8('BGP84-v8c6OcNX1TlAYdUskKAgrUByfu70CC94bwrHhJ4mtA9C1-w62QxcLTZn71oUjWv2Y0Uijv062XoIbRQOk')
+        });
+      }
+      this._pushSub = JSON.parse(JSON.stringify(sub));
+      const uid = (lsGet('achieva_push_uid', '') || (() => {
+        const id = 'u_' + Math.random().toString(36).slice(2, 10);
+        lsSet('achieva_push_uid', id); return id;
+      })());
+      const safeUid = uid.replace(/[^a-zA-Z0-9_]/g, '_');
+      const saveSubToCode = (code) => {
+        if (window._fbReady) {
+          window._fbSet(window._fbRef(window._fbDB, `buddyGoals/${code}/subscribers/${safeUid}`), this._pushSub);
+        }
+      };
+      if (window._fbReady) this.myCodes.forEach(saveSubToCode);
+      else document.addEventListener('firebase-ready', () => this.myCodes.forEach(saveSubToCode), { once: true });
+    } catch(e) {
+      console.log('Push registration skipped:', e.message);
+    }
   },
 
   /* ── Create a new buddy goal ── */
@@ -1917,6 +1956,10 @@ const Buddy = {
       if (!this.myCodes.includes(code)) this.myCodes.push(code);
       lsSet('achieva_buddy_codes_v1', this.myCodes);
       this._listen(code);
+      if (this._pushSub) {
+        const uid = (lsGet('achieva_push_uid', '') || 'anon').replace(/[^a-zA-Z0-9_]/g, '_');
+        window._fbSet(window._fbRef(window._fbDB, `buddyGoals/${code}/subscribers/${uid}`), this._pushSub);
+      }
       document.getElementById('buddyNameInput').value = '';
       document.getElementById('buddyTargetInput').value = '';
       Modal.close('modalBuddyCreate');
@@ -1943,6 +1986,10 @@ const Buddy = {
       if (!this.myCodes.includes(code)) this.myCodes.push(code);
       lsSet('achieva_buddy_codes_v1', this.myCodes);
       this._listen(code);
+      if (this._pushSub) {
+        const uid = (lsGet('achieva_push_uid', '') || 'anon').replace(/[^a-zA-Z0-9_]/g, '_');
+        window._fbSet(window._fbRef(window._fbDB, `buddyGoals/${code}/subscribers/${uid}`), this._pushSub);
+      }
       showToast(t('buddy_joined'));
     } catch(e) {
       showToast('Error: ' + e.message);
@@ -1969,16 +2016,35 @@ const Buddy = {
     if (!code || !amt || amt <= 0) { showToast(t('buddy_fill_fields')); return; }
     if (!window._fbReady) { showToast('Firebase not ready.'); return; }
     Modal.close('modalBuddyContrib');
+    const name = AppState.user.name || 'Someone';
     try {
       const contribRef = window._fbRef(window._fbDB, 'buddyGoals/' + code + '/contributions');
       const newRef = window._fbPush(contribRef);
-      await window._fbSet(newRef, {
-        name: AppState.user.name || 'You',
-        amount: round(amt),
-        date: new Date().toISOString()
-      });
+      await window._fbSet(newRef, { name, amount: round(amt), date: new Date().toISOString() });
       showToast(t('buddy_contributed'));
       Badges.checkAndUnlock();
+
+      // Send push to all other subscribers
+      const snap = await window._fbGet(window._fbRef(window._fbDB, `buddyGoals/${code}/subscribers`));
+      if (snap.exists()) {
+        const myUid = lsGet('achieva_push_uid', '');
+        const safeMyUid = myUid.replace(/[^a-zA-Z0-9_]/g, '_');
+        const subs = Object.entries(snap.val())
+          .filter(([uid]) => uid !== safeMyUid)
+          .map(([, sub]) => sub);
+        if (subs.length > 0) {
+          const g = this.goals.find(x => x.code === code);
+          fetch('https://achieva-push.najwaiman226.workers.dev/send', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              subscriptions: subs,
+              title: `💰 ${name} baru contribute!`,
+              body: `+RM ${fmt(amt)} ke "${g ? g.name : code}"`
+            })
+          }).catch(() => {});
+        }
+      }
     } catch(e) {
       showToast('Error: ' + e.message);
     }
