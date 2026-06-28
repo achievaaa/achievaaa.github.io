@@ -384,12 +384,14 @@
   .buddy-code { font-family: var(--ff-mono); font-size: 10.5px; color: var(--text-2); background: var(--inner); padding: 3px 9px; border-radius: var(--r-pill); }
   .buddy-bar-track { height: 9px; background: var(--inner); border-radius: var(--r-pill); overflow: hidden; margin: 10px 0 8px; }
   .buddy-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--success)); border-radius: var(--r-pill); transition: width 0.8s ease; }
-  .buddy-stats-row { display: flex; justify-content: space-between; font-size: 11.5px; color: var(--text-2); margin-bottom: 14px; }
+  .buddy-stats-row { display: flex; justify-content: space-between; font-size: 11.5px; color: var(--text-2); margin-bottom: 10px; }
   .buddy-stats-row b { color: var(--text); font-family: var(--ff-mono); }
+  .buddy-contribs { border-top: 1px solid var(--inner); padding-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+  .buddy-contrib-row { display: flex; align-items: center; gap: 10px; }
   .contrib-avatars { display: flex; }
   .contrib-avatar { width: 26px; height: 26px; border-radius: 50%; background: var(--accent); color: #fff; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; border: 2px solid var(--card); margin-left: -8px; }
   .contrib-avatar:first-child { margin-left: 0; }
-  .notice-box { background: var(--warn); border: 1px solid var(--warn-bdr); border-radius: var(--r-sm); padding: 11px 13px; font-size: 11.5px; color: var(--warn-text); line-height: 1.55; margin-top: 4px; }
+  .notice-box { background: var(--success-dim); border: 1px solid var(--success-bdr); border-radius: var(--r-sm); padding: 11px 13px; font-size: 11.5px; color: var(--success); line-height: 1.55; margin-top: 4px; }
 
   /* ── Settings ── */
   .settings-group { background: var(--card); border: 1px solid var(--card-border); border-radius: var(--r-lg); overflow: hidden; margin-bottom: 18px; }
@@ -933,18 +935,21 @@
       <div class="section-title"><span data-i18n="dash_activity_title">Recent Activity</span><button class="link-sm" onclick="Nav.go('tracker')" data-i18n="see_all">See all</button></div>
       <div class="acard" id="dashActivityCard"></div>
 
+      <div class="section-title"><span data-i18n="dash_buddy_title">Buddy Goals</span><button class="link-sm" onclick="Nav.go('buddy')" data-i18n="see_all">See all</button></div>
+      <div id="dashBuddyWrap">
+        <div class="acard hoverable buddy-cta" style="cursor:pointer" onclick="Nav.go('buddy')" id="dashBuddyCta">
+          <div class="buddy-cta-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
+          <div style="flex:1">
+            <div style="font-size:13.5px;font-weight:600" data-i18n="dash_buddy_cta_t">Save together</div>
+            <div style="font-size:11.5px;color:var(--text-2)" data-i18n="dash_buddy_cta_d">Invite friends & track shared goals</div>
+          </div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;flex-shrink:0"><path d="M9 18l6-6-6-6"/></svg>
+        </div>
+        <div id="dashBuddyList" class="stack hidden"></div>
+      </div>
+
       <div class="section-title"><span data-i18n="dash_badges_title">Badges</span><button class="link-sm" onclick="Nav.go('badges')" data-i18n="see_all">See all</button></div>
       <div class="acard"><div class="badge-strip" id="dashBadgeStrip"></div></div>
-
-      <div class="section-title"><span data-i18n="dash_buddy_title">Buddy Goals</span></div>
-      <div class="acard hoverable buddy-cta" style="cursor:pointer" onclick="Nav.go('buddy')">
-        <div class="buddy-cta-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
-        <div style="flex:1">
-          <div style="font-size:13.5px;font-weight:600" data-i18n="dash_buddy_cta_t">Save together</div>
-          <div style="font-size:11.5px;color:var(--text-2)" data-i18n="dash_buddy_cta_d">Invite friends & track shared goals</div>
-        </div>
-        <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;flex-shrink:0"><path d="M9 18l6-6-6-6"/></svg>
-      </div>
     </div>
   </div>
 
@@ -1303,6 +1308,21 @@
     <div class="modal-actions">
       <button class="btn-secondary" onclick="Modal.close('modalBuddyJoin')" data-i18n="cancel">Cancel</button>
       <button class="btn-primary" onclick="Buddy.join()" data-i18n="buddy_join_cta">Join</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="modalBuddyContrib">
+  <div class="modal-box">
+    <h3 id="contribModalTitle">Add Contribution</h3>
+    <p id="contribModalSub" style="margin-bottom:14px">How much are you adding?</p>
+    <div class="amt-wrap" style="margin-bottom:18px">
+      <div class="amt-prefix">RM</div>
+      <input type="number" id="contribAmtInput" placeholder="50" inputmode="decimal" style="width:100%" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="Modal.close('modalBuddyContrib')" data-i18n="cancel">Cancel</button>
+      <button class="btn-primary" onclick="Buddy.submitContrib()">+ Add</button>
     </div>
   </div>
 </div>
@@ -1929,13 +1949,26 @@ const Buddy = {
     }
   },
 
-  /* ── Add a contribution ── */
-  async addContribution(code) {
-    if (!window._fbReady) { showToast('Firebase not ready yet.'); return; }
-    const raw = window.prompt(t('buddy_add_prompt'));
-    const amt = parseFloat(raw);
-    if (!amt || amt <= 0) return;
+  /* ── Open contribution modal ── */
+  addContribution(code) {
+    this._pendingContribCode = code;
+    const g = this.goals.find(x => x.code === code);
+    document.getElementById('contribModalTitle').textContent = g ? g.name : 'Add Contribution';
+    document.getElementById('contribModalSub').textContent = g
+      ? `RM ${fmt(Object.values(g.contributions||{}).reduce((s,c)=>s+c.amount,0))} / RM ${fmt(g.target)} raised so far`
+      : 'How much are you adding?';
+    document.getElementById('contribAmtInput').value = '';
+    Modal.open('modalBuddyContrib');
+    setTimeout(() => document.getElementById('contribAmtInput').focus(), 200);
+  },
 
+  /* ── Submit contribution from modal ── */
+  async submitContrib() {
+    const code = this._pendingContribCode;
+    const amt = parseFloat(document.getElementById('contribAmtInput').value);
+    if (!code || !amt || amt <= 0) { showToast(t('buddy_fill_fields')); return; }
+    if (!window._fbReady) { showToast('Firebase not ready.'); return; }
+    Modal.close('modalBuddyContrib');
     try {
       const contribRef = window._fbRef(window._fbDB, 'buddyGoals/' + code + '/contributions');
       const newRef = window._fbPush(contribRef);
@@ -1956,6 +1989,30 @@ const Buddy = {
     const empty = this.goals.length === 0;
     document.getElementById('buddyEmpty').classList.toggle('hidden', !empty);
     document.getElementById('buddyListWrap').classList.toggle('hidden', empty);
+
+    // Dashboard buddy section
+    const dashCta = document.getElementById('dashBuddyCta');
+    const dashList = document.getElementById('dashBuddyList');
+    if (dashCta && dashList) {
+      dashCta.classList.toggle('hidden', !empty);
+      dashList.classList.toggle('hidden', empty);
+      if (!empty) {
+        dashList.innerHTML = this.goals.map(g => {
+          const contribs = g.contributions ? Object.values(g.contributions) : [];
+          const raised = contribs.reduce((s,c) => s + (c.amount||0), 0);
+          const pct = Math.min(100, Math.round(raised / g.target * 100));
+          return `<div class="acard buddy-card" style="cursor:pointer" onclick="Nav.go('buddy')">
+            <div class="buddy-head">
+              <div class="buddy-name">${g.name}</div>
+              <span class="pill accent">${pct}%</span>
+            </div>
+            <div class="buddy-bar-track"><div class="buddy-bar-fill" style="width:${pct}%"></div></div>
+            <div class="buddy-stats-row"><span>RM ${fmt(raised)} / RM ${fmt(g.target)}</span><span style="font-size:10.5px;color:var(--text-3)">${g.code}</span></div>
+          </div>`;
+        }).join('');
+      }
+    }
+
     if (empty) return;
 
     document.getElementById('buddyList').innerHTML = this.goals.map(g => {
@@ -1963,6 +2020,8 @@ const Buddy = {
       const raised = contribs.reduce((s,c) => s + (c.amount||0), 0);
       const pct = Math.min(100, Math.round(raised / g.target * 100));
       const names = [...new Set(contribs.map(c => c.name))].slice(0, 4);
+      // recent contributions
+      const recent = [...contribs].sort((a,b) => new Date(b.date)-new Date(a.date)).slice(0,3);
       return `<div class="acard buddy-card">
         <div class="buddy-head">
           <div class="buddy-name">${g.name}</div>
@@ -1970,9 +2029,19 @@ const Buddy = {
         </div>
         <div class="buddy-bar-track"><div class="buddy-bar-fill" style="width:${pct}%"></div></div>
         <div class="buddy-stats-row"><span>RM ${fmt(raised)} / RM ${fmt(g.target)}</span><span><b>${pct}%</b></span></div>
-        <div style="display:flex;align-items:center;justify-content:space-between">
+        ${recent.length > 0 ? `<div class="buddy-contribs">
+          ${recent.map(c => `<div class="buddy-contrib-row">
+            <div class="contrib-avatar" style="width:28px;height:28px;font-size:11px;flex-shrink:0">${c.name.charAt(0).toUpperCase()}</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:12px;font-weight:600">${c.name}</div>
+              <div style="font-size:10.5px;color:var(--text-2)">${timeAgo(c.date)}</div>
+            </div>
+            <div style="font-family:var(--ff-mono);font-size:12.5px;color:var(--success);font-weight:600">+RM ${fmt(c.amount)}</div>
+          </div>`).join('')}
+        </div>` : ''}
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px">
           <div class="contrib-avatars">${names.map(n => `<div class="contrib-avatar">${n.charAt(0).toUpperCase()}</div>`).join('') || '<span style="font-size:11px;color:var(--text-3)">—</span>'}</div>
-          <button class="btn-mini" onclick="Buddy.addContribution('${g.code}')">+ RM</button>
+          <button class="btn-primary" style="height:36px;padding:0 16px;font-size:12.5px" onclick="Buddy.addContribution('${g.code}')">+ RM</button>
         </div>
       </div>`;
     }).join('');
