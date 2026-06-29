@@ -10,31 +10,9 @@
 <script type="module">
   import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
   import { getDatabase, ref, set, get, update, onValue, push } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyC7izJqKVWhn-Oztd4cxI8G2YxalD6gC8s",
-    authDomain: "achieva-e10b5.firebaseapp.com",
-    databaseURL: "https://achieva-e10b5-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "achieva-e10b5",
-    storageBucket: "achieva-e10b5.firebasestorage.app",
-    messagingSenderId: "922888309646",
-    appId: "1:922888309646:web:b4f0ac2a25397bb3d032df",
-    measurementId: "G-B5GV7JCEJM"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-
-  // Expose Firebase helpers to global scope for Buddy module
-  window._fbDB = db;
-  window._fbRef = ref;
-  window._fbSet = set;
-  window._fbGet = get;
-  window._fbUpdate = update;
-  window._fbOnValue = onValue;
-  window._fbPush = push;
-  window._fbReady = true;
-
+  const firebaseConfig={apiKey:"AIzaSyC7izJqKVWhn-Oztd4cxI8G2YxalD6gC8s",authDomain:"achieva-e10b5.firebaseapp.com",databaseURL:"https://achieva-e10b5-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"achieva-e10b5",storageBucket:"achieva-e10b5.firebasestorage.app",messagingSenderId:"922888309646",appId:"1:922888309646:web:b4f0ac2a25397bb3d032df"};
+  const app=initializeApp(firebaseConfig),db=getDatabase(app);
+  window._fbDB=db;window._fbRef=ref;window._fbSet=set;window._fbGet=get;window._fbUpdate=update;window._fbOnValue=onValue;window._fbPush=push;window._fbReady=true;
   document.dispatchEvent(new Event('firebase-ready'));
 </script>
 <style>
@@ -384,7 +362,7 @@
   .buddy-code { font-family: var(--ff-mono); font-size: 10.5px; color: var(--text-2); background: var(--inner); padding: 3px 9px; border-radius: var(--r-pill); }
   .buddy-bar-track { height: 9px; background: var(--inner); border-radius: var(--r-pill); overflow: hidden; margin: 10px 0 8px; }
   .buddy-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--success)); border-radius: var(--r-pill); transition: width 0.8s ease; }
-  .buddy-stats-row { display: flex; justify-content: space-between; font-size: 11.5px; color: var(--text-2); margin-bottom: 10px; }
+  .buddy-stats-row { display: flex; justify-content: space-between; font-size: 11.5px; color: var(--text-2); margin-bottom: 14px; }
   .buddy-stats-row b { color: var(--text); font-family: var(--ff-mono); }
   .buddy-contribs { border-top: 1px solid var(--inner); padding-top: 10px; display: flex; flex-direction: column; gap: 8px; }
   .buddy-contrib-row { display: flex; align-items: center; gap: 10px; }
@@ -935,21 +913,19 @@
       <div class="section-title"><span data-i18n="dash_activity_title">Recent Activity</span><button class="link-sm" onclick="Nav.go('tracker')" data-i18n="see_all">See all</button></div>
       <div class="acard" id="dashActivityCard"></div>
 
-      <div class="section-title"><span data-i18n="dash_buddy_title">Buddy Goals</span><button class="link-sm" onclick="Nav.go('buddy')" data-i18n="see_all">See all</button></div>
-      <div id="dashBuddyWrap">
-        <div class="acard hoverable buddy-cta" style="cursor:pointer" onclick="Nav.go('buddy')" id="dashBuddyCta">
-          <div class="buddy-cta-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
-          <div style="flex:1">
-            <div style="font-size:13.5px;font-weight:600" data-i18n="dash_buddy_cta_t">Save together</div>
-            <div style="font-size:11.5px;color:var(--text-2)" data-i18n="dash_buddy_cta_d">Invite friends & track shared goals</div>
-          </div>
-          <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;flex-shrink:0"><path d="M9 18l6-6-6-6"/></svg>
-        </div>
-        <div id="dashBuddyList" class="stack hidden"></div>
-      </div>
-
       <div class="section-title"><span data-i18n="dash_badges_title">Badges</span><button class="link-sm" onclick="Nav.go('badges')" data-i18n="see_all">See all</button></div>
       <div class="acard"><div class="badge-strip" id="dashBadgeStrip"></div></div>
+
+      <div class="section-title"><span data-i18n="dash_buddy_title">Buddy Goals</span></div>
+      <div class="acard hoverable buddy-cta" style="cursor:pointer" onclick="Nav.go('buddy')" id="dashBuddyCta">
+        <div class="buddy-cta-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
+        <div style="flex:1">
+          <div style="font-size:13.5px;font-weight:600" data-i18n="dash_buddy_cta_t">Save together</div>
+          <div style="font-size:11.5px;color:var(--text-2)" data-i18n="dash_buddy_cta_d">Invite friends & track shared goals</div>
+        </div>
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;flex-shrink:0"><path d="M9 18l6-6-6-6"/></svg>
+      </div>
+      <div id="dashBuddyList"></div>
     </div>
   </div>
 
@@ -1161,8 +1137,8 @@
       <div class="stack" id="buddyList"></div>
     </div>
 
-    <div class="notice-box" style="margin-top:18px" id="buddySyncNotice" data-i18n="buddy_notice">
-      🔄 Buddy Goals syncing with Firebase...
+    <div class="notice-box" style="margin-top:18px" data-i18n="buddy_notice">
+      ✅ Buddy Goals sync in real-time across all devices via Firebase.
     </div>
   </div>
 
@@ -1312,45 +1288,48 @@
   </div>
 </div>
 
+<!-- Add missing modal for contributions -->
 <div class="modal-overlay hidden" id="modalBuddyContrib">
   <div class="modal-box">
     <h3 id="contribModalTitle">Add Contribution</h3>
-    <p id="contribModalSub" style="margin-bottom:14px">How much are you adding?</p>
-    <div class="amt-wrap" style="margin-bottom:18px">
+    <p id="contribModalSub">How much are you adding?</p>
+    <div class="amt-wrap mg-top" style="margin-bottom:18px">
       <div class="amt-prefix">RM</div>
-      <input type="number" id="contribAmtInput" placeholder="50" inputmode="decimal" style="width:100%" />
+      <input type="number" id="contribAmtInput" style="width:100%" placeholder="100" />
     </div>
     <div class="modal-actions">
       <button class="btn-secondary" onclick="Modal.close('modalBuddyContrib')" data-i18n="cancel">Cancel</button>
-      <button class="btn-primary" onclick="Buddy.submitContrib()">+ Add</button>
+      <button class="btn-primary" onclick="Buddy.submitContrib()" data-i18n="buddy_contribute">Contribute</button>
     </div>
   </div>
 </div>
 
-</body>
 <script>
 /* ════════════════════════════════════════════════════════════
-   ACHIEVA APP SHELL — new code (namespaced modules below).
-   The ORIGINAL PLANNER ENGINE (Income→Formula→Commitments→
-   Goals→Results) lives further down this same script, copied
-   verbatim from the source file: same function names, same
-   globals (currentStep, formula, prio, tlMode, commits, goals),
-   same localStorage key ('tabungku_progress_v1'). Nothing in it
-   was rewritten — only re-themed via the shared CSS variables.
+   HELPER FUNCTIONS — defined first so everything else can use them
    ════════════════════════════════════════════════════════════ */
-
-/* ── Tiny storage helpers ── */
 function lsGet(key, fallback) {
   try { const v = JSON.parse(localStorage.getItem(key)); return (v === null || v === undefined) ? fallback : v; }
   catch (e) { return fallback; }
 }
 function lsSet(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {} }
 
-function urlB64ToUint8(base64String) {
-  const padding = '='.repeat((4 - base64String.length % 4) % 4);
-  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
-  const rawData = atob(base64);
-  return new Uint8Array([...rawData].map(c => c.charCodeAt(0)));
+function urlB64ToUint8(b64){const pad="=".repeat((4-b64.length%4)%4);return new Uint8Array([...atob((b64+pad).replace(/-/g,"+").replace(/_/g,"/"))].map(c=>c.charCodeAt(0)));}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+function fmt(n) { return Math.round(n).toLocaleString('ms-MY'); }
+function round(n) { return Math.round(n); }
+function fmtDate(months) {
+  const d = new Date();
+  d.setMonth(d.getMonth() + months);
+  return d.toLocaleDateString('ms-MY', { month: 'short', year: 'numeric' });
 }
 
 /* ── App user/profile state ── */
@@ -1361,9 +1340,6 @@ const AppState = {
 
 /* ════════════════════════════════════════════════════════════
    I18N — minimal dictionary covering all new UI surfaces.
-   The original Planner's own copy (Bahasa Melayu) is left as
-   written in its source — it is content, not app chrome, and
-   translating it risked touching working logic for no benefit.
    ════════════════════════════════════════════════════════════ */
 const I18N = {
 en: {
@@ -1415,7 +1391,7 @@ en: {
   buddy_created:'✓ Buddy Goal created!', buddy_joined:'✓ Joined buddy goal!',
   buddy_not_found:"Code not found. Make sure your friend's code is correct and try again.",
   buddy_fill_fields:'Please fill in both fields.', buddy_add_prompt:'Add a contribution amount (RM):',
-  buddy_contributed:'✓ Contribution added!',
+  buddy_contributed:'✓ Contribution added!', buddy_contribute:'Contribute',
   settings_lang:'Language', settings_theme:'Theme', settings_replay:'Replay Onboarding',
   settings_notif:'Notifications', settings_notif_sub:'Reminders to log savings (UI only — not yet wired to push)',
   settings_reset:'Reset Data', settings_about:'About Achieva', settings_about_sub:'Plan smart. Save more.',
@@ -1472,7 +1448,7 @@ ms: {
   buddy_created:'✓ Buddy Goal dicipta!', buddy_joined:'✓ Berjaya join buddy goal!',
   buddy_not_found:'Code tak jumpa. Pastikan code dari kawan kau betul dan cuba lagi.',
   buddy_fill_fields:'Sila isi kedua-dua field.', buddy_add_prompt:'Tambah jumlah contribution (RM):',
-  buddy_contributed:'✓ Contribution ditambah!',
+  buddy_contributed:'✓ Contribution ditambah!', buddy_contribute:'Sumbang',
   settings_lang:'Bahasa', settings_theme:'Tema', settings_replay:'Replay Onboarding',
   settings_notif:'Notifications', settings_notif_sub:'Reminder untuk log savings (UI je — belum wire ke push sebenar)',
   settings_reset:'Reset Data', settings_about:'Tentang Achieva', settings_about_sub:'Plan smart. Save more.',
@@ -1541,8 +1517,7 @@ const Theme = {
     }
   }
 };
-</script>
-<script>
+
 /* ════════════════════════════════════════════════════════════
    ONBOARDING FLOW CONTROLLER
    ════════════════════════════════════════════════════════════ */
@@ -1622,8 +1597,7 @@ const Nav = {
 };
 
 /* ════════════════════════════════════════════════════════════
-   CONTEXTUAL TIPS — shown once per screen, replaces the old
-   spotlight tutorial entirely.
+   CONTEXTUAL TIPS — shown once per screen
    ════════════════════════════════════════════════════════════ */
 const Tips = {
   shown: lsGet('achieva_tips_v1', { planner: false, tracker: false, buddy: false }),
@@ -1655,14 +1629,26 @@ const Modal = {
 document.addEventListener('click', (e) => {
   if (e.target.classList && e.target.classList.contains('modal-overlay')) e.target.classList.add('hidden');
 });
-</script>
-<script>
+
 /* ════════════════════════════════════════════════════════════
-   Helpers shared by the new screens. These read the SAME
-   globals the original planner already maintains (goals,
-   commits, getInc, getPct, round, fmt, fmtDate) — no duplicate
-   state, no risk of the two halves of the app disagreeing.
+   Helpers shared by the new screens
    ════════════════════════════════════════════════════════════ */
+function getInc() { return parseFloat(document.getElementById('incomeInput').value) || 0; }
+function getSavings() {
+  const pct = getPct();
+  return round(getInc() * (pct.s || 0) / 100);
+}
+function getPct() {
+  if (typeof formula !== 'undefined' && formula === 'free') {
+    return {
+      n: parseFloat(document.getElementById('freeN').value) || 0,
+      w: parseFloat(document.getElementById('freeW').value) || 0,
+      s: parseFloat(document.getElementById('freeS').value) || 0,
+    };
+  }
+  const FORMULAS = { '70/20/10': { n: 70, w: 20, s: 10 }, '50/30/20': { n: 50, w: 30, s: 20 }, '40/30/30': { n: 40, w: 30, s: 30 } };
+  return FORMULAS[formula] || FORMULAS['50/30/20'];
+}
 function hasPlan() { return (typeof goals !== 'undefined') && (getInc() > 0 || goals.length > 0); }
 
 function quickPlanSummary() {
@@ -1868,248 +1854,188 @@ const Badges = {
   }
 };
 
-/* ════════════════════════════════════════════════════════════
-   BUDDY GOALS — Firebase Realtime Database
-   Goals are stored at /buddyGoals/{code} so any device
-   that knows the code can read & write to the same node.
-   My joined codes are tracked in localStorage only.
+/* ═══════════════════════════════════════════════════════════
+   BUDDY GOALS — Firebase Realtime Database + Web Push
    ════════════════════════════════════════════════════════════ */
 const Buddy = {
-  goals: [],          // live cache, populated from Firebase listeners
-  myCodes: lsGet('achieva_buddy_codes_v1', []),  // codes this device joined/created
-  listeners: {},      // active Firebase onValue listeners keyed by code
-
-  genCode() { return Math.random().toString(36).slice(2, 8).toUpperCase(); },
+  goals: [], myCodes: lsGet('achieva_buddy_codes_v1', []), listeners: {},
+  genCode() { return Math.random().toString(36).slice(2,8).toUpperCase(); },
   openCreate() { Modal.open('modalBuddyCreate'); },
   openJoin()   { Modal.open('modalBuddyJoin'); },
 
-  /* ── Attach a real-time listener for one code ── */
   _listen(code) {
-    if (this.listeners[code]) return; // already listening
-    if (!window._fbReady) return;
-    const goalRef = window._fbRef(window._fbDB, 'buddyGoals/' + code);
-    this.listeners[code] = window._fbOnValue(goalRef, snap => {
-      const data = snap.val();
-      if (!data) return;
-      const idx = this.goals.findIndex(g => g.code === code);
-      if (idx >= 0) this.goals[idx] = data;
-      else this.goals.push(data);
-      this.render();
-      Badges.checkAndUnlock();
+    if (this.listeners[code] || !window._fbReady) return;
+    this.listeners[code] = window._fbOnValue(window._fbRef(window._fbDB,'buddyGoals/'+code), snap => {
+      const data = snap.val(); if (!data) return;
+      const idx = this.goals.findIndex(g => g.code===code);
+      if (idx>=0) this.goals[idx]=data; else this.goals.push(data);
+      this.render(); Badges.checkAndUnlock();
     });
   },
 
-  /* ── Boot: re-attach listeners for all saved codes ── */
   init() {
-    // wait for Firebase to be ready (it's an ES module, loads async)
-    const attach = () => {
-      this.myCodes.forEach(code => this._listen(code));
-    };
-    if (window._fbReady) { attach(); }
-    else { document.addEventListener('firebase-ready', attach, { once: true }); }
-    // Register push subscription
+    const attach = () => this.myCodes.forEach(c => this._listen(c));
+    if (window._fbReady) attach();
+    else document.addEventListener('firebase-ready', attach, {once:true});
     this._registerPush();
   },
 
-  /* ── Register Web Push subscription ── */
   async _registerPush() {
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
     try {
       const reg = await navigator.serviceWorker.ready;
       let sub = await reg.pushManager.getSubscription();
-      if (!sub) {
-        sub = await reg.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: urlB64ToUint8('BGP84-v8c6OcNX1TlAYdUskKAgrUByfu70CC94bwrHhJ4mtA9C1-w62QxcLTZn71oUjWv2Y0Uijv062XoIbRQOk')
-        });
-      }
+      if (!sub) sub = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlB64ToUint8('BGP84-v8c6OcNX1TlAYdUskKAgrUByfu70CC94bwrHhJ4mtA9C1-w62QxcLTZn71oUjWv2Y0Uijv062XoIbRQOk')
+      });
       this._pushSub = JSON.parse(JSON.stringify(sub));
-      const uid = (lsGet('achieva_push_uid', '') || (() => {
-        const id = 'u_' + Math.random().toString(36).slice(2, 10);
-        lsSet('achieva_push_uid', id); return id;
-      })());
-      const safeUid = uid.replace(/[^a-zA-Z0-9_]/g, '_');
-      const saveSubToCode = (code) => {
-        if (window._fbReady) {
-          window._fbSet(window._fbRef(window._fbDB, `buddyGoals/${code}/subscribers/${safeUid}`), this._pushSub);
-        }
+      let uid = lsGet('achieva_push_uid','');
+      if (!uid) { uid='u_'+Math.random().toString(36).slice(2,10); lsSet('achieva_push_uid',uid); }
+      const safeUid = uid.replace(/[^a-zA-Z0-9_]/g,'_');
+      const saveToCode = (code) => {
+        if (window._fbReady) window._fbSet(window._fbRef(window._fbDB,'buddyGoals/'+code+'/subscribers/'+safeUid), this._pushSub);
       };
-      if (window._fbReady) this.myCodes.forEach(saveSubToCode);
-      else document.addEventListener('firebase-ready', () => this.myCodes.forEach(saveSubToCode), { once: true });
-    } catch(e) {
-      console.log('Push registration skipped:', e.message);
-    }
+      if (window._fbReady) this.myCodes.forEach(saveToCode);
+      else document.addEventListener('firebase-ready', () => this.myCodes.forEach(saveToCode), {once:true});
+    } catch(e) { console.log('Push skipped:', e.message); }
   },
 
-  /* ── Create a new buddy goal ── */
   async create() {
-    const name   = document.getElementById('buddyNameInput').value.trim();
+    const name = document.getElementById('buddyNameInput').value.trim();
     const target = parseFloat(document.getElementById('buddyTargetInput').value);
-    if (!name || !target || target <= 0) { showToast(t('buddy_fill_fields')); return; }
-    if (!window._fbReady) { showToast('Firebase not ready yet, try again.'); return; }
-
+    if (!name || !target || target<=0) { showToast(t('buddy_fill_fields')); return; }
+    if (!window._fbReady) { showToast('Firebase not ready.'); return; }
     const code = this.genCode();
-    const goal = { code, name, target: round(target), contributions: {}, createdAt: Date.now() };
-
     try {
-      await window._fbSet(window._fbRef(window._fbDB, 'buddyGoals/' + code), goal);
+      await window._fbSet(window._fbRef(window._fbDB,'buddyGoals/'+code), {code,name,target:round(target),contributions:{},createdAt:Date.now()});
       if (!this.myCodes.includes(code)) this.myCodes.push(code);
       lsSet('achieva_buddy_codes_v1', this.myCodes);
       this._listen(code);
       if (this._pushSub) {
-        const uid = (lsGet('achieva_push_uid', '') || 'anon').replace(/[^a-zA-Z0-9_]/g, '_');
-        window._fbSet(window._fbRef(window._fbDB, `buddyGoals/${code}/subscribers/${uid}`), this._pushSub);
+        let uid=lsGet('achieva_push_uid','')||'anon';
+        window._fbSet(window._fbRef(window._fbDB,'buddyGoals/'+code+'/subscribers/'+uid.replace(/[^a-zA-Z0-9_]/g,'_')), this._pushSub);
       }
-      document.getElementById('buddyNameInput').value = '';
-      document.getElementById('buddyTargetInput').value = '';
+      document.getElementById('buddyNameInput').value='';
+      document.getElementById('buddyTargetInput').value='';
       Modal.close('modalBuddyCreate');
-      showToast(t('buddy_created') + ' Code: ' + code);
+      showToast(t('buddy_created')+' Code: '+code);
       Badges.checkAndUnlock();
-    } catch(e) {
-      showToast('Error: ' + e.message);
-    }
+    } catch(e) { showToast('Error: '+e.message); }
   },
 
-  /* ── Join an existing buddy goal by code ── */
   async join() {
     const code = document.getElementById('buddyCodeInput').value.trim().toUpperCase();
     if (!code) { showToast(t('buddy_fill_fields')); return; }
-    if (!window._fbReady) { showToast('Firebase not ready yet, try again.'); return; }
-
+    if (!window._fbReady) { showToast('Firebase not ready.'); return; }
     try {
-      const snap = await window._fbGet(window._fbRef(window._fbDB, 'buddyGoals/' + code));
+      const snap = await window._fbGet(window._fbRef(window._fbDB,'buddyGoals/'+code));
       Modal.close('modalBuddyJoin');
-      document.getElementById('buddyCodeInput').value = '';
-
+      document.getElementById('buddyCodeInput').value='';
       if (!snap.exists()) { showToast(t('buddy_not_found')); return; }
-
       if (!this.myCodes.includes(code)) this.myCodes.push(code);
       lsSet('achieva_buddy_codes_v1', this.myCodes);
       this._listen(code);
       if (this._pushSub) {
-        const uid = (lsGet('achieva_push_uid', '') || 'anon').replace(/[^a-zA-Z0-9_]/g, '_');
-        window._fbSet(window._fbRef(window._fbDB, `buddyGoals/${code}/subscribers/${uid}`), this._pushSub);
+        let uid=lsGet('achieva_push_uid','')||'anon';
+        window._fbSet(window._fbRef(window._fbDB,'buddyGoals/'+code+'/subscribers/'+uid.replace(/[^a-zA-Z0-9_]/g,'_')), this._pushSub);
       }
       showToast(t('buddy_joined'));
-    } catch(e) {
-      showToast('Error: ' + e.message);
-    }
+    } catch(e) { showToast('Error: '+e.message); }
   },
 
-  /* ── Open contribution modal ── */
   addContribution(code) {
+    const g = this.goals.find(x=>x.code===code);
+    if (g) {
+      const raised = Object.values(g.contributions||{}).reduce((s,c)=>s+(c.amount||0),0);
+      if (raised>=g.target) return;
+    }
     this._pendingContribCode = code;
-    const g = this.goals.find(x => x.code === code);
     document.getElementById('contribModalTitle').textContent = g ? g.name : 'Add Contribution';
-    document.getElementById('contribModalSub').textContent = g
-      ? `RM ${fmt(Object.values(g.contributions||{}).reduce((s,c)=>s+c.amount,0))} / RM ${fmt(g.target)} raised so far`
-      : 'How much are you adding?';
-    document.getElementById('contribAmtInput').value = '';
+    const raised2 = g ? Object.values(g.contributions||{}).reduce((s,c)=>s+(c.amount||0),0) : 0;
+    document.getElementById('contribModalSub').textContent = g ? 'RM '+fmt(raised2)+' / RM '+fmt(g.target)+' raised so far' : 'How much are you adding?';
+    document.getElementById('contribAmtInput').value='';
     Modal.open('modalBuddyContrib');
     setTimeout(() => document.getElementById('contribAmtInput').focus(), 200);
   },
 
-  /* ── Submit contribution from modal ── */
   async submitContrib() {
     const code = this._pendingContribCode;
     const amt = parseFloat(document.getElementById('contribAmtInput').value);
-    if (!code || !amt || amt <= 0) { showToast(t('buddy_fill_fields')); return; }
+    if (!code||!amt||amt<=0) { showToast(t('buddy_fill_fields')); return; }
     if (!window._fbReady) { showToast('Firebase not ready.'); return; }
     Modal.close('modalBuddyContrib');
-    const name = AppState.user.name || 'Someone';
+    const name = AppState.user.name||'Someone';
     try {
-      const contribRef = window._fbRef(window._fbDB, 'buddyGoals/' + code + '/contributions');
-      const newRef = window._fbPush(contribRef);
-      await window._fbSet(newRef, { name, amount: round(amt), date: new Date().toISOString() });
-      showToast(t('buddy_contributed'));
-      Badges.checkAndUnlock();
-
-      // Send push to all other subscribers
-      const snap = await window._fbGet(window._fbRef(window._fbDB, `buddyGoals/${code}/subscribers`));
+      const newRef = window._fbPush(window._fbRef(window._fbDB,'buddyGoals/'+code+'/contributions'));
+      await window._fbSet(newRef, {name, amount:round(amt), date:new Date().toISOString()});
+      showToast(t('buddy_contributed')); Badges.checkAndUnlock();
+      const snap = await window._fbGet(window._fbRef(window._fbDB,'buddyGoals/'+code+'/subscribers'));
       if (snap.exists()) {
-        const myUid = lsGet('achieva_push_uid', '');
-        const safeMyUid = myUid.replace(/[^a-zA-Z0-9_]/g, '_');
-        const subs = Object.entries(snap.val())
-          .filter(([uid]) => uid !== safeMyUid)
-          .map(([, sub]) => sub);
-        if (subs.length > 0) {
-          const g = this.goals.find(x => x.code === code);
+        const myUid = (lsGet('achieva_push_uid','')||'').replace(/[^a-zA-Z0-9_]/g,'_');
+        const subs = Object.entries(snap.val()).filter(([uid])=>uid!==myUid).map(([,s])=>s);
+        if (subs.length>0) {
+          const g = this.goals.find(x=>x.code===code);
           fetch('https://achieva-push.najwaiman226.workers.dev/send', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              subscriptions: subs,
-              title: `💰 ${name} baru contribute!`,
-              body: `+RM ${fmt(amt)} ke "${g ? g.name : code}"`
-            })
-          }).catch(() => {});
+            method:'POST', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({subscriptions:subs, title:name+' baru contribute!', body:'+RM '+fmt(amt)+' ke "'+(g?g.name:code)+'"'})
+          }).catch(()=>{});
         }
       }
-    } catch(e) {
-      showToast('Error: ' + e.message);
-    }
+    } catch(e) { showToast('Error: '+e.message); }
   },
 
-  /* ── Render all goals from cache ── */
   render() {
-    const empty = this.goals.length === 0;
-    document.getElementById('buddyEmpty').classList.toggle('hidden', !empty);
-    document.getElementById('buddyListWrap').classList.toggle('hidden', empty);
-
-    // Dashboard buddy section
-    const dashCta = document.getElementById('dashBuddyCta');
-    const dashList = document.getElementById('dashBuddyList');
-    if (dashCta && dashList) {
-      dashCta.classList.toggle('hidden', !empty);
-      dashList.classList.toggle('hidden', empty);
-      if (!empty) {
-        dashList.innerHTML = this.goals.map(g => {
-          const contribs = g.contributions ? Object.values(g.contributions) : [];
-          const raised = contribs.reduce((s,c) => s + (c.amount||0), 0);
-          const pct = Math.min(100, Math.round(raised / g.target * 100));
-          return `<div class="acard buddy-card" style="cursor:pointer" onclick="Nav.go('buddy')">
-            <div class="buddy-head">
-              <div class="buddy-name">${g.name}</div>
-              <span class="pill accent">${pct}%</span>
-            </div>
-            <div class="buddy-bar-track"><div class="buddy-bar-fill" style="width:${pct}%"></div></div>
-            <div class="buddy-stats-row"><span>RM ${fmt(raised)} / RM ${fmt(g.target)}</span><span style="font-size:10.5px;color:var(--text-3)">${g.code}</span></div>
-          </div>`;
-        }).join('');
-      }
+    const empty = this.goals.length===0;
+    document.getElementById('buddyEmpty').classList.toggle('hidden',!empty);
+    document.getElementById('buddyListWrap').classList.toggle('hidden',empty);
+    const dashCta=document.getElementById('dashBuddyCta'), dashList=document.getElementById('dashBuddyList');
+    if (dashCta&&dashList) {
+      dashCta.classList.toggle('hidden',!empty);
+      dashList.classList.toggle('hidden',empty);
+      if (!empty) dashList.innerHTML=this.goals.map(g=>{
+        const contribs=g.contributions?Object.values(g.contributions):[];
+        const raised=contribs.reduce((s,c)=>s+(c.amount||0),0);
+        const pct=Math.min(100,Math.round(raised/g.target*100));
+        const done=raised>=g.target;
+        return '<div class="acard buddy-card" style="cursor:pointer" onclick="Nav.go(\'buddy\')">'
+          +'<div class="buddy-head"><div class="buddy-name">'+g.name+'</div>'
+          +'<span class="pill '+(done?'success':'accent')+'">'+(done?'\uD83C\uDF89 Selesai!':pct+'%')+'</span></div>'
+          +'<div class="buddy-bar-track"><div class="buddy-bar-fill" style="width:'+pct+'%;'+(done?'background:var(--success)':'')+'"></div></div>'
+          +'<div class="buddy-stats-row"><span>RM '+fmt(raised)+' / RM '+fmt(g.target)+'</span><span style="font-size:10.5px;color:var(--text-3)">'+g.code+'</span></div></div>';
+      }).join('');
     }
-
     if (empty) return;
-
-    document.getElementById('buddyList').innerHTML = this.goals.map(g => {
-      const contribs = g.contributions ? Object.values(g.contributions) : [];
-      const raised = contribs.reduce((s,c) => s + (c.amount||0), 0);
-      const pct = Math.min(100, Math.round(raised / g.target * 100));
-      const names = [...new Set(contribs.map(c => c.name))].slice(0, 4);
-      // recent contributions
-      const recent = [...contribs].sort((a,b) => new Date(b.date)-new Date(a.date)).slice(0,3);
-      return `<div class="acard buddy-card">
-        <div class="buddy-head">
-          <div class="buddy-name">${g.name}</div>
-          <div class="buddy-code">${g.code}</div>
-        </div>
-        <div class="buddy-bar-track"><div class="buddy-bar-fill" style="width:${pct}%"></div></div>
-        <div class="buddy-stats-row"><span>RM ${fmt(raised)} / RM ${fmt(g.target)}</span><span><b>${pct}%</b></span></div>
-        ${recent.length > 0 ? `<div class="buddy-contribs">
-          ${recent.map(c => `<div class="buddy-contrib-row">
-            <div class="contrib-avatar" style="width:28px;height:28px;font-size:11px;flex-shrink:0">${c.name.charAt(0).toUpperCase()}</div>
-            <div style="flex:1;min-width:0">
-              <div style="font-size:12px;font-weight:600">${c.name}</div>
-              <div style="font-size:10.5px;color:var(--text-2)">${timeAgo(c.date)}</div>
-            </div>
-            <div style="font-family:var(--ff-mono);font-size:12.5px;color:var(--success);font-weight:600">+RM ${fmt(c.amount)}</div>
-          </div>`).join('')}
-        </div>` : ''}
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px">
-          <div class="contrib-avatars">${names.map(n => `<div class="contrib-avatar">${n.charAt(0).toUpperCase()}</div>`).join('') || '<span style="font-size:11px;color:var(--text-3)">—</span>'}</div>
-          <button class="btn-primary" style="height:36px;padding:0 16px;font-size:12.5px" onclick="Buddy.addContribution('${g.code}')">+ RM</button>
-        </div>
-      </div>`;
+    document.getElementById('buddyList').innerHTML=this.goals.map(g=>{
+      const contribs=g.contributions?Object.values(g.contributions):[];
+      const raised=contribs.reduce((s,c)=>s+(c.amount||0),0);
+      const pct=Math.min(100,Math.round(raised/g.target*100));
+      const done=raised>=g.target;
+      const names=[...new Set(contribs.map(c=>c.name))].slice(0,4);
+      const recent=[...contribs].sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,3);
+      let html2='<div class="acard buddy-card">'
+        +'<div class="buddy-head"><div class="buddy-name">'+g.name+'</div>'
+        +(done?'<span class="pill success">\uD83C\uDF89 Selesai!</span>':'<div class="buddy-code">'+g.code+'</div>')
+        +'</div>'
+        +'<div class="buddy-bar-track"><div class="buddy-bar-fill" style="width:'+pct+'%;'+(done?'background:var(--success)':'')+'"></div></div>'
+        +'<div class="buddy-stats-row"><span>RM '+fmt(raised)+' / RM '+fmt(g.target)+'</span><span><b>'+pct+'%</b></span></div>';
+      if (done) html2+='<div style="text-align:center;padding:10px 0 4px;font-size:13px;color:var(--success);font-weight:600">\uD83C\uDF89 Goal tercapai! Tahniah semua!</div>';
+      if (!done&&recent.length>0) {
+        html2+='<div class="buddy-contribs">'+recent.map(c=>'<div class="buddy-contrib-row">'
+          +'<div class="contrib-avatar" style="width:28px;height:28px;font-size:11px;flex-shrink:0">'+c.name.charAt(0).toUpperCase()+'</div>'
+          +'<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:600">'+c.name+'</div>'
+          +'<div style="font-size:10.5px;color:var(--text-2)">'+timeAgo(c.date)+'</div></div>'
+          +'<div style="font-family:var(--ff-mono);font-size:12.5px;color:var(--success);font-weight:600">+RM '+fmt(c.amount)+'</div>'
+          +'</div>').join('')+'</div>';
+      }
+      html2+='<div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px">'
+        +'<div class="contrib-avatars">'+( names.map(n=>'<div class="contrib-avatar">'+n.charAt(0).toUpperCase()+'</div>').join('')||'<span style="font-size:11px;color:var(--text-3)">\u2014</span>' )+'</div>'
+        +(done
+          ?'<div class="buddy-code" style="font-size:10px">'+g.code+'</div>'
+          :'<button class="btn-primary" style="height:36px;padding:0 16px;font-size:12.5px" onclick="Buddy.addContribution(\''+g.code+'\')">+ RM</button>'
+        )
+        +'</div></div>';
+      return html2;
     }).join('');
   }
 };
@@ -2137,7 +2063,7 @@ const Settings = {
   },
   openReset() { Modal.open('modalReset'); },
   confirmReset() {
-    ['achieva_user_v1','achieva_tips_v1','achieva_tracker_v1','achieva_badges_v1','achieva_buddy_v1','achieva_buddy_codes_v1','tabungku_progress_v1']
+    ['achieva_user_v1','achieva_tips_v1','achieva_tracker_v1','achieva_badges_v1','achieva_buddy_v1','achieva_buddy_codes_v1','achieva_push_uid','tabungku_progress_v1']
       .forEach(k => { try { localStorage.removeItem(k); } catch(e) {} });
     location.reload();
   }
@@ -2174,12 +2100,9 @@ const App = {
     }, 2000);
   }
 };
-</script>
-<script>
+
 /* ════════════════════════════════════════════════════════════
    ORIGINAL PLANNER ENGINE — copied verbatim from the source
-   index.html. Function names, globals, and the localStorage
-   key are unchanged so existing user data keeps working.
    ════════════════════════════════════════════════════════════ */
   /* ── State ── */
   let currentStep = 1;
@@ -2250,33 +2173,6 @@ const App = {
     '40/30/30': { n: 40, w: 30, s: 30 },
   };
   const FKEYS = Object.keys(FORMULAS);
-
-  /* ── Helpers ── */
-  function getInc() { return parseFloat(document.getElementById('incomeInput').value) || 0; }
-  function round(n) { return Math.round(n); }
-  function fmt(n) { return round(n).toLocaleString('ms-MY'); }
-  function getPct() {
-    if (formula === 'free') {
-      return {
-        n: parseFloat(document.getElementById('freeN').value) || 0,
-        w: parseFloat(document.getElementById('freeW').value) || 0,
-        s: parseFloat(document.getElementById('freeS').value) || 0,
-      };
-    }
-    return FORMULAS[formula];
-  }
-  function getSavings() { return round(getInc() * (getPct().s || 0) / 100); }
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 1800);
-  }
-  function fmtDate(months) {
-    const d = new Date();
-    d.setMonth(d.getMonth() + months);
-    return d.toLocaleDateString('ms-MY', { month: 'short', year: 'numeric' });
-  }
 
   /* ── Steps ── */
   function renderSteps() {
@@ -2675,4 +2571,5 @@ const App = {
 /* App boot — runs after the planner state above has loaded */
 App.boot();
 </script>
+</body>
 </html>
